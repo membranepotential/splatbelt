@@ -1,0 +1,25 @@
+FROM node:current-bookworm
+
+RUN apt update && apt -y upgrade
+
+ADD library-scripts/*.sh /
+RUN /bin/bash /common-debian.sh
+RUN /bin/bash /install-docker.sh
+RUN /bin/bash /install-diff-so-fancy.sh
+RUN apt -y install \
+    awscli \
+    postgresql-client \
+    python3-full \
+    python3-pip \
+    python3-setuptools \
+    python-is-python3 \
+    ffmpeg \
+    libsm6 \
+    libxext6
+
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
+ADD requirements.txt /
+RUN pip install -r /requirements.txt
+
+ADD entrypoint.sh /
+ENTRYPOINT /entrypoint.sh

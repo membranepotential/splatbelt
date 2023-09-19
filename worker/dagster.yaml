@@ -1,0 +1,39 @@
+telemetry:
+  enabled: false
+
+storage:
+  postgres:
+    postgres_db:
+      username:
+        env: POSTGRES_USER
+      password:
+        env: POSTGRES_PASSWORD
+      hostname:
+        env: POSTGRES_HOST
+      db_name:
+        env: DAGSTER_DB
+      port: 5432
+
+run_launcher:
+  module: dagster_docker
+  class: DockerRunLauncher
+  config:
+    image: worker
+    env_vars:
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+      - DAGSTER_DB
+    network: nerf_devcontainer
+    container_kwargs:
+      volumes:
+        - /home/felix/Documents/ai-creativity/nerfbelt/scratch:/workspace
+      shm_size: 16gb
+      device_requests:
+        - count: 1
+          capabilities: [["gpu"]]

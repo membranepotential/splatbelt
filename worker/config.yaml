@@ -1,0 +1,17 @@
+ops:
+  frames:
+    config:
+      uploads:
+        - name: sun-tube.scaled.mp4
+          type: num
+          num: 50
+  pairing:
+    config:
+      type: exhaustive
+  feature_matching:
+    config:
+      feature_type: superpoint_max
+      matcher: superpoint+lightglue
+  splat:
+    config:
+      max_iter: 4000

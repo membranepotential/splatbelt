@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+      tags:
+        - worker:latest
+
+    networks:
+      - devcontainer
+
+    environment:
+      - MONGO_URL
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+      - DAGSTER_DB
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+
+networks:
+  devcontainer:
+    name: nerf_devcontainer
+    external: true

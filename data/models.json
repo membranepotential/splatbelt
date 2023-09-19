@@ -1,0 +1,23 @@
+[
+    {
+        "id": "ff3533eb-f298-41bf-8bf6-2e9a5bf679d9",
+        "project": 1,
+        "frames": {
+            "sun-tube.scaled.mp4": {
+                "type": "num",
+                "num": 50
+            }
+        },
+        "pairing": {
+            "type": "exhaustive"
+        },
+        "config": {
+            "feature_type": "sift",
+            "matcher_type": "superglue"
+        },
+        "state": {
+            "state": "fresh",
+            "progress": 0
+        }
+    }
+]

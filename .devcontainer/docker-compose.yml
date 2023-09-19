@@ -1,0 +1,88 @@
+version: "3"
+
+services:
+  devcontainer:
+    build:
+      context: .
+
+    tty: true
+    user: node
+
+    volumes:
+      - ..:/workspace:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks: [devcontainer]
+
+    environment:
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID=${MINIO_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET}
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+      - DAGSTER_DB
+
+  minio:
+    image: minio/minio:latest
+    networks: [devcontainer]
+    volumes:
+      - minio-storage:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET}
+      MINIO_API_CORS_ALLOW_ORIGIN: "*"
+    command: server --address ":9000" --console-address ":9001" /data
+
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    networks: [devcontainer]
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  postgrest:
+    image: postgrest/postgrest
+    command: "postgrest /postgrest.conf"
+    volumes:
+      - ../postgrest.conf:/postgrest.conf
+    networks:
+      - devcontainer
+    depends_on:
+      - postgres
+    environment:
+      PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}
+
+  dagster:
+    build:
+      context: ../worker
+      dockerfile: ../worker/Dockerfile.dagster
+    volumes:
+      - ../worker:/app:cached
+    networks:
+      - devcontainer
+    depends_on:
+      - postgres
+    environment:
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID=${MINIO_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET}
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+      - DAGSTER_DB
+
+volumes:
+  postgres-data:
+  minio-storage:
+
+networks:
+  devcontainer:
+    name: nerf_devcontainer

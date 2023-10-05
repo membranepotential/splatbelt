@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { debounce } from 'lodash';
+	import { debounce } from 'lodash-es';
 	import { invalidate } from '$app/navigation';
 	import { createUploadTask } from '$lib/upload/s3';
 	import { updated } from '$lib/models/project';
@@ -73,46 +73,59 @@
 	}
 </script>
 
-<NameEdit bind:value={project.name} class="mb-6 w-full" on:change={updateProject} />
-
-<section class="mt-6 mb-6 w-full">
-	<h2 class="mb-2">Uploads</h2>
-	<ul>
-		{#each uploads as upload}
-			<li class="pt-1 pb-1">
-				<!-- <a href={upload.url} target="_blank">{upload.name}</a> -->
-				<span>{upload.name}</span>
-				{#if upload.transferred < upload.size}
-					<span class="ml-2"
-						>Upload progress: {Math.round(100 * (upload.transferred / upload.size))}%</span
-					>
-				{/if}
-			</li>
-		{/each}
-	</ul>
-	<div class="mt-6">
-		<input
-			id="file"
-			type="file"
-			class="text-transparent"
-			multiple
-			formenctype="multipart/form-data"
-			accept="image/*,video/*"
-			title="File"
-			bind:files={selectedFiles}
-			on:change={handleFilesDrop}
-		/>
-	</div>
-</section>
-
-<section class="mt-6 mb-6 border-t-2 pt-2 border-b-2 pb-2 w-full">
-	<h2>Models</h2>
-	<ul>
-		{#each models as model}
-			<ModelCard {uploads} {model} on:change={updateProject} />
-		{/each}
-		<div class="mt-6">
-			<button class="border p-2" on:click={addModel}>Add Model</button>
+<div class="py-10">
+	<header>
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			<h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">{project.name}</h1>
 		</div>
-	</ul>
-</section>
+	</header>
+	<main>
+		<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+			<NameEdit bind:value={project.name} class="mb-6" on:change={updateProject} />
+
+			<section class="mt-6 mb-6">
+				<h2 class="mb-2">Uploads</h2>
+				<ul>
+					{#each uploads as upload}
+						<li class="pt-1 pb-1">
+							<!-- <a href={upload.url} target="_blank">{upload.name}</a> -->
+							<span>{upload.name}</span>
+							{#if upload.transferred < upload.size}
+								<span class="ml-2"
+									>Upload progress: {Math.round(100 * (upload.transferred / upload.size))}%</span
+								>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+				<div class="mt-6">
+					<input
+						id="file"
+						type="file"
+						class="text-transparent"
+						multiple
+						formenctype="multipart/form-data"
+						accept="image/*,video/*"
+						title="File"
+						bind:files={selectedFiles}
+						on:change={handleFilesDrop}
+					/>
+				</div>
+			</section>
+
+			<section class="mt-6 mb-6 border-t-2 pt-2 border-b-2 pb-2 w-full">
+				<h2>Models</h2>
+				<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+					<ul>
+						{#each models as model}
+							<ModelCard {uploads} {model} on:change={updateProject} />
+						{/each}
+						<div class="mt-6">
+							<button class="border p-2" on:click={addModel}>Add Model</button>
+						</div>
+					</ul>
+				</div>
+			</section>
+		</div>
+	</main>
+</div>

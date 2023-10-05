@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import debounce from 'lodash/debounce';
+	import { debounce } from 'lodash-es';
 
 	export let value: string;
 	let class_: string;

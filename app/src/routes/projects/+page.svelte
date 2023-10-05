@@ -11,7 +11,7 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				name: 'New Project'
+				name: 'New Project Title'
 			})
 		});
 
@@ -39,13 +39,22 @@
 				{#each data.projects as project}
 					<li class="h-10 flex flex-row items-center">
 						<a class="grow" href="/project/{project.id}">{project.name}</a>
-						<button class="ml-2 text-red-600" on:click={() => deleteProject(project.id)}
+
+						<button
+							type="button"
+							on:click={() => deleteProject(project.id)}
+							class="rounded-full bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
 							>Delete</button
 						>
 					</li>
 				{/each}
 				<li class="h-10 flex flex-row items-center">
-					<button on:click={createProject}>New Project</button>
+					<button
+						type="button"
+						on:click={createProject}
+						class="rounded-full bg-green-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+						>Create New Project</button
+					>
 				</li>
 			</ul>
 		</div>

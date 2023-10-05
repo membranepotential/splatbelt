@@ -1,8 +1,6 @@
 name: Svelte Unit Tests
 
-on:
-  push:
-    branches: [main]
+on: [push]
 
 jobs:
   test:
@@ -34,9 +32,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./app
 
       - name: Build
         run: npm run build
+        working-directory: ./app
 
       - name: Test
         run: npm run test
+        working-directory: ./app

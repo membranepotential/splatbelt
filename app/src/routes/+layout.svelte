@@ -1,5 +1,6 @@
 <script>
 	import '../app.css';
+	import Toast from '$lib/notifications/Toast.svelte'
 </script>
 
 <div class="p-4">
@@ -49,3 +50,4 @@
 		<slot />
 	</div>
 </div>
+<Toast />

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { debounce } from 'lodash';
+	import { debounce } from 'lodash-es';
 	import { invalidate } from '$app/navigation';
 	import { createUploadTask } from '$lib/upload/s3';
 	import { updated } from '$lib/models/project';

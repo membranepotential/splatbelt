@@ -1,4 +1,5 @@
 <script lang="ts">
+	import humanizeDuration from 'humanize-duration';
 	import { invalidate } from '$app/navigation';
 	import { toast } from '$lib/notifications/notifications.ts';
 	import type { PageData } from './$types';
@@ -28,6 +29,19 @@
 		await invalidate('/api/projects');
 		toast('Project deleted');
 	}
+
+	/**
+	 * Database timestamp are UTC. Get current UTC time to calculate offset
+	 */
+	function getCreatedOffset(project) {
+		const current = new Date();
+		const now = new Date(current.getTime() + current.getTimezoneOffset() * 60000);
+
+		return humanizeDuration(now - new Date(project.created), {
+			round: true,
+			units: ['y', 'mo', 'd', 'h', 'm']
+		});
+	}
 </script>
 
 <div class="py-10">
@@ -51,7 +65,7 @@
 								<!-- <p class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset">{project.status }</p> -->
 							</div>
 							<div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-								<p class="truncate">Created {project.created}</p>
+								<p class="truncate">Created {getCreatedOffset(project)} ago</p>
 							</div>
 						</div>
 						<div class="flex flex-none items-center gap-x-4">

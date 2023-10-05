@@ -112,7 +112,10 @@
 					/>
 				</div>
 			</section>
-
+            <section class="mt-6 mb-6 border-t-2 pt-2 border-b-2 pb-2 w-full">
+                <div class="mt-6">
+                    <a class="border p-2" href="{project.id}/edit/">Edit</a>
+                </div>
 			<section class="mt-6 mb-6 border-t-2 pt-2 border-b-2 pb-2 w-full">
 				<h2>Models</h2>
 				<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">

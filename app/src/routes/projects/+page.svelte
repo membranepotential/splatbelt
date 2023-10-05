@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
+	import { toast } from '$lib/notifications/notifications.ts';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -16,6 +17,7 @@
 		});
 
 		await invalidate('/api/projects');
+		toast('Project created');
 	}
 
 	async function deleteProject(id: number) {
@@ -24,6 +26,7 @@
 		});
 
 		await invalidate('/api/projects');
+		toast('Project deleted');
 	}
 </script>
 

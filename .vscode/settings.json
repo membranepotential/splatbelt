@@ -1,5 +1,7 @@
 {
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
-    }
+    },
+    "prettier.configPath": "app/.prettierrc",
+    "prettier.prettierPath": "app/node_modules/prettier"
 }

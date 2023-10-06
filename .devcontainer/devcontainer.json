@@ -23,21 +23,22 @@
         "black-formatter.importStrategy": "useBundled"
       },
       "extensions": [
-        "GitHub.copilot",
-        "ms-azuretools.vscode-docker",
-        "redhat.vscode-yaml",
-        "DotJoshJohnson.xml",
-        "KevinRose.vsc-python-indent",
-        "ionutvmi.path-autocomplete",
-        "Rubymaniac.vscode-paste-and-indent",
-        "GitHub.copilot-chat",
-        "svelte.svelte-vscode",
         "ardenivanov.svelte-intellisense",
+        "be5invis.toml",
         "bradlc.vscode-tailwindcss",
-        "ms-python.python",
         "charliermarsh.ruff",
+        "DotJoshJohnson.xml",
+        "esbenp.prettier-vscode",
+        "GitHub.copilot-chat",
+        "GitHub.copilot",
+        "ionutvmi.path-autocomplete",
+        "KevinRose.vsc-python-indent",
+        "ms-azuretools.vscode-docker",
         "ms-python.black-formatter",
-        "be5invis.toml"
+        "ms-python.python",
+        "redhat.vscode-yaml",
+        "Rubymaniac.vscode-paste-and-indent",
+        "svelte.svelte-vscode"
       ]
     }
   }

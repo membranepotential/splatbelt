@@ -4,7 +4,7 @@
 
   export let data: PageData;
   const project: Project = data.project;
-  console.log('Project', project);
+  console.log('Canvas for project', project);
 </script>
 
 <div class="py-10">Canvas</div>

@@ -6,12 +6,12 @@ type Notification = string;
 export const notifications = writable<Notification[]>([]);
 
 export function toast(message: string) {
-	notifications.update((state) => [message, ...state]);
-	setTimeout(removeToast, 5000);
+  notifications.update((state) => [message, ...state]);
+  setTimeout(removeToast, 5000);
 }
 
 function removeToast() {
-	notifications.update((state) => {
-		return [...state.slice(0, state.length - 1)];
-	});
+  notifications.update((state) => {
+    return [...state.slice(0, state.length - 1)];
+  });
 }

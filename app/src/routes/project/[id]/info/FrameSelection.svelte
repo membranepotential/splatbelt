@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { FrameSelection } from "$lib/models/model";
+  import type { FrameSelection } from '$lib/models/model';
 
   export let setting: {
     key: string;
@@ -9,19 +9,19 @@
 
   function handleFrameSelectionToggle() {
     if (setting.active && setting.selection === null) {
-      setting.selection = { type: "num", num: 10 };
+      setting.selection = { type: 'num', num: 10 };
     }
   }
 
   function handleFrameSelectionChange(event: Event) {
     const type = (event.target as HTMLSelectElement).value;
     if (setting.active && setting.selection !== null) {
-      if (type === "list") {
-        setting.selection = { type: "list", frames: [] };
-      } else if (type === "num") {
-        setting.selection = { type: "num", num: 10 };
-      } else if (type === "image") {
-        setting.selection = { type: "image" };
+      if (type === 'list') {
+        setting.selection = { type: 'list', frames: [] };
+      } else if (type === 'num') {
+        setting.selection = { type: 'num', num: 10 };
+      } else if (type === 'image') {
+        setting.selection = { type: 'image' };
       }
     }
   }
@@ -46,14 +46,14 @@
       <option value="num">Num</option>
       <option value="list">List</option>
     </select>
-    {#if setting.selection.type === "num"}
+    {#if setting.selection.type === 'num'}
       <input
         id="{setting.key}-frame-num"
         type="number"
         bind:value={setting.selection.num}
         class="ml-4 border p-2"
       />
-    {:else if setting.selection.type === "list"}
+    {:else if setting.selection.type === 'list'}
       <button class="ml-4 border p-2">Choose Frames...</button>
     {/if}
   {/if}

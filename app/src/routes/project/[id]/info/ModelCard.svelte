@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import FrameSelection from "./FrameSelection.svelte";
-  import { toWorkerConfig } from "$lib/models/model";
-  import type { Model } from "$lib/models/model";
-  import type { Upload } from "$lib/models/upload";
+  import { createEventDispatcher } from 'svelte';
+  import FrameSelection from './FrameSelection.svelte';
+  import { toWorkerConfig } from '$lib/models/model';
+  import type { Model } from '$lib/models/model';
+  import type { Upload } from '$lib/models/upload';
 
   const dispatch = createEventDispatcher<{ change: Model }>();
 
@@ -24,19 +24,19 @@
         .filter((setting) => setting.active && setting.selection !== null)
         .map((setting) => [
           setting.key,
-          setting.selection || { type: "num", num: 10 },
+          setting.selection || { type: 'num', num: 10 },
         ])
     );
-    dispatch("change", model);
+    dispatch('change', model);
   }
 
   function handlePairingChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
-    if (value === "exhaustive") {
-      model.pairing = { type: "exhaustive" };
-    } else if (value === "complex") {
+    if (value === 'exhaustive') {
+      model.pairing = { type: 'exhaustive' };
+    } else if (value === 'complex') {
       model.pairing = {
-        type: "complex",
+        type: 'complex',
         sequential: 5,
         retrieval: 5,
         covisible: null,
@@ -47,8 +47,8 @@
   async function launchWorker() {
     const config = toWorkerConfig(model);
     await fetch(`${model.project}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config),
     });
   }

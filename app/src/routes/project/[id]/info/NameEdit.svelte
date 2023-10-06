@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import { debounce } from "lodash-es";
+  import { createEventDispatcher } from 'svelte';
+  import { debounce } from 'lodash-es';
 
   export let value: string;
   let class_: string;
@@ -9,7 +9,7 @@
   const dispatch = createEventDispatcher<{ change: string }>();
 
   function handleChange() {
-    dispatch("change", value.trim());
+    dispatch('change', value.trim());
   }
 
   const debouncedHandleChange = debounce(handleChange, 500);

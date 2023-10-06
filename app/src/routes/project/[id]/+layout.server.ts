@@ -1,4 +1,4 @@
-import type { LayoutServerData } from "./$types";
+import type { LayoutServerData } from './$types';
 
 export const load: LayoutServerData = async ({ fetch, params }) => {
   try {

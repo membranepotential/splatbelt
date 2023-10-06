@@ -1,21 +1,20 @@
 <script lang="ts">
-  import { debounce } from "lodash-es";
-  import { invalidate } from "$app/navigation";
-  import { createUploadTask } from "$lib/upload/s3";
-  import { updated } from "$lib/models/project";
-  import { createModel } from "$lib/models/model";
-  import { createUpload } from "$lib/models/upload";
-  import type { Upload } from "$lib/models/upload";
-  import type { Model } from "$lib/models/model";
-  import type { Project } from "$lib/models/project";
+  import { debounce } from 'lodash-es';
+  import { invalidate } from '$app/navigation';
+  import { createUploadTask } from '$lib/upload/s3';
+  import { updated } from '$lib/models/project';
+  import { createModel } from '$lib/models/model';
+  import { createUpload } from '$lib/models/upload';
+  import type { Upload } from '$lib/models/upload';
+  import type { Model } from '$lib/models/model';
+  import type { Project } from '$lib/models/project';
 
-  import NameEdit from "./NameEdit.svelte";
-  import ModelCard from "./ModelCard.svelte";
-  import type { PageData } from "./$types";
+  import NameEdit from './NameEdit.svelte';
+  import ModelCard from './ModelCard.svelte';
+  import type { PageData } from './$types';
 
   export let data: PageData;
   const project: Project = data.project;
-  console.log("Project", project);
 
   $: idString = project.id.toString();
   $: uploads = project.uploads;
@@ -25,12 +24,12 @@
 
   async function updateProjectNow() {
     const updatedProject = updated(project);
-    console.log("Updating project", updatedProject);
+    console.log('Updating project', updatedProject);
 
     const url = `/api/projects/${project.id}`;
     await fetch(url, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedProject),
     });
     await invalidate(url);
@@ -39,14 +38,14 @@
 
   async function handleFilesDrop() {
     const files = Array.from(selectedFiles);
-    console.log("Uploading files", files);
+    console.log('Uploading files', files);
 
     const tasks = files.map(async (file) => {
       const task = createUploadTask(file, idString);
 
       const upload = createUpload(file, task.key);
       project.uploads = [...uploads, upload];
-      console.debug("Created new file", upload);
+      console.debug('Created new file', upload);
 
       task.transferred.subscribe((transferred) => {
         upload.transferred = transferred;
@@ -56,7 +55,7 @@
       try {
         await task.task;
         await updateProject();
-        console.log("Upload finished", upload);
+        console.log('Upload finished', upload);
       } catch (error) {
         uploads = uploads.filter((u) => u.name !== upload.name);
         console.error(`Error while uploading ${upload.key}`, error);

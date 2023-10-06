@@ -1,15 +1,22 @@
 name: Svelte Unit Tests
 
-on:
-  push:
-    branches: [main]
+on: [push]
+
+env:
+  AWS_REGION: us-east-1 # required so @aws/sdk/client-s3 builds
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./app
+
     strategy:
       matrix:
         node-version: [20.x]
+        
     steps:
       - uses: actions/checkout@v4
 

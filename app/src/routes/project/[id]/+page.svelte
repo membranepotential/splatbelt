@@ -89,11 +89,11 @@
         on:change={updateProject}
       />
 
-      <section class="mt-6 mb-6">
+      <section class="mb-6 mt-6">
         <h2 class="mb-2">Uploads</h2>
         <ul>
           {#each uploads as upload}
-            <li class="pt-1 pb-1">
+            <li class="pb-1 pt-1">
               <!-- <a href={upload.url} target="_blank">{upload.name}</a> -->
               <span>{upload.name}</span>
               {#if upload.transferred < upload.size}
@@ -120,11 +120,11 @@
           />
         </div>
       </section>
-      <section class="mt-6 mb-6 border-t-2 pt-2 border-b-2 pb-2 w-full">
+      <section class="mb-6 mt-6 w-full border-b-2 border-t-2 pb-2 pt-2">
         <div class="mt-6">
           <a class="border p-2" href="{project.id}/edit/">Edit</a>
         </div>
-        <section class="mt-6 mb-6 border-t-2 pt-2 border-b-2 pb-2 w-full">
+        <section class="mb-6 mt-6 w-full border-b-2 border-t-2 pb-2 pt-2">
           <h2>Models</h2>
           <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <ul>

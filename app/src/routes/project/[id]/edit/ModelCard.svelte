@@ -56,15 +56,15 @@
 
 <div class="container p-4">
   <div class="mb-4">
-    <h2 class="font-bold mb-2">Frame Selection</h2>
+    <h2 class="mb-2 font-bold">Frame Selection</h2>
     {#each frameSelections as setting}
       <FrameSelection bind:setting />
     {/each}
   </div>
 
   <div class="mb-4">
-    <h2 class="font-bold mb-2">Pairing</h2>
-    <div class="flex items-center mb-2">
+    <h2 class="mb-2 font-bold">Pairing</h2>
+    <div class="mb-2 flex items-center">
       <select
         value={model.pairing.type}
         on:change={handlePairingChange}
@@ -77,7 +77,7 @@
   </div>
 
   <div class="mb-4">
-    <h2 class="font-bold mb-2">Settings</h2>
+    <h2 class="mb-2 font-bold">Settings</h2>
     <ul>
       <li>
         <label for="feature-config">Features</label>
@@ -101,7 +101,7 @@
   </div>
 
   <div>
-    <h2 class="font-bold mb-2">Progress</h2>
+    <h2 class="mb-2 font-bold">Progress</h2>
     <p>State: {model.state.state} {model.state.progress}%</p>
   </div>
   <div>

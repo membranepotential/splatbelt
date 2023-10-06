@@ -27,7 +27,7 @@
   }
 </script>
 
-<div class="flex items-center mb-2">
+<div class="mb-2 flex items-center">
   <input
     id="{setting.key}-frame-include"
     type="checkbox"

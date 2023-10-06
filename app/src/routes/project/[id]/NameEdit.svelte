@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  import { debounce } from 'lodash-es';
+  import { createEventDispatcher } from 'svelte'
+  import { debounce } from 'lodash-es'
 
-  export let value: string;
-  let class_: string;
-  export { class_ as class };
+  export let value: string
+  let class_: string
+  export { class_ as class }
 
-  const dispatch = createEventDispatcher<{ change: string }>();
+  const dispatch = createEventDispatcher<{ change: string }>()
 
   function handleChange() {
-    dispatch('change', value.trim());
+    dispatch('change', value.trim())
   }
 
-  const debouncedHandleChange = debounce(handleChange, 500);
+  const debouncedHandleChange = debounce(handleChange, 500)
 </script>
 
 <input

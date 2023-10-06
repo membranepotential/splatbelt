@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  import FrameSelection from './FrameSelection.svelte';
-  import { toWorkerConfig } from '$lib/models/model';
-  import type { Model } from '$lib/models/model';
-  import type { Upload } from '$lib/models/upload';
+  import { createEventDispatcher } from 'svelte'
+  import FrameSelection from './FrameSelection.svelte'
+  import { toWorkerConfig } from '$lib/models/model'
+  import type { Model } from '$lib/models/model'
+  import type { Upload } from '$lib/models/upload'
 
-  const dispatch = createEventDispatcher<{ change: Model }>();
+  const dispatch = createEventDispatcher<{ change: Model }>()
 
-  export let uploads: Upload[];
-  export let model: Model;
+  export let uploads: Upload[]
+  export let model: Model
   const frameSelections = uploads.map((upload) => {
-    const key = upload.name;
+    const key = upload.name
     if (key in model.frames) {
-      const selection = model.frames[key];
-      return { key, active: true, selection };
+      const selection = model.frames[key]
+      return { key, active: true, selection }
     } else {
-      return { key, active: false, selection: null };
+      return { key, active: false, selection: null }
     }
-  });
+  })
   $: {
     model.frames = Object.fromEntries(
       frameSelections
@@ -26,31 +26,31 @@
           setting.key,
           setting.selection || { type: 'num', num: 10 },
         ])
-    );
-    dispatch('change', model);
+    )
+    dispatch('change', model)
   }
 
   function handlePairingChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
+    const value = (event.target as HTMLSelectElement).value
     if (value === 'exhaustive') {
-      model.pairing = { type: 'exhaustive' };
+      model.pairing = { type: 'exhaustive' }
     } else if (value === 'complex') {
       model.pairing = {
         type: 'complex',
         sequential: 5,
         retrieval: 5,
         covisible: null,
-      };
+      }
     }
   }
 
   async function launchWorker() {
-    const config = toWorkerConfig(model);
+    const config = toWorkerConfig(model)
     await fetch(`${model.project}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config),
-    });
+    })
   }
 </script>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
-  import { notifications } from './notifications';
+  import { fade } from 'svelte/transition'
+  import { notifications } from './notifications'
 </script>
 
 <div

@@ -55,8 +55,6 @@
 			<ul role="list" class="divide-y divide-gray-100">
 				{#each data.projects as project}
 					<li
-						v-for="project in projects"
-						:key="project.id"
 						class="flex items-center justify-between gap-x-6 py-5"
 					>
 						<div class="min-w-0">

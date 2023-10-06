@@ -8,15 +8,11 @@
   const project: Project = data.project;
 
   const tabs = [
-    { id: 'info', label: 'Info' },
+    { id: 'edit', label: 'Edit' },
     { id: 'timeline', label: 'Timeline' },
   ];
 
-  page.subscribe((value) => {
-    console.log(value);
-  });
   const activeTab = derived(page, (page) => page.route.id?.split('/').pop());
-  console.log(activeTab);
 
   const classesActive = 'bg-indigo-100 text-indigo-700';
   const classesInactive = 'text-gray-500 hover:text-gray-700';
@@ -33,20 +29,16 @@
   <main>
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
       <nav class="flex space-x-4" aria-label="Tabs">
-        <a
-          href="/project/{project.id}/info"
-          class="rounded-md px-3 py-2 text-sm font-medium {$activeTab === 'info'
-            ? classesActive
-            : classesInactive}"
-          aria-current="page">Info</a
-        >
-        <a
-          href="/project/{project.id}/timeline"
-          class="rounded-md px-3 py-2 text-sm font-medium {$activeTab ===
-          'timeline'
-            ? classesActive
-            : classesInactive}">Timeline</a
-        >
+        {#each tabs as tab}
+          <a
+            href="/project/{project.id}/{tab.id}"
+            class="rounded-md px-3 py-2 text-sm font-medium {$activeTab ===
+            tab.id
+              ? classesActive
+              : classesInactive}"
+            aria-current="page">{tab.label}</a
+          >
+        {/each}
       </nav>
 
       <main class="mx-auto max-w-7xl">

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import humanizeDuration from 'humanize-duration';
-  import { invalidate } from '$app/navigation';
-  import { toast } from '$lib/notifications/notifications.ts';
-  import type { PageData } from './$types';
+  import humanizeDuration from 'humanize-duration'
+  import { invalidate } from '$app/navigation'
+  import { toast } from '$lib/notifications/notifications.ts'
+  import type { PageData } from './$types'
 
-  export let data: PageData;
+  export let data: PageData
 
   async function createProject() {
     await fetch('/api/projects', {
@@ -15,34 +15,34 @@
       body: JSON.stringify({
         name: 'New Project Title',
       }),
-    });
+    })
 
-    await invalidate('/api/projects');
-    toast('Project created');
+    await invalidate('/api/projects')
+    toast('Project created')
   }
 
   async function deleteProject(id: number) {
     await fetch(`/api/projects/${id}`, {
       method: 'DELETE',
-    });
+    })
 
-    await invalidate('/api/projects');
-    toast('Project deleted');
+    await invalidate('/api/projects')
+    toast('Project deleted')
   }
 
   /**
    * Database timestamp are UTC. Get current UTC time to calculate offset
    */
   function getCreatedOffset(project) {
-    const current = new Date();
+    const current = new Date()
     const now = new Date(
       current.getTime() + current.getTimezoneOffset() * 60000
-    );
+    )
 
     return humanizeDuration(now - new Date(project.created), {
       round: true,
       units: ['y', 'mo', 'd', 'h', 'm'],
-    });
+    })
   }
 </script>
 

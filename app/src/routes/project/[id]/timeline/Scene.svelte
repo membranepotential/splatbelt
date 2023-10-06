@@ -1,19 +1,19 @@
 <script lang="ts">
-  import { T } from '@threlte/core';
-  import { OrbitControls } from '@threlte/extras';
-  import { interactivity } from '@threlte/extras';
-  import { spring } from 'svelte/motion';
-  import { onMount } from 'svelte';
+  import { T } from '@threlte/core'
+  import { OrbitControls } from '@threlte/extras'
+  import { interactivity } from '@threlte/extras'
+  import { spring } from 'svelte/motion'
+  import { onMount } from 'svelte'
 
-  interactivity();
-  const scale = spring(0, { stiffness: 0.1 });
+  interactivity()
+  const scale = spring(0, { stiffness: 0.1 })
 
   onMount(() => {
-    scale.set(1);
-  });
+    scale.set(1)
+  })
 
-  let mousedown = false;
-  let rgb: number[] = [];
+  let mousedown = false
+  let rgb: number[] = []
 
   function updateSphereColor(e: MouseEvent) {
     if (mousedown) {
@@ -21,15 +21,15 @@
         Math.floor((e.pageX / window.innerWidth) * 255),
         Math.floor((e.pageY / window.innerHeight) * 255),
         150,
-      ];
-      console.log(rgb.join(','));
+      ]
+      console.log(rgb.join(','))
     }
   }
-  window.addEventListener('mousedown', () => (mousedown = true));
-  window.addEventListener('mouseup', () => (mousedown = false));
-  window.addEventListener('mousemove', updateSphereColor);
+  window.addEventListener('mousedown', () => (mousedown = true))
+  window.addEventListener('mouseup', () => (mousedown = false))
+  window.addEventListener('mousemove', updateSphereColor)
 
-  $: sphereColor = rgb.join(',');
+  $: sphereColor = rgb.join(',')
 </script>
 
 <T.PerspectiveCamera makeDefault position={[-10, 20, 10]} fov={15}>

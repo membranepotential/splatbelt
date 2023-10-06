@@ -1,27 +1,27 @@
 <script lang="ts">
-  import type { FrameSelection } from '$lib/models/model';
+  import type { FrameSelection } from '$lib/models/model'
 
   export let setting: {
-    key: string;
-    active: boolean;
-    selection: FrameSelection | null;
-  };
+    key: string
+    active: boolean
+    selection: FrameSelection | null
+  }
 
   function handleFrameSelectionToggle() {
     if (setting.active && setting.selection === null) {
-      setting.selection = { type: 'num', num: 10 };
+      setting.selection = { type: 'num', num: 10 }
     }
   }
 
   function handleFrameSelectionChange(event: Event) {
-    const type = (event.target as HTMLSelectElement).value;
+    const type = (event.target as HTMLSelectElement).value
     if (setting.active && setting.selection !== null) {
       if (type === 'list') {
-        setting.selection = { type: 'list', frames: [] };
+        setting.selection = { type: 'list', frames: [] }
       } else if (type === 'num') {
-        setting.selection = { type: 'num', num: 10 };
+        setting.selection = { type: 'num', num: 10 }
       } else if (type === 'image') {
-        setting.selection = { type: 'image' };
+        setting.selection = { type: 'image' }
       }
     }
   }

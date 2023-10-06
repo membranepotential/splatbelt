@@ -1,21 +1,21 @@
 <script lang="ts">
-  import type { LayoutData } from './$types';
-  import type { Project } from '$lib/models/project';
-  import { page } from '$app/stores';
-  import { derived } from 'svelte/store';
+  import type { LayoutData } from './$types'
+  import type { Project } from '$lib/models/project'
+  import { page } from '$app/stores'
+  import { derived } from 'svelte/store'
 
-  export let data: LayoutData;
-  const project: Project = data.project;
+  export let data: LayoutData
+  const project: Project = data.project
 
   const tabs = [
     { id: 'edit', label: 'Edit' },
     { id: 'timeline', label: 'Timeline' },
-  ];
+  ]
 
-  const activeTab = derived(page, (page) => page.route.id?.split('/').pop());
+  const activeTab = derived(page, (page) => page.route.id?.split('/').pop())
 
-  const classesActive = 'bg-indigo-100 text-indigo-700';
-  const classesInactive = 'text-gray-500 hover:text-gray-700';
+  const classesActive = 'bg-indigo-100 text-indigo-700'
+  const classesInactive = 'text-gray-500 hover:text-gray-700'
 </script>
 
 <div class="py-10">

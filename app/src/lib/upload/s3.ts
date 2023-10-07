@@ -122,7 +122,7 @@ async function upload(
 export function createUploadTask(
   file: File,
   prefix: string,
-  endpoint: string = '/api/upload'
+  endpoint = '/api/upload'
 ): UploadTask {
   const key = `${prefix}/${file.name}`
   const transferred = writable(0)

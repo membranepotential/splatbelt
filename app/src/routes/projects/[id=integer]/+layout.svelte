@@ -18,16 +18,20 @@
   const classesInactive = 'text-gray-500 hover:text-gray-700'
 </script>
 
+<svelte:head>
+  <title>Project | {project.name}</title>
+</svelte:head>
+
 <div class="py-10">
   <header class="mb-8">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="px-4 sm:px-6 lg:px-8">
       <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">
         {project.name}
       </h1>
     </div>
   </header>
   <main>
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="sm:px-6 lg:px-8">
       <nav class="flex space-x-4" aria-label="Tabs">
         {#each tabs as tab}
           <a
@@ -41,7 +45,7 @@
         {/each}
       </nav>
 
-      <main class="mx-auto max-w-7xl">
+      <main>
         <slot />
       </main>
     </div>

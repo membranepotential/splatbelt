@@ -1,9 +1,7 @@
 import type { LayoutServerLoad } from './$types'
-import { error } from '@sveltejs/kit';
-
+import { error } from '@sveltejs/kit'
 
 export const load: LayoutServerLoad = async ({ fetch, params }) => {
-
   const res = await fetch(`/api/projects/${params.id}`)
 
   if (res.status !== 200) {

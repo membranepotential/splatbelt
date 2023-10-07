@@ -2,9 +2,6 @@ name: Svelte Type Check
 
 on: [pull_request]
 
-env:
-  AWS_REGION: us-east-1 # required so @aws/sdk/client-s3 builds
-
 jobs:
   test:
     runs-on: ubuntu-latest

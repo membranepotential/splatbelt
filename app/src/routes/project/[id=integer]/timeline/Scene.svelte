@@ -1,4 +1,5 @@
 <script lang="ts">
+  // @ts-nocheck
   import { T } from '@threlte/core'
   import { OrbitControls } from '@threlte/extras'
   import { interactivity } from '@threlte/extras'

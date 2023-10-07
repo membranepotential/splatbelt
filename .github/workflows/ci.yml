@@ -1,4 +1,4 @@
-name: Svelte Unit Tests
+name: CI
 
 on: [push]
 
@@ -6,7 +6,7 @@ env:
   AWS_REGION: us-east-1 # required so @aws/sdk/client-s3 builds
 
 jobs:
-  test:
+  verify:
     runs-on: ubuntu-latest
 
     defaults:
@@ -38,8 +38,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build
-        run: npm run build
+      - name: Typecheck
+        run: npm run check
+      
+      - name: Lint
+        run: npm run lint
 
       - name: Test
         run: npm run test
+
+      - name: Build
+        run: npm run build

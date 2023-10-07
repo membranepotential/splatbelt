@@ -5,8 +5,6 @@
   import { updated } from '$lib/models/project'
   import { createModel } from '$lib/models/model'
   import { createUpload } from '$lib/models/upload'
-  import type { Upload } from '$lib/models/upload'
-  import type { Model } from '$lib/models/model'
   import type { Project } from '$lib/models/project'
 
   import NameEdit from './NameEdit.svelte'

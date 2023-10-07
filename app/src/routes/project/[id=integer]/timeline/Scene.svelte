@@ -1,4 +1,5 @@
 <script lang="ts">
+  // Block checking for this file due to color type issues in the 3rd party libs
   // @ts-nocheck
   import { T } from '@threlte/core'
   import { OrbitControls } from '@threlte/extras'

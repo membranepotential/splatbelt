@@ -17,7 +17,7 @@ export async function get(
 
 export async function create(
   collection: string,
-  data: any,
+  data: { [key: string]: string },
   { fetch }: RequestEvent
 ) {
   const url = new URL(`/${collection}`, API_URL)

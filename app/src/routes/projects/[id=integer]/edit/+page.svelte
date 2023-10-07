@@ -107,7 +107,7 @@
 
   <section class="mb-6 mt-6 w-full border-b-2 border-t-2 pb-2 pt-2">
     <h2>Models</h2>
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="sm:px-6 lg:px-8">
       <ul>
         {#each models as model}
           <ModelCard {uploads} {model} on:change={updateProject} />

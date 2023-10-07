@@ -6,8 +6,10 @@
 
 <div class="p-4">
   <div class="min-h-full">
-    <Navigation />
-    <slot />
+    <div class="mx-auto max-w-7xl">
+      <Navigation />
+      <slot />
+    </div>
   </div>
 </div>
 <Toast />

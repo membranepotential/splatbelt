@@ -73,14 +73,14 @@
 
 <div class="py-10">
   <header>
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="px-4 sm:px-6 lg:px-8">
       <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">
         {project.name}
       </h1>
     </div>
   </header>
   <main>
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="sm:px-6 lg:px-8">
       <NameEdit
         bind:value={project.name}
         class="mb-6"
@@ -124,7 +124,7 @@
         </div>
         <section class="mb-6 mt-6 w-full border-b-2 border-t-2 pb-2 pt-2">
           <h2>Models</h2>
-          <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div class="sm:px-6 lg:px-8">
             <ul>
               {#each models as model}
                 <ModelCard {uploads} {model} on:change={updateProject} />

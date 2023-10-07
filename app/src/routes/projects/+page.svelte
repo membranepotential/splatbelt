@@ -50,16 +50,20 @@
   }
 </script>
 
+<svelte:head>
+  <title>Projects</title>
+</svelte:head>
+
 <div class="py-10">
   <header>
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="px-4 sm:px-6 lg:px-8">
       <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">
         Projects
       </h1>
     </div>
   </header>
   <main>
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="sm:px-6 lg:px-8">
       <ul role="list" class="divide-y divide-gray-100">
         {#each data.projects as project}
           <li class="flex items-center justify-between gap-x-6 py-5">

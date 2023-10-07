@@ -1,8 +1,9 @@
 <script lang="ts">
   import humanizeDuration from 'humanize-duration'
   import { invalidate } from '$app/navigation'
-  import { toast } from '$lib/notifications/notifications.ts'
+  import { toast } from '$lib/notifications/notifications'
   import type { PageData } from './$types'
+  import type { Project } from '$lib/models/project'
 
   export let data: PageData
 
@@ -33,16 +34,19 @@
   /**
    * Database timestamp are UTC. Get current UTC time to calculate offset
    */
-  function getCreatedOffset(project) {
+  function getCreatedOffset(project: Project) {
     const current = new Date()
     const now = new Date(
       current.getTime() + current.getTimezoneOffset() * 60000
     )
 
-    return humanizeDuration(now - new Date(project.created), {
-      round: true,
-      units: ['y', 'mo', 'd', 'h', 'm'],
-    })
+    return humanizeDuration(
+      now.valueOf() - new Date(project.created).valueOf(),
+      {
+        round: true,
+        units: ['y', 'mo', 'd', 'h', 'm'],
+      }
+    )
   }
 </script>
 

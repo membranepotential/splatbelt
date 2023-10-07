@@ -10,6 +10,9 @@ psql "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres" -f /workspace/.
 cd /workspace/app
 npm install
 
+# for running e2e tests
+npx playwright install --with-deps chromium
+
 # install nerf-worker
 echo "Install nerf-worker..."
 cd /workspace/worker

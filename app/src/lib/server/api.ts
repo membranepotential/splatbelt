@@ -1,9 +1,10 @@
 import { API_URL } from '$env/static/private'
 import type { RequestEvent } from '@sveltejs/kit'
 
+const withBaseURL = (url: string) => new URL(url, API_URL)
+
 export async function list(collection: string, { fetch }: RequestEvent) {
-  const url = new URL(`/${collection}`, API_URL)
-  return fetch(url)
+  return fetch(withBaseURL(`/${collection}`))
 }
 
 export async function get(
@@ -11,17 +12,15 @@ export async function get(
   id: string,
   { fetch }: RequestEvent
 ) {
-  const url = new URL(`/${collection}?id=eq.${id}`, API_URL)
-  return fetch(url)
+  return fetch(withBaseURL(`/${collection}?id=eq.${id}`))
 }
 
 export async function create(
   collection: string,
-  data: { [key: string]: string },
+  data: { [key: string]: any }, // eslint-disable-line @typescript-eslint/no-explicit-any
   { fetch }: RequestEvent
 ) {
-  const url = new URL(`/${collection}`, API_URL)
-  return fetch(url, {
+  return fetch(withBaseURL(`/${collection}`), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -35,8 +34,7 @@ export async function delete_(
   id: string,
   { fetch }: RequestEvent
 ) {
-  const url = new URL(`/${collection}?id=eq.${id}`, API_URL)
-  return fetch(url, {
+  return fetch(withBaseURL(`/${collection}?id=eq.${id}`), {
     method: 'DELETE',
   })
 }
@@ -47,8 +45,7 @@ export async function update(
   data: unknown,
   { fetch }: RequestEvent
 ) {
-  const url = new URL(`/${collection}?id=eq.${id}`, API_URL)
-  return fetch(url, {
+  return fetch(withBaseURL(`/${collection}?id=eq.${id}`), {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

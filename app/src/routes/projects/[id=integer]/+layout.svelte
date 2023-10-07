@@ -31,7 +31,7 @@
       <nav class="flex space-x-4" aria-label="Tabs">
         {#each tabs as tab}
           <a
-            href="/project/{project.id}/{tab.id}"
+            href="/projects/{project.id}/{tab.id}"
             class="rounded-md px-3 py-2 text-sm font-medium {$activeTab ===
             tab.id
               ? classesActive

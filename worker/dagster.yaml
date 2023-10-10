@@ -32,7 +32,7 @@ run_launcher:
     network: nerf_devcontainer
     container_kwargs:
       volumes:
-        - /home/felix/Documents/ai-creativity/nerfbelt/scratch:/workspace
+        - ./scratch:/workspace
       shm_size: 16gb
       device_requests:
         - count: 1

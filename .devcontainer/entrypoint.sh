@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Sync docker group GID with host
+# Dangerous: privileged access to the docker socket
 DOCKER_HOST_GID=$(stat -c '%g' /var/run/docker.sock)
 sudo groupmod --gid $DOCKER_HOST_GID docker
 

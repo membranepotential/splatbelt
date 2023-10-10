@@ -22,19 +22,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN git clone --branch master --recursive https://github.com/cvg/Hierarchical-Localization.git
 RUN pip install --no-cache -e Hierarchical-Localization
 
-RUN git clone --recursive https://github.com/MrNeRF/gaussian-splatting-cuda.git
-ARG CUDA_ARCHITECTURES="89;86;80;75;70;61"
-ARG TORCH_CUDA_ARCH_LIST="8.9;8.6;8.0;7.5;7.0;6.1"
-RUN cd gaussian-splatting-cuda && \
-    sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" CMakeLists.txt && \
-    sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" external/CMakeLists.txt && \
-    cmake -B build \
-    -DTorch_DIR=/usr/local/lib/python3.10/dist-packages/torch/share/cmake/Torch \
-    -DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST} \
-    -DCMAKE_BUILD_TYPE=Release -G Ninja && \
-    cmake --build build && \
-    cp build/gaussian_splatting_cuda /usr/bin/ && \
-    cp -r parameter /usr/
+# This should ideally be a separata repo
+# RUN git clone --recursive https://github.com/MrNeRF/gaussian-splatting-cuda.git
+# ARG CUDA_ARCHITECTURES="89;86;80;75;70;61"
+# ARG TORCH_CUDA_ARCH_LIST="8.9;8.6;8.0;7.5;7.0;6.1"
+# RUN cd gaussian-splatting-cuda && \
+#     sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" CMakeLists.txt && \
+#     sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" external/CMakeLists.txt && \
+#     cmake -B build \
+#     -DTorch_DIR=/usr/local/lib/python3.10/dist-packages/torch/share/cmake/Torch \
+#     -DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST} \
+#     -DCMAKE_BUILD_TYPE=Release -G Ninja && \
+#     cmake --build build && \
+#     cp build/gaussian_splatting_cuda /usr/bin/ && \
+#     cp -r parameter /usr/
 
 RUN mkdir -p /workspace
 WORKDIR /workspace

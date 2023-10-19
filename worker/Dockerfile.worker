@@ -24,8 +24,8 @@ RUN pip install --no-cache -e Hierarchical-Localization
 
 # This should ideally be a separata repo
 # RUN git clone --recursive https://github.com/MrNeRF/gaussian-splatting-cuda.git
-# ARG CUDA_ARCHITECTURES="89;86;80;75;70;61"
-# ARG TORCH_CUDA_ARCH_LIST="8.9;8.6;8.0;7.5;7.0;6.1"
+# ARG CUDA_ARCHITECTURES="86"
+# ARG TORCH_CUDA_ARCH_LIST="8.6+PTX"
 # RUN cd gaussian-splatting-cuda && \
 #     sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" CMakeLists.txt && \
 #     sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" external/CMakeLists.txt && \

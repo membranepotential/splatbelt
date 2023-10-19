@@ -32,7 +32,7 @@ run_launcher:
     network: nerf_devcontainer
     container_kwargs:
       volumes:
-        - ./scratch:/workspace
+        - /home/ubuntu/splatbelt/worker/scratch:/workspace
       shm_size: 16gb
       device_requests:
         - count: 1

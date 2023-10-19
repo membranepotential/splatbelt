@@ -45,13 +45,14 @@ ARG TORCH_CUDA_ARCH_LIST="8.6+PTX"
 RUN micromamba install -y -n base -f gaussian-splatting/environment.yml && \
     micromamba clean --all --yes
 
-# RUN mkdir -p /workspace
-# WORKDIR /workspace
+RUN mkdir -p /home/$MAMBA_USER/workspace
+WORKDIR /home/$MAMBA_USER/workspace
 
-# ENV DAGSTER_HOME=/app
-# RUN mkdir -p ${DAGSTER_HOME}/worker
+ENV DAGSTER_HOME=/home/$MAMBA_USER/app
+RUN mkdir -p ${DAGSTER_HOME}/worker && chown $MAMBA_USER ${DAGSTER_HOME}/worker
+
 # COPY pyproject.toml /${DAGSTER_HOME}/
-# RUN pip install --no-cache -e ${DAGSTER_HOME}
+# RUN micromamba run -n base pip install --no-cache -e ${DAGSTER_HOME}
 
 # ADD . ${DAGSTER_HOME}
-# RUN pip install -U --no-cache --no-deps -e ${DAGSTER_HOME}
+# RUN micromamba run -n base pip install -U --no-cache --no-deps -e ${DAGSTER_HOME}

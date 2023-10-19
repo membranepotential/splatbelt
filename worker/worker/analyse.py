@@ -119,7 +119,7 @@ def feature_matching(
     execute_script(command, context)
 
     command = (
-        f"match_features.py -p {pairing.path} "
+        f"match_features.py -p {pairing.path}/pairs.txt "
         f"-f {out.path}/features.h5 -m {out.path}/matches.h5 "
         f"-c {config.matcher} "
     )
@@ -139,7 +139,7 @@ def colmap(
 
     command = (
         f"prepare_db.py -i {frames.path} -o {out.path} "
-        f"-p {pairing.path} -f {feature_matching.path}/features.h5 "
+        f"-p {pairing.path}/pairs.txt -f {feature_matching.path}/features.h5 "
         f"-m {feature_matching.path}/matches.h5 "
     )
     execute_script(command, context)
@@ -149,21 +149,21 @@ def colmap(
     return out
 
 
-@asset(partitions_def=project_partition)
-def splat(
-    context: OpExecutionContext,
-    config: GaussianSplattingConfig,
-    colmap: S3Asset,
-) -> S3Asset:
-    out = S3Asset.from_context(context)
+# @asset(partitions_def=project_partition)
+# def splat(
+#     context: OpExecutionContext,
+#     config: GaussianSplattingConfig,
+#     colmap: S3Asset,
+# ) -> S3Asset:
+#     out = S3Asset.from_context(context)
 
-    command = (
-        f"gaussian_splatting_cuda -d {colmap.path}/colmap-pinhole "
-        f"-o {out.path} -i {config.max_iter}"
-    )
-    execute_command_in_context(command, context)
+#     command = (
+#         f"gaussian_splatting_cuda -d {colmap.path}/colmap-pinhole "
+#         f"-o {out.path} -i {config.max_iter}"
+#     )
+#     execute_command_in_context(command, context)
 
-    return out
+#     return out
 
 
 assets = load_assets_from_current_module()

@@ -12,6 +12,6 @@ ops:
     config:
       feature_type: superpoint_max
       matcher: superpoint+lightglue
-  splat:
-    config:
-      max_iter: 4000
+  # splat:
+  #   config:
+  #     max_iter: 4000

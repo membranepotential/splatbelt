@@ -8,7 +8,7 @@ MODELS=$(tr -d '\n' < models.json)
 psql postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST <<EOF
 DELETE FROM api.projects WHERE id = 1;
 COPY api.projects (id, created, updated, name, uploads, models) FROM stdin;
-1	$DATE	$DATE	'Dev Project'	$UPLOADS	$MODELS
+1	$DATE	$DATE	Dev Project $UPLOADS	$MODELS
 \.
 EOF
 

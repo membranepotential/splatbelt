@@ -23,7 +23,6 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_HOST
-      - DAGSTER_DB
 
   minio:
     image: minio/minio:latest
@@ -57,27 +56,6 @@ services:
       - postgres
     environment:
       PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}
-
-  dagster:
-    build:
-      context: ../worker
-      dockerfile: ../worker/Dockerfile.dagster
-    volumes:
-      - ../worker:/app:cached
-    networks:
-      - devcontainer
-    depends_on:
-      - postgres
-    environment:
-      - S3_ENDPOINT=http://minio:9000
-      - S3_BUCKET
-      - AWS_REGION
-      - AWS_ACCESS_KEY_ID=${MINIO_USER}
-      - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET}
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_HOST
-      - DAGSTER_DB
 
 volumes:
   postgres-data:

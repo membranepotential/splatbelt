@@ -11,17 +11,10 @@
     "minio:9000",
     "minio:9001",
     "postgres:5432",
-    "postgrest:3000",
-    "dagster:4000"
+    "postgrest:3000"
   ],
   "customizations": {
     "vscode": {
-      "settings": {
-        "[python]": {
-          "editor.defaultFormatter": "ms-python.black-formatter"
-        },
-        "black-formatter.importStrategy": "useBundled"
-      },
       "extensions": [
         "ardenivanov.svelte-intellisense",
         "be5invis.toml",

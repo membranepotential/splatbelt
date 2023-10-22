@@ -1,10 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import * as GaussianSplat3D from '$lib/splats/gaussian-splat-3d.module'
+  import * as GaussianSplat3D from '$lib/splats'
 
   onMount(() => {
+    const canvas = document.getElementById('page-canvas')
+    if (canvas === null) throw new Error('Canvas not found')
+
     const viewer = new GaussianSplat3D.Viewer(
-      document.getElementById('page-canvas')!,
+      canvas,
       [0, -1, -0.6],
       [-1, -4, 6],
       [0, 4, -0],

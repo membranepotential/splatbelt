@@ -54,7 +54,7 @@
   }
 </script>
 
-<div class="container p-4">
+<div class="container w-1/2 overflow-hidden rounded-lg p-6">
   <div class="mb-4">
     <h2 class="mb-2 font-bold">Frame Selection</h2>
     {#each frameSelections as setting}
@@ -105,6 +105,9 @@
     <p>State: {model.state.state} {model.state.progress}%</p>
   </div>
   <div>
-    <button on:click={launchWorker}>Analyse</button>
+    <button
+      class="z-10 mt-4 w-full rounded-md bg-indigo-100 px-3 py-2 text-sm font-medium text-indigo-700"
+      on:click={launchWorker}>Analyse</button
+    >
   </div>
 </div>

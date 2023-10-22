@@ -113,7 +113,7 @@
           <ModelCard {uploads} {model} on:change={updateProject} />
         {/each}
         <div class="mt-6">
-          <button class="border p-2" on:click={addModel}>Add Model</button>
+          <!-- <button class="border p-2" on:click={addModel}>Add Model</button> -->
         </div>
       </ul>
     </div>

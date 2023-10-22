@@ -9,7 +9,7 @@
 
   function handleFrameSelectionToggle() {
     if (setting.active && setting.selection === null) {
-      setting.selection = { type: 'num', num: 10 }
+      setting.selection = { type: 'num', num: 50 }
     }
   }
 
@@ -19,7 +19,7 @@
       if (type === 'list') {
         setting.selection = { type: 'list', frames: [] }
       } else if (type === 'num') {
-        setting.selection = { type: 'num', num: 10 }
+        setting.selection = { type: 'num', num: 50 }
       } else if (type === 'image') {
         setting.selection = { type: 'image' }
       }

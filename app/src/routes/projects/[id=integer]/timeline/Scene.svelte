@@ -24,7 +24,7 @@
         Math.floor((e.pageY / window.innerHeight) * 255),
         150,
       ]
-      console.log(rgb.join(','))
+      // console.log(rgb.join(','))
     }
   }
   window.addEventListener('mousedown', () => (mousedown = true))

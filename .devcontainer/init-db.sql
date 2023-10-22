@@ -7,5 +7,3 @@ create table if not exists api.projects (
   uploads json not null default '[]'::json,
   models json not null default '[]'::json
 );
-
-create database dagster;

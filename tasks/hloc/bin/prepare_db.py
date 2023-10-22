@@ -2,7 +2,6 @@
 
 import click
 from pathlib import Path
-from typing import Any
 
 from pycolmap import CameraMode, Reconstruction
 from hloc.reconstruction import (
@@ -17,26 +16,25 @@ from hloc.reconstruction import (
 
 @click.command()
 @click.option("-i", "--images", type=click.Path(exists=True), required=True)
-@click.option("-o", "--output", type=click.Path(exists=True), required=True)
 @click.option("-p", "--pairs", type=click.Path(exists=True), required=True)
 @click.option("-f", "--features", type=click.Path(exists=True), required=True)
 @click.option("-m", "--matches", type=click.Path(exists=True), required=True)
+@click.option("-o", "--outdir", type=click.Path(), default="colmap")
 @click.option("-nogv", "--skip-geometric-verification", is_flag=True, default=False)
 @click.option("-ms", "--min-match-score", type=float, default=None)
 def prepare_database(
     images: Path,
-    output: Path,
     pairs: Path,
     features: Path,
     matches: Path,
+    outdir: Path,
     skip_geometric_verification: bool,
     min_match_score: None | float,
 ) -> Reconstruction:
-    output = Path(output)
-    sfm_dir = output / "colmap"
-    sfm_dir.mkdir(parents=True, exist_ok=True)
+    outdir = Path(outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
 
-    database = sfm_dir / "database.db"
+    database = outdir / "database.db"
     create_empty_db(database)
 
     import_images(Path(images), database, CameraMode.SINGLE)

@@ -4,12 +4,9 @@ import os
 from pathlib import Path
 from mimetypes import guess_type
 from typing import Any
-import boto3
 import click
 import numpy as np
 import cv2
-
-BUCKET = os.environ["S3_BUCKET"]
 
 
 class Video:
@@ -64,40 +61,24 @@ class Video:
         self.cap.release()
 
 
-def get_s3_client():
-    endpoint = os.environ.get("S3_ENDPOINT", "")
-    if endpoint:
-        return boto3.client("s3", endpoint_url=endpoint)
-    else:
-        region = os.environ["AWS_REGION"]
-        return boto3.client("s3", region_name=region)
-
-
-def handle_source(source: str, project_id: str, outdir: Path, client):
+def handle_source(source: str, outdir: Path):
     name, *conf = source.split(",")
     name = name.strip()
 
     filetype = guess_type(name)[0].split("/")[0]
     if filetype == "image":
-        handle_image(name, project_id, outdir, client)
+        handle_image(name, outdir)
     elif filetype == "video":
-        handle_video(name, conf, project_id, outdir, client)
+        handle_video(name, conf, outdir)
     else:
         print(f"Skip source {name} - unsupported filetype {filetype}")
 
 
-def handle_image(name: str, project_id: str, outdir: Path, client):
-    key = project_id + "/" + name
-    dst = str(outdir / name)
-    client.download_file(BUCKET, key, dst)
-    print("Downloaded image", name)
+def handle_image(name: str, outdir: Path):
+    Path(name).rename(outdir / name)
 
 
-def handle_video(name: str, conf: list[str], project_id: str, outdir: Path, client):
-    key = project_id + "/" + name
-    client.download_file(BUCKET, key, name)
-    print(f"Downloaded video {name}")
-
+def handle_video(name: str, conf: list[str], outdir: Path):
     video = Video(name)
 
     ex_type = conf[0]
@@ -117,17 +98,14 @@ def handle_video(name: str, conf: list[str], project_id: str, outdir: Path, clie
 
 
 @click.command()
-@click.option("--project-id", "-p", required=True)
 @click.option("--sources", "-s", required=True)
 @click.option("--outdir", "-o", required=True)
-def main(project_id, sources, outdir):
+def main(sources, outdir):
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
 
-    client = get_s3_client()
-
     for source in sources.split(";"):
-        handle_source(source, project_id, outdir, client)
+        handle_source(source, outdir)
 
 
 if __name__ == "__main__":

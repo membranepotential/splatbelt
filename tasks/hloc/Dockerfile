@@ -1,8 +1,5 @@
 FROM colmap/colmap:latest
 
-ENV DEBIAN_FRONTEND=noninteractive
-SHELL ["/bin/bash", "-c"]
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     zip \
@@ -30,14 +27,6 @@ ADD bin /bin
 
 RUN mkdir -p /workspace
 WORKDIR /workspace
-
-ENV S3_ENDPOINT ""
-ENV S3_BUCKET ""
-ENV AWS_REGION ""
-ENV AWS_ACCESS_KEY_ID ""
-ENV AWS_SECRET_ACCESS_KEY ""
-
-ENV PROJECT_ID ""
 
 # Sources follow the format
 # image_name;video_1_name,num,50;video_2_name,list,1,5,7,20

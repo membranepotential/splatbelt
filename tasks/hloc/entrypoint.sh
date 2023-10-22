@@ -5,7 +5,7 @@ set -e
 FRAME_DIR=/workspace/images
 
 # Process images and videos
-process_sources.py -p $PROJECT_ID -s $SOURCES -o $FRAME_DIR
+process_sources.py -s $SOURCES -o $FRAME_DIR
 
 # Create pairing
 pairing.py \

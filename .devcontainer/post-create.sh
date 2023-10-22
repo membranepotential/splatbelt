@@ -18,8 +18,3 @@ npm install
 
 # for running e2e tests
 npx playwright install --with-deps chromium
-
-# install nerf-worker
-echo "Install nerf-worker..."
-cd /workspace/worker
-pip install -e .

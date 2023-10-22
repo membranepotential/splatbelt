@@ -3,8 +3,6 @@
 import sys
 from tqdm.auto import tqdm
 
-print("logger started")
-
 load_msg = "Loading images... "
 register_msg = "Registering image "
 

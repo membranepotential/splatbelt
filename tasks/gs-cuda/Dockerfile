@@ -1,8 +1,7 @@
 FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV CUDA_HOME="/usr/local/cuda"
-SHELL ["/bin/bash", "-c"]
+ARG CUDA_ARCHITECTURES="61;70;86"
+ARG TORCH_CUDA_ARCH_LIST="6.1;7.0;8.6+PTX"
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -18,16 +17,19 @@ RUN apt-get update && \
     python-is-python3 \
     libtbb-dev \
     && \
+    rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache -U pip setuptools cmake
 
 RUN git clone --recursive https://github.com/MrNeRF/gaussian-splatting-cuda.git
 
-RUN curl https://download.pytorch.org/libtorch/cu118/libtorch-cxx11-abi-shared-with-deps-2.0.1%2Bcu118.zip -o libtorch.zip && \
-    unzip  libtorch.zip -d gaussian-splatting-cuda/external/ && \
+# RUN curl https://download.pytorch.org/libtorch/cu118/libtorch-cxx11-abi-shared-with-deps-2.0.1%2Bcu118.zip -o libtorch.zip && \
+#     unzip  libtorch.zip -d gaussian-splatting-cuda/external/ && \
+#     rm libtorch.zip
+
+ADD libtorch.zip .
+RUN unzip libtorch.zip -d gaussian-splatting-cuda/external/ && \
     rm libtorch.zip
 
-ARG CUDA_ARCHITECTURES="86"
-ARG TORCH_CUDA_ARCH_LIST="8.6+PTX"
 RUN cd gaussian-splatting-cuda && \
     sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" CMakeLists.txt && \
     sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" external/CMakeLists.txt && \
@@ -41,10 +43,7 @@ RUN cd gaussian-splatting-cuda && \
 RUN mkdir -p /workspace
 WORKDIR /workspace
 
-ENV DAGSTER_HOME=/app
-RUN mkdir -p ${DAGSTER_HOME}/worker
-COPY pyproject.toml /${DAGSTER_HOME}/
-RUN pip install --no-cache -e ${DAGSTER_HOME}
+ENV MAX_ITER 7000
 
-ADD . ${DAGSTER_HOME}
-RUN pip install -U --no-cache --no-deps -e ${DAGSTER_HOME}
+ADD entrypoint.sh /bin
+CMD entrypoint.sh

@@ -8,7 +8,9 @@ RUN /bin/bash /install-docker.sh
 RUN /bin/bash /install-diff-so-fancy.sh
 RUN apt -y install \
     awscli \
-    postgresql-client \
+    postgresql-client
+
+RUN apt -y install \
     python3-full \
     python3-pip \
     python3-setuptools \

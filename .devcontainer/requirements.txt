@@ -1,5 +1,3 @@
 postgres~=4.0
 numpy~=1.26.0
 opencv-python~=4.8.0
-black
-aeolos @ git+https://github.com/membranepotential/aeolos.git#main

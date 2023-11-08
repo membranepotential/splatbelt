@@ -1,0 +1,14 @@
+{
+  "frames": {
+    "sun-tube.scaled.mp4": {
+      "type": "num",
+      "num": 50
+    }
+  },
+  "pairing": {
+    "type": "exhaustive"
+  },
+  "features": "sift",
+  "matcher": "superglue",
+  "numIter": 7000
+}

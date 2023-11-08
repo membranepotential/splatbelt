@@ -1,4 +1,4 @@
-import { SplatBuffer } from './buffer.js'
+import { SplatBuffer } from './buffer'
 
 export class SplatLoader {
   constructor(splatBuffer = null) {

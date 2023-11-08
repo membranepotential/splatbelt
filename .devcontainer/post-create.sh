@@ -10,7 +10,13 @@
 aws s3 --endpoint-url http://minio:9000 mb s3://$S3_BUCKET
 
 # init database
-psql "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres" -f /workspace/.devcontainer/init-db.sql
+psql "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}" -f ./db/schema.sql
+
+# Reload PostgREST schema cache
+./db/reload-postgrest-schema-cache.sh
+
+# Replace dev data
+./data/hydrate.sh
 
 # install node modules
 cd /workspace/app

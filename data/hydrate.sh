@@ -2,15 +2,17 @@
 cd $(dirname $(realpath -s $0))
 
 DATE=$(date -Is)
-UPLOADS=$(tr -d '\n' < uploads.json)
-MODELS=$(tr -d '\n' < models.json)
+MODEL_CONF=$(tr -d '\n' <model_conf.json)
 
+# Replace test data
+# Columns must be tab (\t) separated
 psql postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST <<EOF
 DELETE FROM api.projects WHERE id = 1;
-COPY api.projects (id, created, updated, name, uploads, models) FROM stdin;
-1	$DATE	$DATE	Dev Project	$UPLOADS	$MODELS
+COPY api.projects (id, name, config) FROM stdin;
+1	Dev Project	$MODEL_CONF
 \.
 EOF
 
 aws s3 --endpoint $S3_ENDPOINT rm --recursive s3://$S3_BUCKET/1/
-aws s3 --endpoint $S3_ENDPOINT cp sun-tube.scaled.mp4 s3://$S3_BUCKET/1/sun-tube.scaled.mp4
+aws s3 --endpoint $S3_ENDPOINT cp sun-tube.scaled.mp4 s3://$S3_BUCKET/1/uploads/sun-tube.scaled.mp4
+aws s3 --endpoint $S3_ENDPOINT cp point_cloud.ply s3://$S3_BUCKET/1/point_cloud.ply

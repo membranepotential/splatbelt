@@ -22,12 +22,8 @@ RUN apt-get update && \
 
 RUN git clone --recursive https://github.com/MrNeRF/gaussian-splatting-cuda.git
 
-# RUN curl https://download.pytorch.org/libtorch/cu118/libtorch-cxx11-abi-shared-with-deps-2.0.1%2Bcu118.zip -o libtorch.zip && \
-#     unzip  libtorch.zip -d gaussian-splatting-cuda/external/ && \
-#     rm libtorch.zip
-
-ADD libtorch.zip .
-RUN unzip libtorch.zip -d gaussian-splatting-cuda/external/ && \
+RUN curl https://download.pytorch.org/libtorch/cu118/libtorch-cxx11-abi-shared-with-deps-2.0.1%2Bcu118.zip -o libtorch.zip && \
+    unzip  libtorch.zip -d gaussian-splatting-cuda/external/ && \
     rm libtorch.zip
 
 RUN cd gaussian-splatting-cuda && \
@@ -46,4 +42,4 @@ WORKDIR /workspace
 ENV MAX_ITER 7000
 
 ADD entrypoint.sh /bin
-CMD entrypoint.sh
+CMD ["bash", "-c", "entrypoint.sh"]

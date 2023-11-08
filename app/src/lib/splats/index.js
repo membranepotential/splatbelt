@@ -1,3 +1,3 @@
-export { Viewer } from './viewer.js'
-export { PlyLoader } from './plyLoader.js'
-export { SplatLoader } from './splatLoader.js'
+export { Viewer } from './viewer'
+export { PlyLoader } from './plyLoader'
+// export { SplatLoader } from './splatLoader'

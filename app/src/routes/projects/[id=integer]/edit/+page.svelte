@@ -1,121 +1,138 @@
 <script lang="ts">
-  import { debounce } from 'lodash-es'
-  import { invalidate } from '$app/navigation'
-  import { createUploadTask } from '$lib/upload/s3'
-  import { updated } from '$lib/models/project'
-  import { createModel } from '$lib/models/model'
-  import { createUpload } from '$lib/models/upload'
-  import type { Project } from '$lib/models/project'
-
-  import NameEdit from './NameEdit.svelte'
-  import ModelCard from './ModelCard.svelte'
+  import { AnalysisState } from '$lib/enums'
   import type { PageData } from './$types'
 
   export let data: PageData
-  const project: Project = data.project
-
-  $: idString = project.id.toString()
-  $: uploads = project.uploads
-  $: models = project.models
-
-  let selectedFiles: FileList
-
-  async function updateProjectNow() {
-    const updatedProject = updated(project)
-    console.log('Updating project', updatedProject)
-
-    const url = `/api/projects/${project.id}`
-    await fetch(url, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedProject),
-    })
-    await invalidate(url)
-  }
-  const updateProject = debounce(updateProjectNow, 200)
-
-  async function handleFilesDrop() {
-    const files = Array.from(selectedFiles)
-    console.log('Uploading files', files)
-
-    const tasks = files.map(async (file) => {
-      const task = createUploadTask(file, idString)
-
-      const upload = createUpload(file, task.key)
-      project.uploads = [...uploads, upload]
-      console.debug('Created new file', upload)
-
-      task.transferred.subscribe((transferred) => {
-        upload.transferred = transferred
-        uploads = uploads // trigger reactivity
-      })
-
-      try {
-        await task.task
-        await updateProject()
-        console.log('Upload finished', upload)
-      } catch (error) {
-        uploads = uploads.filter((u) => u.name !== upload.name)
-        console.error(`Error while uploading ${upload.key}`, error)
-      }
-    })
-
-    await Promise.all(tasks)
-  }
-
-  async function addModel() {
-    const model = createModel(project.id, uploads)
-    project.models = [...models, model]
-    await updateProject()
+  $: project = data.project
+  $: disabled = project.state >= AnalysisState.pending
+  $: config = project.config
+  $: if (config.pairing.type === 'complex') {
+    config.pairing.sequential = config.pairing.sequential || 10
+    config.pairing.retrieval = config.pairing.retrieval || 10
   }
 </script>
 
-<div class="py-10">
-  <NameEdit bind:value={project.name} class="mb-6" on:change={updateProject} />
+<div class="block rounded-lg bg-gray-100 px-6 py-4">
+  <section>
+    <div class="w-1/3">
+      <label for="select-pairing"> Pairing </label>
+    </div>
+    <div class="w-2/3">
+      <select
+        id="select-pairing"
+        name="pairingType"
+        bind:value={config.pairing.type}
+        class="w-full"
+        {disabled}
+      >
+        <option value="exhaustive">Exhaustive</option>
+        <option value="complex">Complex</option>
+      </select>
+    </div>
+  </section>
 
-  <section class="mb-6 mt-6">
-    <h2 class="mb-2">Uploads</h2>
-    <ul>
-      {#each uploads as upload}
-        <li class="pb-1 pt-1">
-          <!-- <a href={upload.url} target="_blank">{upload.name}</a> -->
-          <span>{upload.name}</span>
-          {#if upload.transferred < upload.size}
-            <span class="ml-2"
-              >Upload progress: {Math.round(
-                100 * (upload.transferred / upload.size)
-              )}%</span
-            >
-          {/if}
-        </li>
-      {/each}
-    </ul>
-    <div class="mt-6">
+  {#if config.pairing.type === 'complex'}
+    <section>
+      <div class="w-1/3">
+        <label for="input-pairing-seq"> Sequential Pairs </label>
+      </div>
+      <div class="w-2/3">
+        <input
+          id="input-pairing-seq"
+          name="pairingSeq"
+          type="text"
+          class="input-bg-white w-full"
+          bind:value={config.pairing.sequential}
+          {disabled}
+        />
+      </div>
+    </section>
+
+    <section>
+      <div class="w-1/3">
+        <label for="input-pairing-seq"> Retrieval Pairs </label>
+      </div>
+      <div class="w-2/3">
+        <input
+          id="input-pairing-seq"
+          name="pairingSeq"
+          type="text"
+          class="input-bg-white w-full"
+          bind:value={config.pairing.retrieval}
+          {disabled}
+        />
+      </div>
+    </section>
+  {/if}
+
+  <section>
+    <div class="w-1/3">
+      <label for="input-features"> Features </label>
+    </div>
+    <div class="w-2/3">
       <input
-        id="file"
-        type="file"
-        class="text-transparent"
-        multiple
-        formenctype="multipart/form-data"
-        accept="image/*,video/*"
-        title="File"
-        bind:files={selectedFiles}
-        on:change={handleFilesDrop}
+        type="text"
+        id="input-features"
+        name="features"
+        class="input-bg-white"
+        bind:value={config.features}
+        {disabled}
       />
     </div>
   </section>
 
-  <section class="mb-6 mt-6 w-full border-b-2 border-t-2 pb-2 pt-2">
-    <h2>Models</h2>
-    <div class="sm:px-6 lg:px-8">
-      <ul>
-        {#each models as model}
-          <ModelCard {uploads} {model} on:change={updateProject} />
-        {/each}
-        <div class="mt-6">
-          <!-- <button class="border p-2" on:click={addModel}>Add Model</button> -->
-        </div>
-      </ul>
+  <section>
+    <div class="w-1/3">
+      <label for="input-matcher"> Matcher </label>
+    </div>
+    <div class="w-2/3">
+      <input
+        type="text"
+        id="input-matcher"
+        name="matcher"
+        class="input-bg-white"
+        bind:value={config.matcher}
+        {disabled}
+      />
     </div>
   </section>
+
+  <section>
+    <div class="w-1/3">
+      <label for="input-num-iter"> #iterations </label>
+    </div>
+    <div class="w-2/3">
+      <input
+        type="text"
+        id="input-num-iter"
+        name="numIter"
+        class="input-bg-white"
+        bind:value={config.numIter}
+        {disabled}
+      />
+    </div>
+  </section>
+
+  <section>
+    <p>Progress:</p>
+  </section>
+
+  <section>Show logs</section>
+
+  <form METHOD="POST" action={`/projects/${project.id}?/analyse`}>
+    <section class="gap-x-8">
+      <button class="btn-action inline-block flex-grow font-bold" {disabled}>
+        Start Analysis
+      </button>
+    </section>
+  </form>
 </div>
+
+<style lang="postcss">
+  section {
+    @apply flex w-full items-center py-4;
+  }
+  label {
+    @apply mb-1 block pr-4 font-bold text-gray-700;
+  }
+</style>

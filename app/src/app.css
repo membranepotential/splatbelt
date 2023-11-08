@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  input[type='text'] {
+    @apply appearance-none rounded border-2 px-4 py-2 leading-tight text-gray-700;
+
+    &.input-bg-gray {
+      @apply border-gray-100 bg-gray-100;
+    }
+
+    &.input-bg-white {
+      @apply border-white bg-white;
+    }
+
+    &:focus {
+      @apply border-indigo-700 bg-white outline-none;
+    }
+  }
+
+  select {
+    @apply w-full rounded border-y-2 border-l-2 border-r-8 border-transparent bg-white px-3 py-2 outline-1 outline-transparent;
+
+    &:focus {
+      @apply outline-indigo-700;
+    }
+  }
+
+  button.btn-action {
+    @apply rounded-md bg-indigo-100 px-4 py-2 text-base text-gray-700;
+
+    &:focus {
+      @apply bg-indigo-200;
+    }
+
+    &:hover {
+      @apply bg-indigo-200;
+    }
+
+    &:active {
+      @apply bg-indigo-300;
+    }
+  }
+}

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import os
 from pathlib import Path
 from mimetypes import guess_type
 from typing import Any
@@ -94,7 +93,6 @@ def handle_video(name: str, conf: list[str], outdir: Path):
     print(f"Extracted frames from video {name}")
 
     video.close()
-    os.unlink(name)
 
 
 @click.command()

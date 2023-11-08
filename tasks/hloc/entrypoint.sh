@@ -41,11 +41,13 @@ colmap mapper \
     --output_path colmap/sparse \
     2>&1 | mapper_logger.py
 
+# select largest model
+best_model=$(select_largest_model.sh)
 
 # Colmap undistort
 colmap image_undistorter \
     --image_path $FRAME_DIR \
-    --input_path colmap/sparse/0 \
+    --input_path $best_model \
     --output_path colmap-pinhole \
     --output_type COLMAP
 

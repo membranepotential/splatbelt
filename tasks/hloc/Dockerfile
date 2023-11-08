@@ -1,4 +1,4 @@
-FROM colmap/colmap:latest
+FROM colmap/colmap:20231009.2
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -43,4 +43,4 @@ ENV FEATURE_TYPE superpoint_max
 ENV MATCHER superpoint+lightglue
 
 ADD entrypoint.sh /bin
-CMD entrypoint.sh
+CMD ["bash", "-c", "entrypoint.sh"]

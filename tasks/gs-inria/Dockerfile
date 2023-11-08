@@ -28,4 +28,4 @@ WORKDIR /workspace
 ADD entrypoint.sh /bin
 USER $MAMBA_USER
 
-ENTRYPOINT entrypoint.sh
+CMD ["bash", "-c", "entrypoint.sh"]

@@ -31,7 +31,8 @@
         "ms-python.python",
         "redhat.vscode-yaml",
         "Rubymaniac.vscode-paste-and-indent",
-        "svelte.svelte-vscode"
+        "svelte.svelte-vscode",
+        "ms-ossdata.vscode-postgresql"
       ]
     }
   }

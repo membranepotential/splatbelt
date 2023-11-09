@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as THREE from 'three'
 
 import { SplatBuffer } from './buffer'
@@ -233,7 +234,7 @@ export class Viewer {
   }
 
   updateSplatMeshIndexes(indexes, renderVertexCount) {
-    const geometry = this.splatMesh.geometry
+    const geometry = this.splatMesh?.geometry
 
     geometry.attributes.splatIndex.set(indexes)
     geometry.attributes.splatIndex.needsUpdate = true

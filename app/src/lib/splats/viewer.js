@@ -264,7 +264,7 @@ export class Viewer {
     }
   })()
 
-  loadBlob(blob: Blob) {
+  loadBlob(blob: Blob): Promise<void> {
     const loadingSpinner = new LoadingSpinner()
     loadingSpinner.show()
     return new Promise((resolve, reject) => {
@@ -365,7 +365,7 @@ export class Viewer {
           }
         })
         .catch(() => {
-          reject(new Error(`Viewer::loadFile -> Could not load file ${url}`))
+          reject(new Error('Could not load blob'))
         })
     })
   }

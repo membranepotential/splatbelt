@@ -8,7 +8,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strict": false,
+    "strict": true,
     "outDir": "./.svelte-kit",
   }
   // Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias

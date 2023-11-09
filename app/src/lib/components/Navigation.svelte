@@ -12,10 +12,6 @@
       label: 'Projects',
     },
     {
-      href: '/truck',
-      label: 'Truck',
-    },
-    {
       href: '/other',
       label: 'other',
     },

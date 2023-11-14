@@ -27,12 +27,12 @@
         "ionutvmi.path-autocomplete",
         "KevinRose.vsc-python-indent",
         "ms-azuretools.vscode-docker",
-        "ms-python.black-formatter",
         "ms-python.python",
         "redhat.vscode-yaml",
         "Rubymaniac.vscode-paste-and-indent",
         "svelte.svelte-vscode",
-        "ms-ossdata.vscode-postgresql"
+        "ms-ossdata.vscode-postgresql",
+        "foxundermoon.shell-format"
       ]
     }
   }

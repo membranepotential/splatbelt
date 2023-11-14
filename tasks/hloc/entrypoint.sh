@@ -2,29 +2,49 @@
 
 set -e
 
+show_usage() {
+    echo "Usage: $0 <project-id> <config>"
+}
+
+get_config() {
+    jq -r ".$1" <<<$CONFIG
+}
+
+PROJECT_ID=$1
+if [ -z "$PROJECT_ID" ]; then
+    show_usage
+    exit 1
+fi
+
+CONFIG=$2
+if [ -z "$CONFIG" ]; then
+    show_usage
+    exit 1
+fi
+
 FRAME_DIR=/workspace/images
 
 # Process images and videos
-process_sources.py -s $SOURCES -o $FRAME_DIR
+process_uploads.py -f $(get_config "frames") -o $FRAME_DIR
 
 # Create pairing
 pairing.py \
     -i $FRAME_DIR \
-    -c $PAIRING \
+    -c $(get_config "pairing") \
     -o pairs.txt
 
 # Extract features
 extract_features.py \
     -i $FRAME_DIR \
     -f features.h5 \
-    -c $FEATURE_TYPE
+    -c $(get_config "features")
 
 # Match features
 match_features.py \
     -p pairs.txt \
     -f features.h5 \
     -m matches.h5 \
-    -c $MATCHER
+    -c $(get_config "matcher")
 
 # Prepare database for colmap
 prepare_db.py \
@@ -54,3 +74,7 @@ colmap image_undistorter \
 mv colmap-pinhole/sparse colmap-pinhole/0
 mkdir colmap-pinhole/sparse
 mv colmap-pinhole/0 colmap-pinhole/sparse/0
+
+# Gaussian splatting
+mkdir -p model
+gaussian_splatting_cuda -d colmap-pinhole -o model -i $(get_config "numIter")

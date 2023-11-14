@@ -5,6 +5,13 @@ Toolbelt for Gaussian Splatting Experiments.
 ## Installaton
 
 
+## GPU instances with Brev
+
+[Brev](https://brev.dev/) is used for GPU instance provisioning.
+
+If a [brev token](https://console.brev.dev/profile) is stored in `brev-token.txt`,
+the `brev` command is set up in the devcontainer.
+
 
 ## FAQ
 

@@ -6,6 +6,8 @@ ADD library-scripts/*.sh /
 RUN /bin/bash /common-debian.sh
 RUN /bin/bash /install-docker.sh
 RUN /bin/bash /install-diff-so-fancy.sh
+RUN /bin/bash /install-brev-cli.sh
+
 RUN apt -y install \
     awscli \
     postgresql-client

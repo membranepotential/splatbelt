@@ -18,6 +18,11 @@ psql "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}" -f ./db
 # Replace dev data
 ./data/hydrate.sh
 
+# Login to brev
+if [ -s ./brev-token.txt ]; then    
+    brev login --token $(cat ./brev-token.txt)
+fi
+
 # install node modules
 cd /workspace/app
 npm install

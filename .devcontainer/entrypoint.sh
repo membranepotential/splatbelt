@@ -29,4 +29,4 @@ DOCKER_HOST_GID=$(stat -c '%g' /var/run/docker.sock)
 ensure_gid_is_unused "$DOCKER_HOST_GID"
 sudo groupmod --gid "$DOCKER_HOST_GID" docker
 
-sleep infinity
+while sleep 1000; do :; done

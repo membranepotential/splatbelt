@@ -1,4 +1,9 @@
 #!/bin/bash
+cd $(dirname $(realpath -s $0))
+
+if [ -f .env ]; then
+    export $(cat .env | xargs)
+fi
 
 usage() {
     echo "Usage: $0 (load|store) <project-id> [<key>]"
@@ -22,14 +27,18 @@ fi
 
 KEY=$3
 
+# Prepare workspace
+WORKSPACE=${WORKSPACE:-"/home/$USER/workspace/$PROJECT_ID"}
+mkdir -p "$WORKSPACE" 2>/dev/null
+
 case $OP in
 load)
     echo "Load ${PROJECT_ID}/${KEY}"
-    aws-cli s3 "$ENDPOINT_ARG" sync "s3://${S3_BUCKET}/${PROJECT_ID}/${KEY}" "./${KEY}"
+    aws s3 "$ENDPOINT_ARG" sync "s3://${S3_BUCKET}/${PROJECT_ID}/${KEY}" "${WORKSPACE}/${KEY}"
     ;;
 store)
     echo "Store ${PROJECT_ID}/${KEY}"
-    aws-cli s3 "$ENDPOINT_ARG" sync "./${KEY}" "s3://${S3_BUCKET}/${PROJECT_ID}/${KEY}"
+    aws s3 "$ENDPOINT_ARG" sync "${WORKSPACE}/${KEY}" "s3://${S3_BUCKET}/${PROJECT_ID}/${KEY}"
     ;;
 *)
     usage

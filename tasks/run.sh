@@ -2,6 +2,10 @@
 set -e
 cd $(dirname $(realpath -s $0))
 
+if [ -f .env ]; then
+    export $(cat .env | xargs)
+fi
+
 PROJECT_ID=$1
 if [ -z "$PROJECT_ID" ]; then
     echo "Usage: $0 <project-id>"
@@ -19,9 +23,9 @@ psql_exec() {
 
 update_state() {
     local ret
-    ret=${x:+"RETURNING $x"}
+    ret=${2:+"RETURNING $2"}
 
-    psql_exec "UPDATE api.projects SET state = '$1' WHERE id=$PROJECT_ID $ret;"
+    psql_exec "UPDATE api.projects SET state='$1' WHERE id=$PROJECT_ID $ret;"
 }
 
 run_project() {
@@ -38,40 +42,60 @@ run_project() {
 
 complete_project() {
     update_state "complete"
+    echo "Project $PROJECT_ID complete"
 }
 
 fail_project() {
     update_state "failed"
+    echo "Project $PROJECT_ID failed"
 }
 
 run_worker() {
-    # Prepare workspace
-    WORKSPACE="/home/$USER/workspace/$PROJECT_ID"
-    mkdir -p "$WORKSPACE"
-
     # Load uploaded files
-    ./s3.sh load "$PROJECT_ID" uploads || return $?
+    if [ ! -d "uploads" ]; then
+        ./s3.sh load "$PROJECT_ID" uploads
+
+        if [ $? -ne 0 ]; then
+            echo "Error: failed to load uploads"
+            return $?
+        fi
+    fi
 
     # Run docker container
+    WORKSPACE=${WORKSPACE:-"/home/$USER/workspace/$PROJECT_ID"}
     docker run \
         --rm \
         --gpus=all \
         --shm-size=16g \
-        --env-file=./.env \
+        --env-file=.env \
         -v "$WORKSPACE:/workspace" \
-        hloc "$PROJECT_ID" "$CONFIG" ||
+        worker "$PROJECT_ID" "$CONFIG"
+
+    if [ $? -ne 0 ]; then
+        echo "Error: docker run failed"
         return $?
+    fi
 
     # Store results
     ./s3.sh store "$PROJECT_ID" model || return $?
+
+    if [ $? -ne 0 ]; then
+        echo "Error: failed to store model"
+        return $?
+    fi
 
     return 0
 }
 
 logger() {
     while read line; do
-        echo "SELECT api.append_log_entry($PROJECT_ID, '$line');"
-    done | psql "$POSTGRES_URL" -f -
+        if [ -z "$line" ]; then
+            continue
+        fi
+
+        echo "$line" >/dev/tty
+        echo "SELECT api.append_log_entry(${PROJECT_ID}, "'$$'$line'$$);'
+    done | psql -q "$POSTGRES_URL" -f - 2>&1 >/dev/null
 }
 
 trap 'fail_project' EXIT

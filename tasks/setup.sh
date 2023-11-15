@@ -1,28 +1,19 @@
 #!/bin/bash
 cd $(dirname $(realpath -s $0))
 
-docker-build() {
-    BUILD_CACHE=$HOME/.cache/docker
+# Join docker group
+sudo usermod -aG docker $USER
 
-    if [ ! -d "$BUILD_CACHE" ]; then
-        mkdir -p "$BUILD_CACHE"
-        touch "$BUILD_CACHE/index.json"
-    fi
+# update cuda and install dependencies
+wget -q -P /tmp https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb
+sudo dpkg -i /tmp/cuda-keyring_1.1-1_all.deb
+sudo apt-get update -q
+sudo apt-get -q -y install awscli postgresql-client cuda
 
-    local image=$1
-    echo "Building $image"
-    docker buildx build --load -t $image $image/ \
-        --cache-to "type=local,dest=$BUILD_CACHE" \
-        --cache-from "type=local,src=$BUILD_CACHE"
-}
+# Build worker image
+DOCKER_BUILDKIT=1 sudo docker build -t worker worker/
 
-# Build docker images
-docker buildx create --name=splatbelt
-docker buildx use splatbelt
-
-docker-build gs-cuda
-docker-build hloc
-
-# Install dependencies
-sudo apt-get update -y
-sudo apt-get install -y awscli postgresql-client
+if [ $? -ne 0 ]; then
+    echo "Error: failed to build worker image"
+    exit 1
+fi

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import click
+import json
 from itertools import combinations
 from pathlib import Path
 from hloc import extract_features, pairs_from_retrieval
@@ -46,19 +47,23 @@ def write_pairs(pairs, output):
 def pairing(image_dir, config, output):
     images = [p.name for p in Path(image_dir).iterdir()]
 
-    pairing_type, *args = config.split(":", maxsplit=1)
+    config = json.loads(config)
+
+    pairing_type = config["type"]
 
     if pairing_type == "exhaustive":
         pairs = pair_exhaustive(images)
 
     elif pairing_type == "complex":
-        args = [a.strip().split("=") for a in args[0].split(",")]
-        nums = {k: int(v) for k, v in args}
-
-        seq_pairs = pair_sequential(images, nums.get("seq", 0))
+        seq_pairs = pair_sequential(images, config.get("sequential", 0))
         write_pairs(seq_pairs, "seq_pairs.txt")
 
-        pair_retrieval(image_dir, "retrieval.h5", "retr_pairs.txt", nums.get("ret", 0))
+        pair_retrieval(
+            image_dir,
+            "retrieval.h5",
+            "retr_pairs.txt",
+            config.get("retrieval", 0),
+        )
 
         pairs = pair_merge(["seq_pairs.txt", "retr_pairs.txt"])
 

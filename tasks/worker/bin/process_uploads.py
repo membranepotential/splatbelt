@@ -69,16 +69,14 @@ class Video:
 
 
 def handle_upload(upload: Path, config: dict[str, Any], outdir: Path):
-    filetype = guess_type(upload)
-    if filetype == "image":
+    filetype, _ = guess_type(upload)
+    if filetype.startswith("image"):
         handle_image(upload, outdir)
-    elif filetype == "video":
+    elif filetype.startswith("video"):
         handle_video(upload, config, outdir)
     else:
         logging.error(
-            "Error processing %s: Unsupported filetype %s",
-            upload.name,
-            filetype,
+            "Error processing %s: Unsupported filetype %s", upload.name, filetype
         )
 
 
@@ -88,12 +86,12 @@ def handle_image(upload: Path, outdir: Path):
 
 def handle_video(upload: Path, conf: list[str], outdir: Path):
     with Video(upload) as video:
-        ex_type = conf[0]
+        ex_type = conf["type"]
         if ex_type == "num":
-            num = int(conf[1])
+            num = int(conf["num"])
             frame_idxs = [int(i * video.num_frames / num) for i in range(num)]
         elif ex_type == "list":
-            frame_idxs = [int(i) for i in conf[1:]]
+            frame_idxs = [int(i) for i in conf["frames"]]
         else:
             logging.error(
                 "Error processing %s: Unknown extraction type %s",

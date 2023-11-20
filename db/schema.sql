@@ -21,10 +21,14 @@ CREATE TABLE IF NOT EXISTS api.projects (
 -- Append a log entry for a project
 CREATE OR REPLACE FUNCTION api.append_log_entry(project_id INT, log_entry TEXT)
 RETURNS VOID AS $$
+DECLARE
+  log_object JSONB;
 BEGIN
-  UPDATE api.projects
-  SET logs = logs || to_jsonb(log_entry)
-  WHERE id = project_id;
+  log_object := jsonb_build_object(
+    'date', now(),
+    'entry', log_entry
+  );
+  UPDATE api.projects SET logs = logs || log_object WHERE id = project_id;
 END;
 $$ LANGUAGE plpgsql;
 

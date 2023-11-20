@@ -1,80 +1,90 @@
-ARG CUDA_VERSION="12.1.1"
+ARG PYTHON_VERSION="3.9"
+ARG TORCH_VERSION="2.1.1"
 ARG TORCH_CUDA_VERSION="121"
-ARG TORCH_VERSION="2.1.0"
-
-FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu22.04 as gs-cuda
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    git \
-    zip \
-    unzip \
-    ninja-build \
-    python3 \
-    python3-dev \
-    python3-pip \
-    python-is-python3 \
-    libtbb-dev \
-    && \
-    rm -rf /var/lib/apt/lists/* && \
-    pip install --no-cache -U pip setuptools cmake
-
-RUN git clone --recursive https://github.com/MrNeRF/gaussian-splatting-cuda.git /gaussian-splatting-cuda
-WORKDIR /gaussian-splatting-cuda
-
-ARG TORCH_CUDA_VERSION
-ARG TORCH_VERSION
-ARG TORCH_DOWNLOAD_URL="https://download.pytorch.org/libtorch/cu${TORCH_CUDA_VERSION}/libtorch-cxx11-abi-shared-with-deps-${TORCH_VERSION}%2Bcu${TORCH_CUDA_VERSION}.zip"
-RUN curl ${TORCH_DOWNLOAD_URL} -o /tmp/libtorch.zip && \
-    unzip  /tmp/libtorch.zip -d ./external/ && \
-    rm /tmp/libtorch.zip
-
 ARG CUDA_ARCHITECTURES="75;86"
 ARG TORCH_CUDA_ARCH_LIST="7.5;8.6+PTX"
+
+# Download libtorch in separate build step
+FROM alpine:3.14 as libtorch
+RUN apk add --no-cache curl unzip
+ARG TORCH_VERSION
+ARG TORCH_CUDA_VERSION
+ARG URL="https://download.pytorch.org/libtorch/cu${TORCH_CUDA_VERSION}/libtorch-cxx11-abi-shared-with-deps-${TORCH_VERSION}%2Bcu${TORCH_CUDA_VERSION}.zip"
+RUN curl $URL -o /tmp/libtorch.zip && \
+    unzip  /tmp/libtorch.zip -d / && \
+    rm /tmp/libtorch.zip
+
+# colmap is based on nvidia/cuda:12.2.2-devel-ubuntu22.04
+FROM colmap/colmap:20231103.5 as colmap-torch
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    software-properties-common \
+    python3-launchpadlib \
+    python3-pip \
+    python-is-python3
+
+RUN add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3.9 \
+    python3.9-dev \
+    python3.9-distutils
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1 
+
+RUN apt-mark hold python-is-python3 python3-pip && \
+    apt-get remove -y --purge software-properties-common python3-launchpadlib && \
+    apt autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG TORCH_VERSION
+RUN pip install -U --no-cache setuptools pip psutil numpy sympy networkx
+RUN pip install -U --no-cache torch==${TORCH_VERSION} torchvision
+
+# Build gaussian-splatting-cuda
+FROM colmap-torch as gs-cuda
+WORKDIR /gaussian-splatting-cuda
+RUN git clone --recursive https://github.com/MrNeRF/gaussian-splatting-cuda.git .
+COPY --from=libtorch /libtorch ./external/libtorch
+
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential git ninja-build libtbb-dev
+RUN pip install -U --no-cache cmake
+
+ARG CUDA_ARCHITECTURES
+ARG TORCH_CUDA_ARCH_LIST
 RUN sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" CMakeLists.txt && \
     sed -i "s/native/\"${CUDA_ARCHITECTURES}\"/" external/CMakeLists.txt && \
     cmake -B build -DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST} -DCMAKE_BUILD_TYPE=Release -G Ninja
-
 RUN cmake --build build
 
 
-FROM colmap/colmap:20231009.2
+# Build hloc
+FROM colmap-torch as hloc
+WORKDIR /hloc
+RUN git clone --branch master --recursive https://github.com/cvg/Hierarchical-Localization.git .
+RUN python setup.py bdist_wheel
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    zip \
-    unzip \
-    git \
-    software-properties-common \
-    jq \
-    python3 \
-    python3-pip \
-    python3-dev \
-    python3-setuptools \
-    python-is-python3 \
-    ninja-build \
-    libtbb-dev \
-    && \
-    rm -rf /var/lib/apt/lists/* && \
-    pip install --no-cache -U pip setuptools cmake
+# Compose worker
+FROM colmap-torch as worker
 
-ARG TORCH_VERSION
-RUN pip install --no-cache torch==${TORCH_VERSION}
+RUN apt-get update && \
+    apt-get install -y make awscli jq && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN git clone --branch master --recursive https://github.com/cvg/Hierarchical-Localization.git
-RUN pip install --no-cache -e Hierarchical-Localization
+COPY --from=hloc /hloc/dist/hloc-*.whl /tmp/
+RUN pip install --no-cache /tmp/hloc-*.whl && rm /tmp/hloc-*.whl
+
+COPY --from=libtorch /libtorch/lib /usr/lib
+COPY --from=gs-cuda /gaussian-splatting-cuda/build/gaussian_splatting_cuda /usr/bin
+COPY --from=gs-cuda /gaussian-splatting-cuda/parameter /usr/parameter
 
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install -U --no-cache -r /tmp/requirements.txt
 
-COPY --from=gs-cuda /gaussian-splatting-cuda/external/libtorch/lib /usr/lib
-COPY --from=gs-cuda /gaussian-splatting-cuda/build/gaussian_splatting_cuda /usr/bin
-COPY --from=gs-cuda /gaussian-splatting-cuda/parameter /usr/parameter
-
-RUN mkdir -p /workspace
 WORKDIR /workspace
-
-ADD bin/ entrypoint.sh /bin/
-ENTRYPOINT ["/bin/entrypoint.sh"]
+ENV PATH="/root/bin:$PATH"
+ADD bin/ /bin/
+ADD Makefile /Makefile

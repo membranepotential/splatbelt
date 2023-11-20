@@ -22,8 +22,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Run the project
-ssh \
-    -R 5432:$POSTGRES_HOST:5432 \
+ssh -R 5432:$POSTGRES_HOST:5432 \
     $S3_PORT_FLAG $S3_PORT_FWD \
     $INSTANCE_NAME \
-    'splatbelt/tasks/run-pending.sh'
+    'splatbelt/tasks/run.sh'

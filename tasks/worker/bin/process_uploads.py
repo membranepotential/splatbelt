@@ -2,16 +2,16 @@
 
 import json
 from pathlib import Path
-from mimetypes import guess_type
 from typing import Any
 import logging
+from mimetypes import guess_type
 import click
 import numpy as np
 import cv2
 
 
 class Video:
-    def __init__(self, path: str | Path):
+    def __init__(self, path):
         self.path = Path(path)
         self.cap = cv2.VideoCapture(str(path))
 

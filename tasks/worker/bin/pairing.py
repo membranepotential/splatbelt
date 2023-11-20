@@ -29,8 +29,10 @@ def pair_retrieval(images: str, out_features: str, out_pairs: str, num_matched: 
 def pair_merge(pair_paths):
     pairs = set()
     for pair_path in pair_paths:
-        with open(str(pair_path), "r") as f:
-            pairs |= {tuple(p.split()) for p in f.readlines()}
+        pair_path = Path(pair_path)
+        if pair_path.exists():
+            with pair_path.open() as f:
+                pairs |= {tuple(p.split()) for p in f.readlines()}
 
     return list(sorted(pairs))
 
@@ -46,31 +48,35 @@ def write_pairs(pairs, output):
 @click.option("-o", "--output", type=click.Path())
 def pairing(image_dir, config, output):
     images = [p.name for p in Path(image_dir).iterdir()]
+    images.sort()
 
     config = json.loads(config)
-
     pairing_type = config["type"]
 
     if pairing_type == "exhaustive":
         pairs = pair_exhaustive(images)
+        write_pairs(pairs, output)
 
     elif pairing_type == "complex":
-        seq_pairs = pair_sequential(images, config.get("sequential", 0))
-        write_pairs(seq_pairs, "seq_pairs.txt")
+        num_seq = config.get("sequential", 0)
+        if num_seq:
+            seq_pairs = pair_sequential(images, num_seq)
+            write_pairs(seq_pairs, "seq_pairs.txt")
 
-        pair_retrieval(
-            image_dir,
-            "retrieval.h5",
-            "retr_pairs.txt",
-            config.get("retrieval", 0),
-        )
+        num_retr = config.get("retrieval", 0)
+        if num_retr:
+            pair_retrieval(
+                image_dir,
+                "retrieval.h5",
+                "retr_pairs.txt",
+                config.get("retrieval", 0),
+            )
 
         pairs = pair_merge(["seq_pairs.txt", "retr_pairs.txt"])
+        write_pairs(pairs, output)
 
     else:
         raise ValueError(f"Unknown pairing type: {pairing_type}")
-
-    write_pairs(pairs, output)
 
 
 if __name__ == "__main__":

@@ -31,8 +31,8 @@
         "redhat.vscode-yaml",
         "Rubymaniac.vscode-paste-and-indent",
         "svelte.svelte-vscode",
-        "ms-ossdata.vscode-postgresql",
-        "foxundermoon.shell-format"
+        "foxundermoon.shell-format",
+        "ms-vscode.makefile-tools"
       ]
     }
   }

@@ -23,6 +23,7 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_HOST
+      - POSTGRES_URL
 
   minio:
     image: minio/minio:latest

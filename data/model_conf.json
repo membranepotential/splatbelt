@@ -8,7 +8,9 @@
   "pairing": {
     "type": "exhaustive"
   },
-  "features": "sift",
-  "matcher": "superglue",
+  "matching": {
+    "type": "colmap",
+    "features": "colmap"
+  },
   "numIter": 7000
 }

@@ -24,8 +24,4 @@ RUN cp gaussian-splatting/train.py /bin/train.py && \
 
 RUN mkdir /workspace && chown $MAMBA_USER:$MAMBA_USER /workspace
 WORKDIR /workspace
-
-ADD entrypoint.sh /bin
 USER $MAMBA_USER
-
-CMD ["bash", "-c", "entrypoint.sh"]

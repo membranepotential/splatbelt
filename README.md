@@ -2,7 +2,9 @@
 
 Toolbelt for Gaussian Splatting Experiments.
 
-## Installaton
+# Idea
+
+[![Idea](231122-meeting-notes.png)]
 
 
 ## GPU instances with Brev

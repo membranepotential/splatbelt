@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import type { Project } from '$lib/models/project'
+  import type { Project } from '$lib'
   import Timeline from './Timeline.svelte'
 
   export let data: PageData

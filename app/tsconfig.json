@@ -10,6 +10,7 @@
     "sourceMap": true,
     "strict": true,
     "outDir": "./.svelte-kit",
+    "useUnknownInCatchVariables": false
   }
   // Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
   //

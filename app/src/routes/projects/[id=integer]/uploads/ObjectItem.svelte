@@ -3,7 +3,7 @@
 
   export let project: Project
   export let object: S3Object
-  export let disabled: boolean = false
+  export let disabled = false
 
   $: isVideo = object.type.startsWith('video')
 

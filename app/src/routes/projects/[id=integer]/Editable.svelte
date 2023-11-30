@@ -5,10 +5,10 @@
 
   export let action: string
   export let value: string
-  export let name: string = 'value'
-  export let inputClass: string = ''
-  export let promptClass: string = ''
-  export let promptText: string = 'edit...'
+  export let name = 'value'
+  export let inputClass = ''
+  export let promptClass = ''
+  export let promptText = 'edit...'
 
   const dispatch = createEventDispatcher<{ submit: ActionResult }>()
 

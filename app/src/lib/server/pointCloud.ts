@@ -12,7 +12,7 @@ export async function exists(projectId: string): Promise<boolean> {
   try {
     await headObject(pointCloudKey(projectId))
     return true
-  } catch (error: any) {
+  } catch (error) {
     if (error.name === 'NotFound') return false
     throw error
   }

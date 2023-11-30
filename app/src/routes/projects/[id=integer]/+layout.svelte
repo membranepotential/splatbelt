@@ -20,7 +20,7 @@
 
   let origConfig: ModelConfig
   let needsUpdate = false
-  let watcher: NodeJS.Timeout | undefined
+  let watcher: ReturnType<typeof setTimeout> | undefined
   let parseError = null as Error | null
   let activeRequest: Promise<Response> | undefined
 

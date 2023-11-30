@@ -198,8 +198,8 @@ export class Viewer {
         ELEMENTS_PER_TEXEL
     )
     for (let c = 0; c < vertexCount; c++) {
-      let destOffset = c * 12
-      let srcOffset = c * 9
+      const destOffset = c * 12
+      const srcOffset = c * 9
       for (let i = 0; i < 9; i++) {
         paddedCenterCovariances[destOffset + i] =
           centerCovariances[srcOffset + i]
@@ -488,7 +488,7 @@ export class Viewer {
         }
 
         const windowSizeInts = node.data.indexes.length
-        let destView = new Uint32Array(
+        const destView = new Uint32Array(
           this.inIndexArray.buffer,
           currentByteOffset,
           windowSizeInts

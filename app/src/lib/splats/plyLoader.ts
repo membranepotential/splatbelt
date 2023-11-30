@@ -34,7 +34,7 @@ class PlyParser {
     const headerLines = headerText.split('\n')
 
     let vertexCount = 0
-    let propertyTypes = {} as Record<string, string>
+    const propertyTypes = {} as Record<string, string>
 
     for (let i = 0; i < headerLines.length; i++) {
       const line = headerLines[i].trim()
@@ -75,8 +75,8 @@ class PlyParser {
     propertyTypes: Record<string, string>,
     outVertex: Record<string, number>
   ) {
-    let rawVertex = outVertex || {}
-    for (let property of propertiesToRead) {
+    const rawVertex = outVertex || {}
+    for (const property of propertiesToRead) {
       const propertyType = propertyTypes[property]
       if (propertyType === 'float') {
         rawVertex[property] = vertexData.getFloat32(
@@ -130,7 +130,7 @@ class PlyParser {
     }
 
     let plyRowSize = 0
-    let fieldOffsets = {} as Record<string, number>
+    const fieldOffsets = {} as Record<string, number>
     const fieldSize = {
       double: 8,
       int: 4,
@@ -140,7 +140,7 @@ class PlyParser {
       ushort: 2,
       uchar: 1,
     } as Record<string, number>
-    for (let fieldName in propertyTypes) {
+    for (const fieldName in propertyTypes) {
       if (Object.prototype.hasOwnProperty.call(propertyTypes, fieldName)) {
         const type = propertyTypes[fieldName]
         fieldOffsets[fieldName] = plyRowSize
@@ -148,7 +148,7 @@ class PlyParser {
       }
     }
 
-    let rawVertex = {} as Record<string, number>
+    const rawVertex = {} as Record<string, number>
 
     const propertiesToRead = [
       'scale_0',
@@ -168,8 +168,8 @@ class PlyParser {
     ] as string[]
 
     console.time('Importance computations')
-    let sizeList = new Float32Array(vertexCount)
-    let sizeIndex = new Uint32Array(vertexCount)
+    const sizeList = new Float32Array(vertexCount)
+    const sizeIndex = new Uint32Array(vertexCount)
     for (let row = 0; row < vertexCount; row++) {
       this.readRawVertexFast(
         vertexData,

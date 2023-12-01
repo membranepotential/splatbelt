@@ -7,6 +7,7 @@
   import { initial, throttle } from 'lodash-es'
   import { Vector3 } from 'three'
   import { VIEWER_STATE } from '$lib/types'
+  import type { EventWithDelta } from '$lib/types'
 
   export let data: PageData
   let canvasContainer: HTMLDivElement
@@ -81,13 +82,7 @@
     }
   }
   const trackEvent = (e) => {
-    events.update((contents) => [
-      ...contents,
-      {
-        type: e.type,
-        event: e,
-      },
-    ])
+    events.update((contents) => [...contents, e])
   }
   const trackMouseMove = throttle(trackEvent, 16, {
     leading: true,
@@ -118,32 +113,64 @@
   function replayEvents() {
     state = 'play'
     console.log('State is now Play')
-    function get__store(store) {
+    function get__store(store: any): Event[] {
       let $val
-      store.subscribe(($) => ($val = $))()
-      return $val
+      store.subscribe(($) => ($val = [...$]))()
+      return $val as unknown as Event[]
     }
 
-    const storeContent = get__store(events)
+    let storeContent: Event[] = get__store(events)
 
     // viewer.controls?.setState(initialPosition)
-    viewer.controls?.reset()
 
-    const eventTarget = storeContent[0].event.target
-    let index = 0
+    const { target, timeStamp: firstEventTimestamp } = storeContent[0]
 
-    function next() {
-      console.log(index)
-      if (!storeContent[index++]) {
-        return null
+    const duration =
+      storeContent[storeContent.length - 1].timeStamp -
+      storeContent[0].timeStamp
+
+    function playLoop() {
+      console.log('playLoop duration ', duration)
+
+      viewer.controls?.reset()
+      let loopStartTime = Date.now()
+      let lastFrameTime = Date.now()
+
+      function playFrame() {
+        const currentOffset = Date.now() - loopStartTime
+
+        if (currentOffset > duration) {
+          return
+        }
+
+        /**
+         * Find the element in the store that has the closest delta to the current offset
+         */
+        const closestEntry = storeContent.reduce((prev, curr) => {
+          const currDelta = curr.timeStamp - firstEventTimestamp
+          const prevDelta = prev.timeStamp - firstEventTimestamp
+
+          const currDiff = Math.abs(currDelta - currentOffset)
+          const prevDiff = Math.abs(prevDelta - currentOffset)
+
+          return currDiff < prevDiff ? curr : prev
+        })
+
+        target.dispatchEvent(closestEntry)
+
+        const currentTime = Date.now()
+        const timeSinceLastFrame = currentTime - lastFrameTime
+        const timeToNextFrame = Math.max(0, 16 - timeSinceLastFrame)
+
+        lastFrameTime = currentTime
+
+        setTimeout(playFrame, timeToNextFrame)
       }
-      const { type, event } = storeContent[index]
 
-      console.log('dispatching ', type)
-      eventTarget.dispatchEvent(event)
-      setTimeout(next, 16)
+      playFrame()
     }
-    setTimeout(next, 16)
+    playLoop()
+    setInterval(playLoop, duration + 2000)
   }
 </script>
 

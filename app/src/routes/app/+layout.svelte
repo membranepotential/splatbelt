@@ -1,4 +1,4 @@
-<div class="flex h-screen items-center justify-center">
+<div class="flex h-screen p-4 items-center justify-center">
   <slot />
 </div>
 

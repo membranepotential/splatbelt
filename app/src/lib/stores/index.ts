@@ -1,1 +1,2 @@
-export { events } from './events.store'
+export { events } from './events'
+export { app } from './app'

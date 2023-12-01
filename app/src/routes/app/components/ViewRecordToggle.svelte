@@ -1,8 +1,16 @@
 <script>
-  let toggleState = false
+  import { app } from '$lib/stores'
+  import { VIEWER_STATE } from '$lib/types'
+
   function toggle() {
-    toggleState = !toggleState
+    app.update(({ VIEWER_STATE: currentState }) => ({
+      VIEWER_STATE:
+        currentState === VIEWER_STATE.RECORDING
+          ? VIEWER_STATE.FREE
+          : VIEWER_STATE.RECORDING,
+    }))
   }
+  $: isRecording = $app.VIEWER_STATE === VIEWER_STATE.RECORDING
 </script>
 
 <div class="absolute top-32 flex w-full flex-col items-center justify-center">
@@ -10,7 +18,7 @@
     on:click={toggle}
     type="button"
     class="border-bg-gray-200 relative inline-flex h-9 w-16 flex-shrink-0 cursor-pointer rounded-full border-2 border-green-900 bg-transparent transition-colors duration-200 ease-in-out"
-    class:border-red-800={toggleState}
+    class:border-red-800={isRecording}
     role="switch"
     aria-checked="false"
   >
@@ -18,13 +26,14 @@
     <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
     <span
       class="pointer-events-none relative inline-block h-8 w-8 translate-x-0 transform rounded-full shadow ring-0 transition duration-200 ease-in-out"
-      class:translate-x-7={toggleState}
+      class:translate-x-7={isRecording}
     >
       <!-- Enabled: "opacity-0 duration-100 ease-out", Not Enabled: "opacity-100 duration-200 ease-in" -->
       <span
-        class="absolute inset-0 flex h-full w-full items-center justify-center opacity-100 transition-opacity duration-200 ease-in"
+        class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity duration-200 ease-in"
         aria-hidden="true"
-        class:opacity-0={toggleState}
+        class:opacity-0={isRecording}
+        class:opacity-100={!isRecording}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -48,9 +57,10 @@
       </span>
       <!-- Enabled: "opacity-100 duration-200 ease-in", Not Enabled: "opacity-0 duration-100 ease-out" -->
       <span
-        class="absolute inset-0 flex h-full w-full items-center justify-center opacity-100 transition-opacity duration-100 ease-out"
+        class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity duration-100 ease-out"
         aria-hidden="true"
-        class:opacity-0={!toggleState}
+        class:opacity-0={!isRecording}
+        class:opacity-100={isRecording}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +80,7 @@
     </span>
   </button>
   <div class="flex py-2 text-white">
-    <span class="hidden" class:hidden={!toggleState}>Record</span>
-    <span class="visible" class:hidden={toggleState}>View</span>
+    <span class:hidden={!isRecording}>Record</span>
+    <span class:hidden={isRecording}>View</span>
   </div>
 </div>

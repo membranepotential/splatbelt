@@ -16,12 +16,12 @@
   }
 </script>
 
-<div
+<button
   on:click={replayLast}
   class="color-white absolute right-0 top-0 z-10 bg-red-400"
 >
   Replay {count} events
-</div>
+</button>
 <ViewRecordToggle />
 <SettingsPane />
 

@@ -3,7 +3,7 @@
   import * as GaussianSplat3D from '$lib/splats'
   import type { PageData } from './$types'
   import UI from './components/UI.svelte'
-  import { events } from '$lib/stores'
+  import { app, events } from '$lib/stores'
   import { initial, throttle } from 'lodash-es'
   import { Vector3 } from 'three'
 
@@ -88,6 +88,11 @@
     //   console.log(lastEvent)
     // })
   })
+
+  // let lastViewerState = $app.get().VIEWER_STATE
+  // $app.subscribe(({ VIEWER_STATE }) => {
+  //   if( VIEWER_STATE !== )
+  // })
 
   function replayEvents() {
     state = 'play'

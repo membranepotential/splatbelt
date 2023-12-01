@@ -2,8 +2,11 @@
   import { onMount } from 'svelte'
   import * as GaussianSplat3D from '$lib/splats'
   import type { PageData } from './$types'
+  import { ModelConfig } from '$lib/schemas'
 
   export let data: PageData
+  export const config: ModelConfig = ModelConfig.parse({})
+
   let canvas: HTMLDivElement
   let viewer: GaussianSplat3D.Viewer
 

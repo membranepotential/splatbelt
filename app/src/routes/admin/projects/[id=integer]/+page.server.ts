@@ -1,7 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 import * as projects from '$lib/server/projects'
-import { AnalysisState } from '$lib/enums'
 
 /**
  * Redirect users from [id]/ to [id]/edit
@@ -28,14 +27,14 @@ export const actions = {
   updateConfig: async ({ params, request }) => {
     try {
       const config = await request.json()
-      console.log('updateConfig', config)
+      // console.log('updateConfig', config)
       await projects.update(params.id, { config })
     } catch (error: any) {
       return fail(422, { message: error.message })
     }
   },
   analyse: async ({ params }) => {
-    await projects.update(params.id, { state: AnalysisState.pending })
+    await projects.update(params.id, { state: "pending" })
   },
   delete: async ({ params }) => {
     try {

@@ -4,7 +4,7 @@ import {
   listObjects,
   headObject,
 } from './s3'
-import type { S3Object } from '$lib'
+import { S3Object } from '$lib/schemas/upload'
 
 const EXT_TO_TYPE: Record<string, string> = {
   png: 'image/png',
@@ -29,7 +29,7 @@ function guessType(name: string) {
 export async function head(key: string) {
   const name = key.split('/').pop() as string
   const { ContentLength, ContentType } = await headObject(key)
-  return { key, name, size: ContentLength, type: ContentType } as S3Object
+  return S3Object.parse({ key, name, size: ContentLength, type: ContentType })
 }
 
 export async function list(projectId: string) {
@@ -41,12 +41,12 @@ export async function list(projectId: string) {
   return contents.map(({ Key, Size }) => {
     const name = Key?.split('/').pop() as string
     const type = guessType(name)
-    return {
+    return S3Object.parse({
       key: Key,
       name,
       size: Size,
       type,
-    } as S3Object
+    })
   })
 }
 

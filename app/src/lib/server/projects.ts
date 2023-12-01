@@ -1,39 +1,31 @@
-import type { Project } from '$lib'
-import * as schemas from '$lib/schemas'
+import { Project, ProjectUpdate } from '$lib/schemas'
 import * as postgrest from './postgrest'
 
-const defaultConfig = {
-  frames: {},
-  pairing: { type: 'exhaustive' },
-  features: 'sift',
-  matcher: 'vocab_tree',
-  numIter: 7000,
+export function list(): Promise<Project[]> {
+  return postgrest
+    .get('/projects')
+    .then((projects: Project[]) =>
+      projects
+        .map((project) => Project.parse(project))
+        .sort((a, b) => b.updated.getTime() - a.updated.getTime())
+    )
 }
 
-const defaultProject = schemas.project.parse({
-  name: 'New Project',
-  config: defaultConfig,
-})
-
-export function list() {
-  return postgrest.get('/projects') as Promise<Project[]>
-}
-
-export function get(id: string) {
-  return postgrest.getOne(`/projects?id=eq.${id}`) as Promise<Project>
+export function get(id: string): Promise<Project> {
+  return postgrest.getOne(`/projects?id=eq.${id}`).then(Project.parse)
 }
 
 export function create() {
   return postgrest.fetch('/projects', {
     method: 'POST',
-    body: JSON.stringify(defaultProject),
+    body: JSON.stringify(Project.parse({})),
   })
 }
 
-export function update(id: string, data: Partial<Project>) {
+export function update(id: string, data: ProjectUpdate) {
   return postgrest.fetch(`/projects?id=eq.${id}`, {
     method: 'PATCH',
-    body: JSON.stringify(schemas.project.parse(data)),
+    body: JSON.stringify(ProjectUpdate.parse(data)),
   })
 }
 

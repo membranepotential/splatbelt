@@ -1,15 +1,24 @@
 <script lang="ts">
   import { uploadStore, type UploadStore } from './upload'
   import type { PageData } from './$types'
-  import type { Upload } from '$lib'
+  import { FrameConfig, type ModelConfig, type Upload } from '$lib/schemas'
   import UploadItem from './UploadItem.svelte'
-  import ObjectItem from './ObjectItem.svelte'
-  import { AnalysisState } from '$lib/enums'
+  import ObjectItem from './FrameSelection.svelte'
 
   export let data: PageData
-  let uploads: UploadStore[] = []
+  export let config: ModelConfig
 
-  $: disabled = data.project.state >= AnalysisState.pending
+  $: objects = data.objects
+  $: frames = Object.fromEntries(
+    objects.map((obj) => [
+      obj.name,
+      FrameConfig.parse(config?.frames[obj.name]),
+    ])
+  )
+
+  $: disabled = data.project.state != 'configuring'
+
+  let uploads: UploadStore[] = []
 
   function uploadInProgress(file: File) {
     return uploads.some(({ object }) => object.name == file.name)
@@ -27,7 +36,7 @@
 
   function uploadDone(upload: Upload) {
     uploads = uploads.filter(({ object }) => object.name != upload.object.name)
-    data.uploads = [...data.uploads, upload.object]
+    data.objects = [...data.objects, upload.object]
   }
 
   async function handleFiles(event: any) {
@@ -40,10 +49,10 @@
 </script>
 
 <ul>
-  {#each data.uploads as object}
+  {#each objects as object}
     <li class="py-2">
       <!-- <a href={upload.url} target="_blank">{upload.name}</a> -->
-      <ObjectItem bind:project={data.project} {object} {disabled} />
+      <ObjectItem bind:config={frames[object.name]} {object} {disabled} />
     </li>
   {/each}
   {#each uploads as upload}

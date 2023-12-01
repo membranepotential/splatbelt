@@ -3,7 +3,7 @@
   import { enhance } from '$app/forms'
   import { toast } from '$lib/notifications/notifications'
   import type { PageData } from './$types'
-  import type { Project } from '$lib'
+  import type { Project } from '$lib/schemas'
 
   export let data: PageData
 

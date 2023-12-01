@@ -7,7 +7,7 @@ import * as uploads from '$lib/server/uploads'
 import type { PageServerLoad } from '../$types'
 
 export const load: PageServerLoad = ({ params }) => {
-  return { uploads: uploads.listWithType(params.id) }
+  return { objects: uploads.listWithType(params.id) }
 }
 
 export const actions = {

@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { AnalysisState } from '$lib/enums'
   import type { PageData } from './$types'
+  import type { ModelConfig } from '$lib/schemas'
+
+  import Chooser from './Chooser.svelte'
 
   export let data: PageData
+  export let config: ModelConfig
+
   $: project = data.project
-  $: disabled = project.state >= AnalysisState.pending
+  $: disabled = project.state != 'configuring'
   $: config = project.config
-  $: if (config.pairing.type === 'complex') {
-    config.pairing.sequential = config.pairing.sequential || 10
-    config.pairing.retrieval = config.pairing.retrieval || 10
-  }
 </script>
 
-<div class="block rounded-lg bg-gray-100 px-6 py-4">
+<!-- <div class="block rounded-lg bg-gray-100 px-6 py-4">
   <section>
     <div class="w-1/3">
       <label for="select-pairing"> Pairing </label>
@@ -114,10 +114,22 @@
   </section>
 
   <section>
-    <p>Progress:</p>
+    <div class="w-1/3">
+      <label for="log-viewer">Logs</label>
+    </div>
+    <div class="h-48 w-2/3">
+      <ul id="log-viewer" class="h-full overflow-y-scroll">
+        {#each project.logs as log, i (i)}
+          <li
+            class="break-words rounded-sm px-2 py-2 text-sm"
+            class:bg-indigo-100={i % 2}
+          >
+            {log.entry}
+          </li>
+        {/each}
+      </ul>
+    </div>
   </section>
-
-  <section>Show logs</section>
 
   <form METHOD="POST" action={`/projects/${project.id}?/analyse`}>
     <section class="gap-x-8">
@@ -126,7 +138,7 @@
       </button>
     </section>
   </form>
-</div>
+</div> -->
 
 <style lang="postcss">
   section {

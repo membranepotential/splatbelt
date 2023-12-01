@@ -1,7 +1,7 @@
 import { writable, type Readable } from 'svelte/store'
 import { deserialize } from '$app/forms'
 import { z } from 'zod'
-import type { Upload } from '$lib'
+import type { Upload } from '$lib/schemas'
 
 const preparedResponse = z.object({
   key: z.string(),
@@ -77,7 +77,7 @@ function setEtag(upload: Upload, index: number, etag: string) {
   upload.etags[index] = etag
 }
 
-export interface UploadStore extends Upload, Readable<number> {}
+export type UploadStore = Upload & Readable<number>
 
 export async function uploadStore(
   file: File,

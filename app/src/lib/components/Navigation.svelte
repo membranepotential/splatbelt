@@ -12,6 +12,10 @@
       label: 'Projects',
     },
     {
+      href: '/',
+      label: 'App',
+    },
+    {
       href: '/other',
       label: 'other',
     },

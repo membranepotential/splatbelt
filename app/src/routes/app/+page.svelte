@@ -6,6 +6,7 @@
   import { app, events } from '$lib/stores'
   import { initial, throttle } from 'lodash-es'
   import { Vector3 } from 'three'
+  import { VIEWER_STATE } from '$lib/types'
 
   export let data: PageData
   let canvasContainer: HTMLDivElement
@@ -89,10 +90,13 @@
     // })
   })
 
-  // let lastViewerState = $app.get().VIEWER_STATE
-  // $app.subscribe(({ VIEWER_STATE }) => {
-  //   if( VIEWER_STATE !== )
-  // })
+  let lastViewerState = VIEWER_STATE.FREE
+  app.subscribe(({ VIEWER_STATE: currentState }) => {
+    if (currentState !== lastViewerState) {
+      console.log('State changed from ', lastViewerState, ' to ', currentState)
+    }
+    lastViewerState = currentState
+  })
 
   function replayEvents() {
     state = 'play'

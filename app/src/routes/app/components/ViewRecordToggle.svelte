@@ -5,12 +5,12 @@
   function toggle() {
     app.update(({ VIEWER_STATE: currentState }) => ({
       VIEWER_STATE:
-        currentState === VIEWER_STATE.RECORDING
+        currentState === VIEWER_STATE.RECORD
           ? VIEWER_STATE.FREE
-          : VIEWER_STATE.RECORDING,
+          : VIEWER_STATE.RECORD,
     }))
   }
-  $: isRecording = $app.VIEWER_STATE === VIEWER_STATE.RECORDING
+  $: isRecording = $app.VIEWER_STATE === VIEWER_STATE.RECORD
 </script>
 
 <div class="absolute top-32 flex w-full flex-col items-center justify-center">

@@ -68,18 +68,9 @@
     }
   })
 
-  let listeners = []
-
   function saveInitialPosition() {
     events.set([])
-    console.log('setting initial position')
-    // initialPosition = viewer.controls.getState()\
-    viewer.controls = {
-      ...viewer.controls,
-      target0: new Vector3().copy(viewer.controls.target),
-      position0: new Vector3().copy(viewer.controls.object.position),
-      zoom0: viewer.controls?.object.zoom,
-    }
+    viewer.controls?.saveState()
   }
   const trackEvent = (e) => {
     events.update((contents) => [...contents, e])

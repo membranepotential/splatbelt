@@ -3,7 +3,7 @@
   import * as GaussianSplat3D from '$lib/splats'
   import type { PageData } from './$types'
   import UI from './components/UI.svelte'
-  import { app, events } from '$lib/stores'
+  import { app, events, playerProgress } from '$lib/stores'
   import { initial, throttle } from 'lodash-es'
   import { Vector3 } from 'three'
   import { VIEWER_STATE } from '$lib/types'
@@ -123,6 +123,10 @@
     function playLoop() {
       console.log('playLoop duration ', duration)
 
+      playerProgress.set({
+        current: 0,
+        total: duration,
+      })
       viewer.controls?.reset()
       let loopStartTime = Date.now()
       let lastFrameTime = Date.now()
@@ -130,6 +134,12 @@
       function playFrame() {
         const currentOffset = Date.now() - loopStartTime
 
+        playerProgress.set({
+          current: currentOffset,
+          total: duration,
+        })
+
+        // Loop has exited
         if (currentOffset > duration) {
           return
         }

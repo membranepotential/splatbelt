@@ -12,7 +12,7 @@
   import type { ModelConfig } from '$lib'
   import { AnalysisState } from '$lib/enums'
   import { modelConfig } from '$lib/schemas'
-  import Error from '../../+error.svelte'
+  import Error from '../../../+error.svelte'
 
   export let data: LayoutData
   $: project = data.project
@@ -62,7 +62,7 @@
 
   const submit = debounce(async (config: ModelConfig) => {
     try {
-      activeRequest = fetch(`/projects/${project.id}?/updateConfig`, {
+      activeRequest = fetch(`/admin/projects/${project.id}?/updateConfig`, {
         method: 'POST',
         body: JSON.stringify(config),
       })
@@ -110,7 +110,7 @@
     <div class="flex items-baseline px-4 sm:px-6 lg:px-8">
       <span class="grow">
         <Editable
-          action={`/projects/${project.id}?/rename`}
+          action={`/admin/projects/${project.id}?/rename`}
           value={project.name}
           promptClass="mx-2 text-sm text-gray-500 hover:cursor-pointer hover:underline"
           on:submit={() => toast('Project name updated')}
@@ -143,7 +143,7 @@
       <nav class="flex space-x-4" aria-label="Tabs">
         {#each tabs as tab}
           <a
-            href="/projects/{project.id}/{tab.id}"
+            href="/admin/projects/{project.id}/{tab.id}"
             class="rounded-md px-3 py-2 text-sm font-medium {$activeTab ===
             tab.id
               ? classesActive

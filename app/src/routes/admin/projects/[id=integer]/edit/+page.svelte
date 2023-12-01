@@ -131,7 +131,7 @@
     </div>
   </section>
 
-  <form METHOD="POST" action={`/projects/${project.id}?/analyse`}>
+  <form METHOD="POST" action={`/admin/projects/${project.id}?/analyse`}>
     <section class="gap-x-8">
       <button class="btn-action inline-block flex-grow font-bold" {disabled}>
         Start Analysis

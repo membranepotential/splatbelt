@@ -8,7 +8,7 @@
 
   const links: Link[] = [
     {
-      href: '/projects',
+      href: '/admin/projects',
       label: 'Projects',
     },
     {

@@ -79,9 +79,16 @@
     leading: true,
     trailing: true,
   })
+  var loopTimer = null
 
+  /**
+   * TODO: WHEN USER TOUCHES AGAIN, MOVE TO FREE
+   * @param newState
+   */
   function handleStateUpdate(newState: VIEWER_STATE) {
     if (newState === VIEWER_STATE.RECORD) {
+      clearInterval(loopTimer)
+
       saveInitialPosition()
       for (const eventType of eventsToTrack) {
         const fn = eventType === 'mousemove' ? trackMouseMove : trackEvent
@@ -90,7 +97,8 @@
       }
 
       viewer.rootElement.addEventListener('pointerdown', saveInitialPosition)
-    } else {
+    } else if (newState === VIEWER_STATE.FREE) {
+      clearInterval(loopTimer)
       for (const eventType of eventsToTrack) {
         const fn = eventType === 'mousemove' ? trackMouseMove : trackEvent
 
@@ -102,8 +110,7 @@
   }
 
   function replayEvents() {
-    state = 'play'
-    console.log('State is now Play')
+    $app.VIEWER_STATE = VIEWER_STATE.PLAY
     function get__store(store: any): Event[] {
       let $val
       store.subscribe(($) => ($val = [...$]))()
@@ -121,7 +128,12 @@
       storeContent[0].timeStamp
 
     function playLoop() {
-      console.log('playLoop duration ', duration)
+      console.log(
+        'playLoop duration ',
+        duration,
+        ' events: ',
+        storeContent.length
+      )
 
       playerProgress.set({
         current: 0,
@@ -131,18 +143,26 @@
       let loopStartTime = Date.now()
       let lastFrameTime = Date.now()
 
+      // const mapOfPlayedEvents = new WeakMap()
+
+      let eventsPlayed = 0
+      const report = () => {
+        console.log('Events played: ', eventsPlayed)
+      }
+
       function playFrame() {
-        const currentOffset = Date.now() - loopStartTime
-
-        playerProgress.set({
-          current: currentOffset,
-          total: duration,
-        })
-
-        // Loop has exited
-        if (currentOffset > duration) {
-          return
+        // Check for different mode
+        if ($app.VIEWER_STATE !== VIEWER_STATE.PLAY) {
+          return report()
         }
+
+        // Check for loop done
+        const currentOffset = Date.now() - loopStartTime
+        if (currentOffset > duration) {
+          return report()
+        }
+
+        const idealTime = loopStartTime + currentOffset
 
         /**
          * Find the element in the store that has the closest delta to the current offset
@@ -157,7 +177,11 @@
           return currDiff < prevDiff ? curr : prev
         })
 
-        target.dispatchEvent(closestEntry)
+        if (closestEntry) {
+          // mapOfPlayedEvents.set(closestEntry, true)
+          target.dispatchEvent(closestEntry)
+          eventsPlayed++
+        }
 
         const currentTime = Date.now()
         const timeSinceLastFrame = currentTime - lastFrameTime
@@ -166,12 +190,20 @@
         lastFrameTime = currentTime
 
         setTimeout(playFrame, timeToNextFrame)
+
+        // Do this when we have time
+        requestAnimationFrame(() => {
+          playerProgress.set({
+            current: currentOffset,
+            total: duration,
+          })
+        })
       }
 
       playFrame()
     }
     playLoop()
-    setInterval(playLoop, duration + 2000)
+    loopTimer = setInterval(playLoop, duration + 2000)
   }
 </script>
 

@@ -46,38 +46,6 @@
 
     renderer = viewer.renderer.domElement
 
-    const trackEvent = (e) => {
-      events.update((contents) => [
-        ...contents,
-        {
-          type: e.type,
-          event: e,
-        },
-      ])
-    }
-    const trackMouseMove = throttle(trackEvent, 16, {
-      leading: true,
-      trailing: true,
-    })
-
-    for (const eventType of eventsToTrack) {
-      const fn = eventType === 'mousemove' ? trackMouseMove : trackEvent
-
-      viewer.rootElement.addEventListener(eventType, fn)
-    }
-
-    viewer.rootElement.addEventListener('pointerdown', () => {
-      events.set([])
-      console.log('setting initial position')
-      // initialPosition = viewer.controls.getState()\
-      viewer.controls = {
-        ...viewer.controls,
-        target0: new Vector3().copy(viewer.controls.target),
-        position0: new Vector3().copy(viewer.controls.object.position),
-        zoom0: viewer.controls?.object.zoom,
-      }
-    })
-
     // viewer.rootElement.addEventListener('pointermove', (e) => {
     //   if (state === 'play') return
     //   if (initialPosition === null) {
@@ -94,9 +62,58 @@
   app.subscribe(({ VIEWER_STATE: currentState }) => {
     if (currentState !== lastViewerState) {
       console.log('State changed from ', lastViewerState, ' to ', currentState)
+      lastViewerState = currentState
+      handleStateUpdate(currentState)
     }
-    lastViewerState = currentState
   })
+
+  let listeners = []
+
+  function saveInitialPosition() {
+    events.set([])
+    console.log('setting initial position')
+    // initialPosition = viewer.controls.getState()\
+    viewer.controls = {
+      ...viewer.controls,
+      target0: new Vector3().copy(viewer.controls.target),
+      position0: new Vector3().copy(viewer.controls.object.position),
+      zoom0: viewer.controls?.object.zoom,
+    }
+  }
+  const trackEvent = (e) => {
+    events.update((contents) => [
+      ...contents,
+      {
+        type: e.type,
+        event: e,
+      },
+    ])
+  }
+  const trackMouseMove = throttle(trackEvent, 16, {
+    leading: true,
+    trailing: true,
+  })
+
+  function handleStateUpdate(newState: VIEWER_STATE) {
+    if (newState === VIEWER_STATE.RECORD) {
+      saveInitialPosition()
+      for (const eventType of eventsToTrack) {
+        const fn = eventType === 'mousemove' ? trackMouseMove : trackEvent
+
+        viewer.rootElement.addEventListener(eventType, fn)
+      }
+
+      viewer.rootElement.addEventListener('pointerdown', saveInitialPosition)
+    } else {
+      for (const eventType of eventsToTrack) {
+        const fn = eventType === 'mousemove' ? trackMouseMove : trackEvent
+
+        viewer.rootElement.removeEventListener(eventType, fn)
+      }
+
+      viewer.rootElement.removeEventListener('pointerdown', saveInitialPosition)
+    }
+  }
 
   function replayEvents() {
     state = 'play'

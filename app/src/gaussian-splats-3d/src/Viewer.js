@@ -486,11 +486,10 @@ export class Viewer {
       if (onProgress) onProgress(percent, percentLabel, 'downloading')
     }
 
-    const fileName = new URL(fileURL).pathname
     return new Promise((resolve, reject) => {
       let fileLoadPromise
-      console.log(`Loading file: ${fileURL}`)
-      if (SplatLoader.isFileSplatFormat(fileURL)) {
+      const fileName = new URL(fileURL).pathname
+      if (SplatLoader.isFileSplatFormat(fileName)) {
         fileLoadPromise = new SplatLoader().loadFromURL(
           fileURL,
           downloadProgress

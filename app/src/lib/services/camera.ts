@@ -1,7 +1,7 @@
 import type { Viewer } from '$splats'
 import * as TWEEN from '@tweenjs/tween.js'
 
-import { PerspectiveCamera, Vector3 } from 'three'
+import type { PerspectiveCamera, Vector3 } from 'three'
 
 class CameraService {
   viewer: Viewer | null

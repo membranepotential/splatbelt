@@ -93,6 +93,8 @@ export class ViewerEngine {
 
         break
       case VIEWER_STATE.PLAY:
+        const currentShot = get(ShotsService.getCurrentShot())
+        this.playLoop(currentShot)
         break
     }
   }
@@ -150,14 +152,31 @@ export class ViewerEngine {
 
     this.duration = trace[trace.length - 1].timeStamp - trace[0].timeStamp
 
-    this.playLoop(trace)
+    this.playLoop()
     this.loopTimer = setInterval(
       this.playLoop.bind(this, trace),
       this.duration + 20000
     )
   }
 
-  playLoop(trace: Interaction[]) {
+  playLoop(shot: Shot) {
+    // check initial position and reset
+
+    console.log('apply shot', shot)
+    shot.initialPosition.position.copy(this.viewer.camera.position)
+    // shot.initialPosition.target.copy(this.viewer.camera.target) // 0,0,0 anyway
+
+    this.viewer.camera.zoom = shot.initialPosition.zoom
+    this.viewer.camera.updateProjectionMatrix()
+
+    console.log('Playing this shot ')
+    this.loopTimer = setInterval(
+      this.playLoop.bind(this, shot),
+      shot.duration + 5000
+    )
+  }
+
+  playLoopOLD(trace: Interaction[]) {
     app.update(() => {
       return {
         VIEWER_STATE: VIEWER_STATE.PLAY,

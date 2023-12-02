@@ -6,6 +6,7 @@ import * as TWEEN from '@tweenjs/tween.js'
 import type { PerspectiveCamera } from 'three'
 import { Spherical, Vector3 } from 'three'
 import { VIEWER_STATE, CAMERA_RECORDING_MODE } from '$lib/types'
+import ShotsService from './shots'
 
 type XYZ = {
   x: number
@@ -114,7 +115,6 @@ class GestureService {
   applyZoomTransform(coords: XYZ, zoom: number, params: TransformationParams) {
     const { axis, directionX, directionY } = params
 
-    console.log('zooming')
     var scale = axis === 'x' ? directionX : directionY
 
     const _zoom = zoom + 0.2 * scale
@@ -244,19 +244,15 @@ class GestureService {
 
   handleEvent(event: Event) {
     // console.log(event)
+
+    const DURATION = 1200
+    const cameraAtBeginning = this.camera?.clone()
     if (this.latestEvents.length > 1 && !this.tween) {
       const [first, second] = this.latestEvents
 
       const camera: PerspectiveCamera = this.camera!
       const { coords, zoom, hasAppliedDolly, hasAppliedZoom, hasAppliedPan } =
         this.calculateNewCameraPosition([first, second])
-      // console.log(coords)
-      // camera.position.set(coords.x + 100, coords.y, coords.z)
-      const duration = 1200
-
-      console.log('hasAppliedDolly', hasAppliedDolly)
-      console.log('hasAppliedPan', hasAppliedPan)
-      console.log('hasAppliedZoom', hasAppliedZoom)
 
       const from = {
         x: camera.position.x,
@@ -277,7 +273,7 @@ class GestureService {
 
       // console.log(from, coords)
       this.tween = new TWEEN.Tween(from)
-        .to(to, duration)
+        .to(to, DURATION)
         .easing(TWEEN.Easing.Quadratic.InOut) // Add this line for a bezier curve effect
         .onUpdate(() => {
           if (hasAppliedZoom) {
@@ -296,6 +292,15 @@ class GestureService {
 
         this.tween = null
         this.latestEvents = []
+
+        ShotsService.updateCurrentShot({
+          duration: DURATION,
+          initialPosition: {
+            target: this.viewer!.controls!.target0.clone(),
+            position: cameraAtBeginning!.position.clone(),
+            zoom: cameraAtBeginning!.zoom,
+          },
+        })
 
         app.set({ VIEWER_STATE: VIEWER_STATE.PLAY })
       })

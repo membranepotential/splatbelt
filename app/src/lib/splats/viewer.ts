@@ -1,5 +1,6 @@
 // @ts-nocheck
 import * as THREE from 'three'
+import TWEEN from '@tweenjs/tween.js'
 
 import { SplatBuffer } from './buffer'
 import { Octree } from './octree'
@@ -511,6 +512,7 @@ export class Viewer {
     if (this.selfDrivenMode) {
       requestAnimationFrame(this.selfDrivenUpdateFunc)
     }
+    TWEEN.update()
     this.controls.update()
     this.updateView()
     this.renderer.autoClear = false

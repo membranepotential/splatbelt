@@ -5,6 +5,8 @@
   import UI from './components/UI.svelte'
   import { ViewerEngine } from '$lib/viewer/engine'
 
+  import CameraService from '$lib/services/camera'
+
   export let data: PageData
   let canvasContainer: HTMLDivElement
   let viewer: GaussianSplat3D.Viewer
@@ -27,6 +29,7 @@
     viewer.start()
 
     engine = new ViewerEngine(viewer)
+    CameraService.link(viewer)
   })
 
   const replayEvents = () => {

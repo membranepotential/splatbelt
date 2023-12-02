@@ -2,11 +2,13 @@
   import { app } from '$lib/stores'
   import { VIEWER_STATE } from '$lib/types'
 
+  import CameraService from '$lib/services/camera'
+
   $: isFree = $app.VIEWER_STATE === VIEWER_STATE.FREE
   $: isRecord = $app.VIEWER_STATE === VIEWER_STATE.RECORD
   $: isPlay = $app.VIEWER_STATE === VIEWER_STATE.PLAY
 
-  let toggleState = false
+  let toggleState = true
   let centerLockState = true
   function toggle() {
     toggleState = !toggleState
@@ -54,6 +56,7 @@
             <button
               type="button"
               class="settings-radio-button active relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
+              on:click={() => CameraService.test()}
             >
               <svg
                 width="24px"

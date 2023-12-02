@@ -52,6 +52,7 @@
     "@aws-sdk/s3-request-presigner": "^3.414.0",
     "@threlte/core": "^6.0.10",
     "@threlte/extras": "^7.0.0",
+    "@tweenjs/tween.js": "^21.0.0",
     "gaussian-splats-3d": "github:mkkellogg/GaussianSplats3D",
     "humanize-duration": "^3.30.0",
     "lodash-es": "^4.17.21",

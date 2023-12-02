@@ -3,7 +3,7 @@
   import { VIEWER_STATE } from '$lib/types'
 
   $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
-  $: isVisible = $app.VIEWER_STATE === VIEWER_STATE.PLAY
+  $: isVisible = $app.VIEWER_STATE !== VIEWER_STATE.RECORD
 </script>
 
 <div

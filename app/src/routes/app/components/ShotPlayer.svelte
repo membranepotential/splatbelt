@@ -1,26 +1,36 @@
 <script>
   import { app, playerProgress } from '$lib/stores'
-  let currentShot = 1
+  import ShotsService from '$lib/services/shots'
+
+  const shots = ShotsService.getShots()
+  const currentShot = ShotsService.getCurrentShot()
+
   $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
+
+  $: console.log($currentShot)
 </script>
 
 <div class="shot-player-bar">
-  <div class="shot bg-slate-800">
-    1
-    {#if currentShot == 1}
-      <div style="transform: translateX({percentDone}%)" class="indicator" />
-    {/if}
+  {#each $shots as shot, i}
+    <div
+      class="shot"
+      class:active={$currentShot === i}
+      on:click={() => ShotsService.setCurrentShot(i)}
+    >
+      {i + 1}
+
+      {#if $currentShot === i}
+        <div style="transform: translateX({percentDone}%);" class="indicator" />
+      {/if}
+    </div>
+  {/each}
+
+  <div
+    class="shot bg-slate-500"
+    on:click={() => ShotsService.addShotAndSetCurrent()}
+  >
+    +
   </div>
-  <div class="shot bg-slate-800">
-    2
-    {#if currentShot == 2}
-      <div
-        style="transform: translateX({percentDone / 10}%)"
-        class="indicator"
-      />
-    {/if}
-  </div>
-  <div class="shot settings bg-slate-500">+</div>
 </div>
 
 <style lang="sass">
@@ -31,6 +41,7 @@
   display: inline-flex
   justify-content: center
   align-items: center
+
   .shot 
     color: white
     position: relative
@@ -41,6 +52,12 @@
     justify-content: center
     align-items: center
     overflow: hidden
+    @apply bg-slate-800
+    
+    &.active
+      background-color: white
+      @apply bg-slate-600
+    
     .indicator
       position: absolute
       bottom: 0
@@ -48,5 +65,4 @@
       background-color: white
       width: 100%
       left: -100%
-
 </style>

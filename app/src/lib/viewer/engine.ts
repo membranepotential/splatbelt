@@ -3,6 +3,7 @@ import { app, events, playerProgress } from '$lib/stores'
 import { get } from 'svelte/store'
 import { throttle } from 'lodash-es'
 import { VIEWER_STATE } from '$lib/types'
+import type { Shot } from '$lib/types'
 
 export class ViewerEngine {
   viewer: Viewer
@@ -42,6 +43,11 @@ export class ViewerEngine {
         this.handleStateUpdate(currentState)
       }
     })
+  }
+
+  loadShot(shot: Shot) {
+    this.viewer.controls?.setState(shot.initialPosition)
+    events.set(shot.events)
   }
 
   trackEvent(e: Event) {
@@ -112,11 +118,15 @@ export class ViewerEngine {
     this.playLoop(recordedEvents)
     this.loopTimer = setInterval(
       this.playLoop.bind(this, recordedEvents),
-      this.duration + 2000
+      this.duration + 20000
     )
   }
 
   playLoop(recordedEvents: Event[]) {
+    app.set({
+      VIEWER_STATE: VIEWER_STATE.PLAY,
+    })
+
     console.log(
       'playLoop duration ',
       this.duration,

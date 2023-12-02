@@ -4,9 +4,10 @@
   import ReplayButton from './ReplayButton.svelte'
   import TempProgressBar from './TempProgressBar.svelte'
   import ShotPlayer from './ShotPlayer.svelte'
-
+  import ShotSettings from './ShotSettings.svelte'
   import { createEventDispatcher } from 'svelte'
   import { events } from '$lib/stores'
+
   const dispatch = createEventDispatcher()
 
   let count = 0
@@ -31,6 +32,7 @@
 <SettingsPane />
 <TempProgressBar />
 <ShotPlayer />
+<ShotSettings />
 
 <style>
 </style>

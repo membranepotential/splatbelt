@@ -44,7 +44,7 @@
 .shot-player-bar
   width: 100%
   position: absolute
-  bottom: 10vh
+  bottom: 14vh
   display: inline-flex
   justify-content: center
   align-items: center

@@ -92,8 +92,9 @@
 <div
   class="help-text pointer-events-none absolute bottom-52 left-0 w-full text-center text-white opacity-30"
 >
-  <span class:hidden={isRecording}>View and Move Model</span>
-  <span class:hidden={!isRecording}>Swipe to record shot</span>
+  <span class:hidden={isRecording || isPlaying}>View and Move Model</span>
+  <span class:hidden={!isRecording || isPlaying}>Swipe to record shot</span>
+  <span class:hidden={!isPlaying}>Preview of all shots</span>
 </div>
 
 <style lang="sass">

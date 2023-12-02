@@ -1,6 +1,7 @@
-<script>
-  import { app } from '$lib/stores'
-  import { VIEWER_STATE } from '$lib/types'
+<script lang="ts">
+  import { app, controls } from '$lib/stores'
+  import { CAMERA_RECORDING_MODE, VIEWER_STATE } from '$lib/types'
+  import { derived } from 'svelte/store'
 
   import CameraService from '$lib/services/camera'
   import TimeSensitiveButton from '$lib/components/TimeSensitiveButton.svelte'
@@ -18,6 +19,16 @@
     centerLockState = !centerLockState
   }
   $: console.log(isPlay)
+
+  function updateControls(key: string, mode: CAMERA_RECORDING_MODE) {
+    controls.update((c) => ({
+      ...c,
+      [key]: mode,
+    }))
+  }
+
+  const activeX = derived(controls, ($controls) => $controls.x)
+  const activeY = derived(controls, ($controls) => $controls.y)
 </script>
 
 {#if !isPlay}
@@ -57,7 +68,8 @@
             <button
               type="button"
               class="settings-radio-button active relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => CameraService.test()}
+              on:click={() => updateControls('y', CAMERA_RECORDING_MODE.DOLLY)}
+              class:active={$activeY === CAMERA_RECORDING_MODE.DOLLY}
             >
               <svg
                 width="24px"
@@ -96,77 +108,80 @@
               Dolly
             </button>
 
-            <TimeSensitiveButton fn={() => CameraService.test2()}>
-              <div
-                class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
-              >
-                <svg
-                  width="24px"
-                  height="24px"
-                  viewBox="0 0 24 24"
+            <button
+              type="button"
+              class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
+              on:click={() => updateControls('y', CAMERA_RECORDING_MODE.ZOOM)}
+              class:active={$activeY === CAMERA_RECORDING_MODE.ZOOM}
+            >
+              <svg
+                width="24px"
+                height="24px"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                color="#000000"
+                ><path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="#000000"
                   stroke-width="1.5"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  color="#000000"
-                  ><path
-                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  /><path
-                    d="M5 6C5.55228 6 6 5.55228 6 5C6 4.44772 5.55228 4 5 4C4.44772 4 4 4.44772 4 5C4 5.55228 4.44772 6 5 6Z"
-                    fill="#000000"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  /><path
-                    d="M19 20C19.5523 20 20 19.5523 20 19C20 18.4477 19.5523 18 19 18C18.4477 18 18 18.4477 18 19C18 19.5523 18.4477 20 19 20Z"
-                    fill="#000000"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  /><path
-                    d="M19 19L17.5 17.5"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  /><path
-                    d="M15.5 15.5L14.5 14.5"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  /><path
-                    d="M12.5 12.5L11.5 11.5"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  /><path
-                    d="M9.5 9.5L8.5 8.5"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  /><path
-                    d="M6.5 6.5L5 5"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  /></svg
-                >
-                Zoom
-              </div>
-            </TimeSensitiveButton>
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /><path
+                  d="M5 6C5.55228 6 6 5.55228 6 5C6 4.44772 5.55228 4 5 4C4.44772 4 4 4.44772 4 5C4 5.55228 4.44772 6 5 6Z"
+                  fill="#000000"
+                  stroke="#000000"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /><path
+                  d="M19 20C19.5523 20 20 19.5523 20 19C20 18.4477 19.5523 18 19 18C18.4477 18 18 18.4477 18 19C18 19.5523 18.4477 20 19 20Z"
+                  fill="#000000"
+                  stroke="#000000"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /><path
+                  d="M19 19L17.5 17.5"
+                  stroke="#000000"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /><path
+                  d="M15.5 15.5L14.5 14.5"
+                  stroke="#000000"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /><path
+                  d="M12.5 12.5L11.5 11.5"
+                  stroke="#000000"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /><path
+                  d="M9.5 9.5L8.5 8.5"
+                  stroke="#000000"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /><path
+                  d="M6.5 6.5L5 5"
+                  stroke="#000000"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+              >
+              Zoom
+            </button>
 
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
+              on:click={() => updateControls('y', CAMERA_RECORDING_MODE.PAN)}
+              class:active={$activeY === CAMERA_RECORDING_MODE.PAN}
             >
               <svg
                 width="24px"
@@ -204,6 +219,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
+              on:click={() => updateControls('x', CAMERA_RECORDING_MODE.DOLLY)}
+              class:active={$activeX === CAMERA_RECORDING_MODE.DOLLY}
             >
               <svg
                 width="24px"
@@ -244,6 +261,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
+              on:click={() => updateControls('x', CAMERA_RECORDING_MODE.ZOOM)}
+              class:active={$activeX === CAMERA_RECORDING_MODE.ZOOM}
             >
               <svg
                 width="24px"
@@ -310,6 +329,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
+              on:click={() => updateControls('x', CAMERA_RECORDING_MODE.PAN)}
+              class:active={$activeX === CAMERA_RECORDING_MODE.PAN}
             >
               <svg
                 width="24px"

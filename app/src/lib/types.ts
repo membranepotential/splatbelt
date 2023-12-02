@@ -15,3 +15,9 @@ export type Shot = {
     zoom: number
   }
 }
+
+export enum CAMERA_RECORDING_MODE {
+  DOLLY = 'DOLLY',
+  ZOOM = 'ZOOM',
+  PAN = 'PAN',
+}

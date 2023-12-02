@@ -29,7 +29,6 @@ class GestureService {
     this.viewer = null
     this.camera = null
     this.tween = null
-    this.tweenPending = false
   }
 
   link(viewer: Viewer) {
@@ -194,8 +193,7 @@ class GestureService {
       this.tween.start().onComplete(() => {
         console.log('Tween complete')
 
-        this.tween = null
-        this.latestEvents = []
+        app.set({ VIEWER_STATE: VIEWER_STATE.PLAY })
       })
     }
     this.latestEvents.push(event)
@@ -204,16 +202,10 @@ class GestureService {
   handleEventUp(event: Event) {
     if (get(app).VIEWER_STATE === 'RECORD') {
       console.log('Ending recording', !!this.tween)
-      app.set({ VIEWER_STATE: VIEWER_STATE.PLAY })
     }
   }
   handleEventDown(event: Event) {
     if (get(app).VIEWER_STATE === 'RECORD') {
-      if (this.tween) {
-        this.tween.stop()
-        this.tween = null
-      }
-
       this.latestEvents = []
     }
   }

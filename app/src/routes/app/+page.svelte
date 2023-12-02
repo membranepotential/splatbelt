@@ -9,7 +9,6 @@
   import CameraService from '$lib/services/camera'
   import { VIEWER_STATE } from '$lib/types'
   import ViewRecordToggle from './components/ViewRecordToggle.svelte'
-
   export let data: PageData
 
   let canvasContainer: HTMLDivElement

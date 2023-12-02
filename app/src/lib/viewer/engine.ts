@@ -6,7 +6,7 @@ import { VIEWER_STATE } from '$lib/types'
 import type { Shot } from '$lib/types'
 import ShotsService from '$lib/services/shots'
 
-const currentShot = ShotsService.getCurrentShot()
+const currentShotIdx = ShotsService.getCurrentShotIdx()
 const shots = ShotsService.getShots()
 
 // console.log(currentShot)
@@ -51,9 +51,9 @@ export class ViewerEngine {
       }
     })
 
-    // currentShot.subscribe((idx) => {
-    //   this.resetForNewShot()
-    // })
+    currentShotIdx.subscribe(() => {
+      this.resetForNewShot()
+    })
   }
 
   resetForNewShot() {
@@ -62,7 +62,6 @@ export class ViewerEngine {
     })
     this.viewer.controls?.reset()
     // events.set([])
-    clearInterval(this.loopTimer!)
   }
 
   loadShot(shot: Shot) {

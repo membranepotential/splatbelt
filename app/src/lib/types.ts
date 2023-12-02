@@ -15,6 +15,7 @@ export type Interaction = {
 }
 
 export type Shot = {
+  id: number
   trace: Interaction[]
   initialPosition: {
     target: Vector3

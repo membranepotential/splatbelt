@@ -193,6 +193,9 @@ class GestureService {
       this.tween.start().onComplete(() => {
         console.log('Tween complete')
 
+        this.tween = null
+        this.latestEvents = []
+
         app.set({ VIEWER_STATE: VIEWER_STATE.PLAY })
       })
     }
@@ -200,14 +203,10 @@ class GestureService {
   }
 
   handleEventUp(event: Event) {
-    if (get(app).VIEWER_STATE === 'RECORD') {
-      console.log('Ending recording', !!this.tween)
-    }
+    console.log('gestures > handleKeyUp')
   }
   handleEventDown(event: Event) {
-    if (get(app).VIEWER_STATE === 'RECORD') {
-      this.latestEvents = []
-    }
+    console.log('gestures > handleKeyDown')
   }
 }
 

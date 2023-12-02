@@ -9,6 +9,11 @@ import {
 import { toast } from '$lib/notifications/notifications'
 import { Vector3 } from 'three'
 
+const id = (function () {
+  let counter = 0
+  return () => counter++
+})()
+
 class ShotsService {
   shots: Writable<Shot[]>
   currentShotIdx: Writable<number>
@@ -57,8 +62,13 @@ class ShotsService {
 
   createEmptyShot() {
     return {
+      id: id(),
       events: writable<Event[]>([]),
-      initialPosition: null,
+      initialPosition: {
+        target: new Vector3(),
+        position: new Vector3(),
+        zoom: 4,
+      },
     }
   }
 
@@ -87,16 +97,11 @@ class ShotsService {
       return toast('Maximum number of shots reached')
     }
 
-    const newShot = {
-      events: writable<Event[]>([]),
-      initialPosition: {
-        target: new Vector3(),
-        position: new Vector3(),
-        zoom: 4,
-      },
-    }
+    const newShot = this.createEmptyShot()
 
-    this.shots.update((shots) => [...shots, this.createEmptyShot()])
+    console.log('new shot', newShot)
+    this.shots.update((shots) => [...shots, newShot])
+    console.log('shots updated')
     this.currentShotIdx.set(currentShotCount)
   }
 }

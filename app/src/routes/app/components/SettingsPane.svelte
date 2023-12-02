@@ -10,6 +10,9 @@
 <script>
   import { app } from '$lib/stores'
   import { VIEWER_STATE } from '$lib/types'
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
   $: isFree = $app.VIEWER_STATE === VIEWER_STATE.FREE
@@ -26,6 +29,7 @@
   }
   $: console.log(isPlay)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
   function updateControls(key: string, mode: CAMERA_RECORDING_MODE) {
     controls.update((c) => ({
@@ -36,6 +40,8 @@
 
   const activeX = derived(controls, ($controls) => $controls.x)
   const activeY = derived(controls, ($controls) => $controls.y)
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 </script>
@@ -78,8 +84,11 @@
               type="button"
               class="settings-radio-button active relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
               on:click={() => updateControls('y', CAMERA_RECORDING_MODE.DOLLY)}
               class:active={$activeY === CAMERA_RECORDING_MODE.DOLLY}
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
             >
@@ -120,12 +129,18 @@
               Dolly
             </button>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
               on:click={() => updateControls('y', CAMERA_RECORDING_MODE.ZOOM)}
               class:active={$activeY === CAMERA_RECORDING_MODE.ZOOM}
+=======
+            <button
+              type="button"
+              class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
+>>>>>>> Stashed changes
 =======
             <button
               type="button"
@@ -195,12 +210,18 @@
               Zoom
             </button>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
               on:click={() => updateControls('y', CAMERA_RECORDING_MODE.PAN)}
               class:active={$activeY === CAMERA_RECORDING_MODE.PAN}
+=======
+            <button
+              type="button"
+              class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
+>>>>>>> Stashed changes
 =======
             <button
               type="button"
@@ -244,8 +265,11 @@
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
               on:click={() => updateControls('x', CAMERA_RECORDING_MODE.DOLLY)}
               class:active={$activeX === CAMERA_RECORDING_MODE.DOLLY}
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
             >
@@ -289,8 +313,11 @@
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
               on:click={() => updateControls('x', CAMERA_RECORDING_MODE.ZOOM)}
               class:active={$activeX === CAMERA_RECORDING_MODE.ZOOM}
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
             >
@@ -360,8 +387,11 @@
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
               on:click={() => updateControls('x', CAMERA_RECORDING_MODE.PAN)}
               class:active={$activeX === CAMERA_RECORDING_MODE.PAN}
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
             >

@@ -2,6 +2,7 @@
   import { app, playerProgress } from '$lib/stores'
   import { VIEWER_STATE } from '$lib/types'
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   import ShotsService from '$lib/services/shots'
 
   const shots = ShotsService.getShots()
@@ -28,6 +29,8 @@
   }
 
 =======
+=======
+>>>>>>> Stashed changes
 
   let currentShot = 1
 >>>>>>> Stashed changes

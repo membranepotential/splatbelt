@@ -3,7 +3,7 @@ import { app, events, playerProgress } from '$lib/stores'
 import { get } from 'svelte/store'
 import { throttle } from 'lodash-es'
 import { VIEWER_STATE } from '$lib/types'
-import type { Shot } from '$lib/types'
+import type { Interaction, Shot } from '$lib/types'
 
 export class ViewerEngine {
   viewer: Viewer
@@ -19,10 +19,9 @@ export class ViewerEngine {
     'wheel',
   ]
 
-  trackMouseMove: (e: Event) => void
+  trackMouseMove: (e: PointerEvent) => void
 
   loopTimer: null | ReturnType<typeof setInterval>
-
   duration: number = 0
 
   constructor(viewer: Viewer) {
@@ -46,12 +45,20 @@ export class ViewerEngine {
   }
 
   loadShot(shot: Shot) {
-    this.viewer.controls?.setState(shot.initialPosition)
-    events.set(shot.events)
+    if (this.viewer.controls !== null) {
+      this.viewer.controls.position0 = shot.initialPosition.position
+      this.viewer.controls.target0 = shot.initialPosition.target
+      this.viewer.controls.zoom0 = shot.initialPosition.zoom
+      this.viewer.controls.reset()
+    }
+    events.set(shot.trace)
   }
 
-  trackEvent(e: Event) {
-    events.update((contents) => [...contents, e])
+  trackEvent(e: PointerEvent) {
+    events.update((contents) => [
+      ...contents,
+      { timeStamp: e.timeStamp, x: e.clientX, y: e.clientY },
+    ])
   }
 
   handleStateUpdate(newState: VIEWER_STATE) {
@@ -107,35 +114,28 @@ export class ViewerEngine {
   replayEvents() {
     clearInterval(this.loopTimer!)
     get(app).VIEWER_STATE = VIEWER_STATE.PLAY
-    let recordedEvents: Event[] = get(events)
+    let trace: Interaction[] = get(events)
 
     // viewer.controls?.setState(initialPosition)
 
-    this.duration =
-      recordedEvents[recordedEvents.length - 1].timeStamp -
-      recordedEvents[0].timeStamp
+    this.duration = trace[trace.length - 1].timeStamp - trace[0].timeStamp
 
-    this.playLoop(recordedEvents)
+    this.playLoop(trace)
     this.loopTimer = setInterval(
-      this.playLoop.bind(this, recordedEvents),
+      this.playLoop.bind(this, trace),
       this.duration + 20000
     )
   }
 
-  playLoop(recordedEvents: Event[]) {
+  playLoop(trace: Interaction[]) {
     app.update(() => {
       return {
         VIEWER_STATE: VIEWER_STATE.PLAY,
       }
     })
-    console.log(
-      'playLoop duration ',
-      this.duration,
-      ' events: ',
-      recordedEvents.length
-    )
+    console.log('playLoop duration ', this.duration, ' events: ', trace.length)
 
-    const { target, timeStamp: firstEventTimestamp } = recordedEvents[0]
+    const { timeStamp: firstEventTimestamp } = trace[0]
 
     playerProgress.set({
       current: 0,
@@ -169,7 +169,7 @@ export class ViewerEngine {
       /**
        * Find the element in the store that has the closest delta to the current offset
        */
-      const closestEntry = recordedEvents.reduce((prev, curr) => {
+      const closestEntry = trace.reduce((prev, curr) => {
         const currDelta = curr.timeStamp - firstEventTimestamp
         const prevDelta = prev.timeStamp - firstEventTimestamp
 
@@ -181,7 +181,7 @@ export class ViewerEngine {
 
       if (closestEntry) {
         // mapOfPlayedEvents.set(closestEntry, true)
-        target!.dispatchEvent(closestEntry)
+        this.viewer.rootElement!.dispatchEvent(closestEntry)
         eventsPlayed++
       }
 

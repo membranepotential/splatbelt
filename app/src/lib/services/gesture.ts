@@ -1,20 +1,16 @@
 import { get } from 'svelte/store'
 import { app, controls } from '$lib/stores'
-import type { Viewer } from '$lib/splats'
-import { VIEWER_STATE } from '$lib/types'
+import type { Viewer } from '$splats'
 import { throttle } from 'lodash-es'
 import * as TWEEN from '@tweenjs/tween.js'
 import type { PerspectiveCamera } from 'three'
 import { Vector3 } from 'three'
 
-type XZY = {
-  x: number
-  y: number
-  z: number
-}
 class GestureService {
   handleEventMoveThrottled: (event: Event) => void
   latestEvents: Event[]
+
+  viewer: Viewer | null
   camera: PerspectiveCamera | null
   tween: TWEEN.Tween<any> | null
 
@@ -29,6 +25,7 @@ class GestureService {
     this.handleEventUp = this.handleEventUp.bind(this)
 
     this.latestEvents = []
+    this.viewer = null
     this.camera = null
     this.tween = null
   }
@@ -203,21 +200,24 @@ class GestureService {
   }
 
   handleEventUp(event: Event) {
-    console.log('Ending recording', !!this.tween)
-    if (this.tween) {
-      this.tween.stop()
-      this.tween = null
+    if (get(app).VIEWER_STATE === 'RECORD') {
+      console.log('Ending recording', !!this.tween)
+      if (this.tween) {
+        this.tween.stop()
+        this.tween = null
+      }
+      this.latestEvents = []
     }
-    this.latestEvents = []
   }
   handleEventDown(event: Event) {
-    console.log('Starting recording')
-    this.latestEvents = []
-    if (this.tween) {
-      this.tween.stop()
-      this.tween = null
+    if (get(app).VIEWER_STATE === 'RECORD') {
+      console.log('Starting recording')
+      if (this.tween) {
+        this.tween.stop()
+        this.tween = null
+      }
+      this.latestEvents = []
     }
-    this.latestEvents = []
   }
 }
 

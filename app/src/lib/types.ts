@@ -7,8 +7,14 @@ export enum VIEWER_STATE {
   PLAY = 'PLAY',
 }
 
+export type Interaction = {
+  timeStamp: number
+  x: number
+  y: number
+}
+
 export type Shot = {
-  events: Event[]
+  trace: Interaction[]
   initialPosition: {
     target: Vector3
     position: Vector3

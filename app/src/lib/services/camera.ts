@@ -1,18 +1,18 @@
 import type { Viewer } from '$splats'
 import * as TWEEN from '@tweenjs/tween.js'
 
-import type { PerspectiveCamera, Vector3 } from 'three'
+import { Vector3, type PerspectiveCamera } from 'three'
 
 class CameraService {
   viewer: Viewer | null
 
   tween2state: string
-  tween: TWEEN.Tween<Vector3>
+  tween: TWEEN.Tween<Vector3> | null
 
   constructor() {
-    console.log('CameraService')
     this.viewer = null
     this.tween2state = 'inactive'
+    this.tween = null
   }
 
   link(viewer: Viewer) {
@@ -22,24 +22,12 @@ class CameraService {
   test() {
     // return this.viewer?.controls.rotateLeft(0.1)
     const camera: PerspectiveCamera = this.viewer?.camera
+    const coords = camera.position.clone()
 
-    const coords = {
-      x: camera.position.x,
-      y: camera.position.y,
-      z: camera.position.z,
-    }
     // console.log(coords)
     // camera.position.set(coords.x + 100, coords.y, coords.z)
     new TWEEN.Tween(coords)
-      .to(
-        {
-          x: camera.position.x,
-
-          y: camera.position.y - 100,
-          z: camera.position.z,
-        },
-        5000
-      )
+      .to(camera.position.sub(new Vector3(0, 100, 0)), 5000)
       .onUpdate(() => {
         console.log('calling update')
         camera.position.set(coords.x, coords.y, coords.z)
@@ -51,25 +39,13 @@ class CameraService {
     // return this.viewer?.controls.rotateLeft(0.1)
 
     const camera: PerspectiveCamera = this.viewer?.camera
-
-    const coords = {
-      x: camera.position.x,
-      y: camera.position.y,
-      z: camera.position.z,
-    }
+    const coords = camera.position.clone()
     // console.log(coords)
     // camera.position.set(coords.x + 100, coords.y, coords.z)
 
     if (this.tween2state === 'inactive') {
       this.tween = new TWEEN.Tween(coords)
-        .to(
-          {
-            x: camera.position.x,
-            y: camera.position.y - 100,
-            z: camera.position.z,
-          },
-          5000
-        )
+        .to(camera.position.add(new Vector3(0, -100, 0)), 5000)
         .onUpdate(() => {
           console.log('calling update')
           camera.position.set(coords.x, coords.y, coords.z)
@@ -81,11 +57,11 @@ class CameraService {
 
     if (this.tween2state === 'inactive') {
       console.log('tween starting')
-      this.tween.start()
+      this.tween?.start()
       this.tween2state = 'active'
     } else if (this.tween2state === 'active') {
       console.log('tween pausing')
-      this.tween.stop()
+      this.tween?.stop()
       this.tween2state = 'inactive'
     }
   }

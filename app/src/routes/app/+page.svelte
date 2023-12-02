@@ -8,14 +8,13 @@
   import GestureService from '$lib/services/gesture'
   import CameraService from '$lib/services/camera'
   import { VIEWER_STATE } from '$lib/types'
+  import ViewRecordToggle from './components/ViewRecordToggle.svelte'
 
   export let data: PageData
+
   let canvasContainer: HTMLDivElement
-  let viewer: GaussianSplat3D.Viewer
-
-  let lastEvent: PointerEvent | null = null
-
-  let engine = null
+  let viewer: Viewer
+  let engine: ViewerEngine
 
   onMount(async () => {
     viewer = new Viewer({

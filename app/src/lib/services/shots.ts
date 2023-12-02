@@ -15,7 +15,7 @@ class ShotsService {
     if (true) {
       this.shots.set([
         {
-          events: [{} as Event, {} as Event],
+          trace: [],
           initialPosition: {
             target: new Vector3(),
             position: new Vector3(),
@@ -23,7 +23,7 @@ class ShotsService {
           },
         },
         {
-          events: [{} as Event, {} as Event],
+          trace: [],
           initialPosition: {
             target: new Vector3(),
             position: new Vector3(),
@@ -31,7 +31,7 @@ class ShotsService {
           },
         },
         {
-          events: [{} as Event, {} as Event],
+          trace: [],
           initialPosition: {
             target: new Vector3(),
             position: new Vector3(),

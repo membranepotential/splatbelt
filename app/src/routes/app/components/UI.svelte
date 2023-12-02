@@ -37,8 +37,9 @@
 <ShotPlayer />
 <ShotSettings />
 <TopNav />
-<Export />
-<Upload />
+
+<!-- <Export />
+<Upload /> -->
 
 <style>
 </style>

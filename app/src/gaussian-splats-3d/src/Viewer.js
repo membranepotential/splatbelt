@@ -163,10 +163,10 @@ export class Viewer {
 
     if (this.useBuiltInControls) {
       this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-      this.controls.listenToKeyEvents(window)
       this.controls.rotateSpeed = 0.5
       this.controls.maxPolarAngle = Math.PI * 0.75
       this.controls.minPolarAngle = 0.1
+      this.controls.enablePan = false
       this.controls.enableDamping = true
       this.controls.dampingFactor = 0.05
       this.controls.target.copy(this.initialCameraLookAt)
@@ -185,7 +185,6 @@ export class Viewer {
         this.onMouseUp.bind(this),
         false
       )
-      window.addEventListener('keydown', this.onKeyDown.bind(this), false)
     }
 
     if (!this.usingExternalRenderer) {

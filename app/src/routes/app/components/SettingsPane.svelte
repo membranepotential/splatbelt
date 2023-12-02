@@ -16,7 +16,6 @@
   function toggleCenterLock() {
     centerLockState = !centerLockState
   }
-  $: console.log(isPlay)
   function updateControls(key: string, mode: CAMERA_RECORDING_MODE) {
     controls.update((c) => ({
       ...c,

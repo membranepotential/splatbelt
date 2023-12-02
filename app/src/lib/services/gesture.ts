@@ -5,11 +5,11 @@ import { throttle } from 'lodash-es'
 import * as TWEEN from '@tweenjs/tween.js'
 import type { PerspectiveCamera } from 'three'
 import { VIEWER_STATE } from '$lib/types'
-import { Vector3 } from 'three'
+import { Spherical, Vector3 } from 'three'
 
 class GestureService {
   handleEventMoveThrottled: (event: Event) => void
-  latestEvents: Event[]
+  latestEvents: PointerEvent[]
 
   viewer: Viewer | null
   camera: PerspectiveCamera | null
@@ -36,7 +36,26 @@ class GestureService {
     this.camera = viewer.camera
   }
 
-  calculateNewCameraPosition(events: Event[]) {
+  // Calculate direction vector from camera to the origin
+  toSpherical(cartesian: Vector3) {
+    var radius = cartesian.length()
+    var phi = Math.acos(cartesian.y / radius) // Angle from the Y-axis
+    var theta = Math.atan2(cartesian.x, cartesian.z) // Angle from the Z-axis in XZ plane
+    return new Spherical(radius, phi, theta)
+  }
+
+  // Function to convert from Spherical to Cartesian coordinates
+  toCartesian(spherical: Spherical) {
+    var x =
+      spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta)
+    var y = spherical.radius * Math.cos(spherical.phi)
+    var z =
+      spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta)
+
+    return new Vector3(x, y, z)
+  }
+
+  calculateNewCameraPosition(events: PointerEvent[]) {
     const currentSettings = get(controls)
 
     const [first, second] = this.latestEvents
@@ -64,26 +83,18 @@ class GestureService {
       z: camera.position.z,
       zoom: camera.zoom,
     }
-    var zoom = camera.zoom
-
-    let y = camera.position.y
-    let x = camera.position.x
-    let z = camera.position.z
-    // let zoom = this.camera?.zoom
 
     switch (MODE) {
       case 'DOLLY':
         var scale = dominantDirection === 'x' ? directionX : directionY
 
-        var dir = new Vector3()
-        dir
-          .subVectors(this.viewer!.controls.target, camera.position)
-          .normalize()
+        const target = this.viewer!.controls!.target.clone()
+        var dir = target.sub(camera.position).normalize()
 
-        console.log('going to target at ', this.viewer!.controls.target)
+        console.log('going to target at ', target)
         console.log('dolly zooming by ', scale, 'on the vector ', dir)
-
         console.log(dir)
+
         // Zoom in or out
         var dollyZoom = dir.multiplyScalar(scale * 1.25)
         camera.position.add(dollyZoom)
@@ -92,42 +103,20 @@ class GestureService {
         coords.y = camera.position.y
         coords.z = camera.position.z
         break
+
       case 'ZOOM':
         console.log('zooming')
         var scale = dominantDirection === 'x' ? directionX : directionY
-
         coords.zoom = coords.zoom + 0.2 * scale
-
         break
+
       case 'PAN':
         console.log('Panning ', directionX, ' and ', directionY)
-        // Calculate direction vector from camera to the origin
-        function toSpherical(cartesian) {
-          var radius = cartesian.length()
-          var phi = Math.acos(cartesian.y / radius) // Angle from the Y-axis
-          var theta = Math.atan2(cartesian.x, cartesian.z) // Angle from the Z-axis in XZ plane
 
-          return { radius, phi, theta }
-        }
-
-        // Function to convert from Spherical to Cartesian coordinates
-        function toCartesian(spherical) {
-          var x =
-            spherical.radius *
-            Math.sin(spherical.phi) *
-            Math.sin(spherical.theta)
-          var y = spherical.radius * Math.cos(spherical.phi)
-          var z =
-            spherical.radius *
-            Math.sin(spherical.phi) *
-            Math.cos(spherical.theta)
-
-          return new Vector3(x, y, z)
-        }
-
-        var spherical = toSpherical(camera.position)
+        var spherical = this.toSpherical(camera.position)
 
         console.log(spherical.theta, spherical.phi)
+
         // Adjust phi and theta for panning
         spherical.theta += directionX / 50
         spherical.phi += directionY / 150
@@ -136,18 +125,18 @@ class GestureService {
         spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi))
 
         // Convert back to Cartesian coordinates
-        camera.position.copy(toCartesian(spherical))
+        camera.position.copy(this.toCartesian(spherical))
 
         coords.x = camera.position.x
         coords.y = camera.position.y
         coords.z = camera.position.z
         break
     }
-    coords.x = Math.min(coords.x, 80)
-    coords.y = Math.min(coords.y, 80)
-    coords.z = Math.min(coords.z, 80)
-    coords.zoom = Math.min(Math.max(coords.zoom, 0), 30)
 
+    // coords.x = Math.min(coords.x, 80)
+    // coords.y = Math.min(coords.y, 80)
+    // coords.z = Math.min(coords.z, 80)
+    // coords.zoom = Math.min(Math.max(coords.zoom, 0), 30)
     return coords
   }
 

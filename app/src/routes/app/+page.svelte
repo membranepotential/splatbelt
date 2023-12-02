@@ -7,8 +7,9 @@
   import { ViewerEngine } from '$lib/viewer/engine'
   import GestureService from '$lib/services/gesture'
   import CameraService from '$lib/services/camera'
+  import RenderService from '$lib/services/render'
   import { VIEWER_STATE } from '$lib/types'
-  import ViewRecordToggle from './components/ViewRecordToggle.svelte'
+
   export let data: PageData
 
   let canvasContainer: HTMLDivElement
@@ -31,6 +32,7 @@
     engine = new ViewerEngine(viewer)
     CameraService.link(viewer)
     GestureService.link(viewer)
+    RenderService.link(viewer)
   })
 
   const replayEvents = () => {

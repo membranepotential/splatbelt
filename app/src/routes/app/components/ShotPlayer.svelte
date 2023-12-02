@@ -20,10 +20,20 @@
     }
   }
 
+  function addAndSetCurrent() {
+    ShotsService.addShotAndSetCurrent()
+    deselectionFlag = false
+    deselectionCheck = -1
+  }
+
   $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
   $: isVisible = $app.VIEWER_STATE === VIEWER_STATE.PLAY
 
   $: console.log($currentShot)
+
+  $: {
+    if (percentDone > 99) nextShot($currentShot, $shots)
+  }
 </script>
 
 {#if isVisible}
@@ -45,12 +55,7 @@
       </div>
     {/each}
 
-    <div
-      class="shot bg-slate-500"
-      on:click={() => ShotsService.addShotAndSetCurrent()}
-    >
-      +
-    </div>
+    <div class="shot bg-slate-500" on:click={() => addAndSetCurrent()}>+</div>
   </div>
 {/if}
 

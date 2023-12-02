@@ -4,12 +4,36 @@ import type { Viewer } from '$splats'
 import { throttle } from 'lodash-es'
 import * as TWEEN from '@tweenjs/tween.js'
 import type { PerspectiveCamera } from 'three'
-import { VIEWER_STATE } from '$lib/types'
 import { Spherical, Vector3 } from 'three'
+import { VIEWER_STATE, CAMERA_RECORDING_MODE } from '$lib/types'
+
+type XYZ = {
+  x: number
+  y: number
+  z: number
+}
+
+type TransformationParams = {
+  axis: string
+  mode: CAMERA_RECORDING_MODE
+  directionX: number
+  directionY: number
+  camera: PerspectiveCamera
+  viewer: Viewer
+  hasAppliedDolly?: boolean
+  hasAppliedZoom?: boolean
+  hasAppliedPan?: boolean
+}
+
+const cameraToXYZ = (camera: PerspectiveCamera): XYZ => ({
+  x: camera.position.x,
+  y: camera.position.y,
+  z: camera.position.z,
+})
 
 class GestureService {
   handleEventMoveThrottled: (event: Event) => void
-  latestEvents: PointerEvent[]
+  latestEvents: Event[]
 
   viewer: Viewer | null
   camera: PerspectiveCamera | null
@@ -29,6 +53,12 @@ class GestureService {
     this.viewer = null
     this.camera = null
     this.tween = null
+
+    app.subscribe((state) => {
+      if (state.VIEWER_STATE === VIEWER_STATE.RECORD) {
+        this.reset()
+      }
+    })
   }
 
   link(viewer: Viewer) {
@@ -36,26 +66,111 @@ class GestureService {
     this.camera = viewer.camera
   }
 
-  // Calculate direction vector from camera to the origin
-  toSpherical(cartesian: Vector3) {
-    var radius = cartesian.length()
-    var phi = Math.acos(cartesian.y / radius) // Angle from the Y-axis
-    var theta = Math.atan2(cartesian.x, cartesian.z) // Angle from the Z-axis in XZ plane
-    return new Spherical(radius, phi, theta)
+  applyTransformation(coords: XYZ, zoom: number, params: TransformationParams) {
+    const { mode } = params
+
+    switch (mode) {
+      case 'DOLLY':
+        return this.applyDollyTransform(coords, zoom, params)
+      case 'ZOOM':
+        return this.applyZoomTransform(coords, zoom, params)
+      case 'PAN':
+        return this.applyPanTransform(coords, zoom, params)
+      default:
+        throw new Error('Unsupported mode: ' + mode)
+    }
   }
 
-  // Function to convert from Spherical to Cartesian coordinates
-  toCartesian(spherical: Spherical) {
-    var x =
-      spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta)
-    var y = spherical.radius * Math.cos(spherical.phi)
-    var z =
-      spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta)
+  /**
+   *
+   * Dolly is a type of zoom and goes traight back and forth.
+   * The axis doesn't matter, we just want the distance
+   * @returns
+   */
+  applyDollyTransform(coords: XYZ, zoom: number, params: TransformationParams) {
+    const { axis, directionX, directionY, viewer, camera } = params
 
-    return new Vector3(x, y, z)
+    const _camera = camera.clone()
+
+    var scale = axis === 'x' ? directionX : directionY
+
+    var dir = new Vector3()
+    dir.subVectors(viewer!.controls!.target, camera.position).normalize()
+
+    // console.log('going to target at ', viewer!.controls!.target)
+    // console.log('dolly zooming by ', scale, 'on the vector ', dir)
+
+    // Zoom in or out
+    var dollyZoom = dir.multiplyScalar(scale * 1.25)
+    _camera.position.add(dollyZoom)
+
+    coords.x = _camera.position.x
+    coords.y = _camera.position.y
+    coords.z = _camera.position.z
+
+    return { zoom, coords, hasAppliedDolly: true }
   }
 
-  calculateNewCameraPosition(events: PointerEvent[]) {
+  applyZoomTransform(coords: XYZ, zoom: number, params: TransformationParams) {
+    const { axis, directionX, directionY } = params
+
+    console.log('zooming')
+    var scale = axis === 'x' ? directionX : directionY
+
+    const _zoom = zoom + 0.2 * scale
+
+    return { zoom: _zoom, coords, hasAppliedZoom: true }
+  }
+
+  applyPanTransform(coords: XYZ, zoom: number, params: TransformationParams) {
+    const { axis, directionX, directionY, viewer, camera } = params
+    if (params.hasAppliedPan) {
+      return { zoom, coords, hasAppliedPan: true }
+    }
+
+    const _camera = camera.clone()
+    const _coods = cameraToXYZ(_camera)
+
+    function toSpherical(cartesian: any) {
+      var radius = cartesian.length()
+      var phi = Math.acos(cartesian.y / radius) // Angle from the Y-axis
+      var theta = Math.atan2(cartesian.x, cartesian.z) // Angle from the Z-axis in XZ plane
+
+      return { radius, phi, theta }
+    }
+
+    // Function to convert from Spherical to Cartesian coordinates
+    function toCartesian(spherical: any) {
+      var x =
+        spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta)
+      var y = spherical.radius * Math.cos(spherical.phi)
+      var z =
+        spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta)
+
+      return new Vector3(x, y, z)
+    }
+
+    var spherical = toSpherical(_camera.position)
+
+    console.log(spherical.theta, spherical.phi)
+    // Adjust phi and theta for panning
+    spherical.theta += directionX / 50
+    spherical.phi += directionY / 150
+
+    // Ensure phi is within bounds to prevent flip
+    spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi))
+
+    // Convert back to Cartesian coordinates
+    _camera.position.copy(toCartesian(spherical))
+
+    coords.x = _camera.position.x
+    coords.y = _camera.position.y
+    coords.z = _camera.position.z
+
+    return { zoom, coords, hasAppliedPan: true }
+  }
+
+  calculateNewCameraPosition(events: Event[]) {
     const currentSettings = get(controls)
 
     const [first, second] = this.latestEvents
@@ -63,81 +178,68 @@ class GestureService {
     // console.log('x dir', directionX)
 
     const directionY = first.clientY - second.clientY
-    // console.log('y dir', directionY)
 
-    // console.log('Starting tween')
+    const orderOfApplication = [
+      CAMERA_RECORDING_MODE.PAN,
+      CAMERA_RECORDING_MODE.DOLLY,
+      CAMERA_RECORDING_MODE.ZOOM,
+    ]
 
-    const xAbs = Math.abs(directionX)
-    const yAbs = Math.abs(directionY)
-    const dominantDirection = xAbs > yAbs ? 'x' : 'y'
+    let startCoords = cameraToXYZ(this.camera!)
 
-    // console.log('dominantDirection', dominantDirection)
-
-    const MODE = currentSettings[dominantDirection]
-    // console.log('MODE', MODE)
-
-    const camera = this.camera?.clone()!
-    const coords = {
-      x: camera.position.x,
-      y: camera.position.y,
-      z: camera.position.z,
-      zoom: camera.zoom,
+    let state = {
+      coords: cameraToXYZ(this.camera!),
+      zoom: this.camera!.zoom,
+      hasAppliedDolly: false,
+      hasAppliedZoom: false,
+      hasAppliedPan: false,
     }
 
-    switch (MODE) {
-      case 'DOLLY':
-        var scale = dominantDirection === 'x' ? directionX : directionY
+    console.table([...Object.values(state.coords), state.zoom])
+    let operationCounter = 0
+    const results = orderOfApplication.reduce((prev, current) => {
+      return Object.entries(get(controls))
+        .filter(([, mode]) => mode === current)
+        .reduce((prevI, [currentAxis, currentMode]) => {
+          const intermediateResults = this.applyTransformation(
+            prevI.coords,
+            prevI.zoom,
+            {
+              hasAppliedDolly: prevI.hasAppliedDolly,
+              hasAppliedZoom: prevI.hasAppliedZoom,
+              hasAppliedPan: prevI.hasAppliedPan,
+              axis: currentAxis,
+              mode: currentMode,
+              directionX,
+              directionY,
+              camera: this.camera!,
+              viewer: this.viewer!,
+            }
+          )
 
-        const target = this.viewer!.controls!.target.clone()
-        var dir = target.sub(camera.position).normalize()
+          console.log('### APPLIED ', currentMode, ' ON ', currentAxis, ' ###')
+          console.table([
+            ...Object.values(intermediateResults.coords),
+            intermediateResults.zoom,
+          ])
 
-        console.log('going to target at ', target)
-        console.log('dolly zooming by ', scale, 'on the vector ', dir)
-        console.log(dir)
+          operationCounter++
 
-        // Zoom in or out
-        var dollyZoom = dir.multiplyScalar(scale * 1.25)
-        camera.position.add(dollyZoom)
+          return {
+            ...prevI,
+            ...intermediateResults,
+          }
+        }, prev)
+    }, state)
 
-        coords.x = camera.position.x
-        coords.y = camera.position.y
-        coords.z = camera.position.z
-        break
+    console.log('### DONE WITH ', operationCounter, ' THINGS TO DO ###')
 
-      case 'ZOOM':
-        console.log('zooming')
-        var scale = dominantDirection === 'x' ? directionX : directionY
-        coords.zoom = coords.zoom + 0.2 * scale
-        break
+    results.coords.x = Math.min(results.coords.x, 80)
+    results.coords.y = Math.min(results.coords.y, 80)
+    results.coords.z = Math.min(results.coords.z, 80)
+    results.zoom = Math.min(Math.max(results.zoom, 0), 30)
 
-      case 'PAN':
-        console.log('Panning ', directionX, ' and ', directionY)
-
-        var spherical = this.toSpherical(camera.position)
-
-        console.log(spherical.theta, spherical.phi)
-
-        // Adjust phi and theta for panning
-        spherical.theta += directionX / 50
-        spherical.phi += directionY / 150
-
-        // Ensure phi is within bounds to prevent flip
-        spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi))
-
-        // Convert back to Cartesian coordinates
-        camera.position.copy(this.toCartesian(spherical))
-
-        coords.x = camera.position.x
-        coords.y = camera.position.y
-        coords.z = camera.position.z
-        break
-    }
-
-    // coords.x = Math.min(coords.x, 80)
-    // coords.y = Math.min(coords.y, 80)
-    // coords.z = Math.min(coords.z, 80)
-    // coords.zoom = Math.min(Math.max(coords.zoom, 0), 30)
-    return coords
+    return results
   }
 
   handleEvent(event: Event) {
@@ -146,10 +248,15 @@ class GestureService {
       const [first, second] = this.latestEvents
 
       const camera: PerspectiveCamera = this.camera!
-      const coords = this.calculateNewCameraPosition([first, second])
+      const { coords, zoom, hasAppliedDolly, hasAppliedZoom, hasAppliedPan } =
+        this.calculateNewCameraPosition([first, second])
       // console.log(coords)
       // camera.position.set(coords.x + 100, coords.y, coords.z)
       const duration = 1200
+
+      console.log('hasAppliedDolly', hasAppliedDolly)
+      console.log('hasAppliedPan', hasAppliedPan)
+      console.log('hasAppliedZoom', hasAppliedZoom)
 
       const from = {
         x: camera.position.x,
@@ -157,30 +264,35 @@ class GestureService {
         z: camera.position.z,
         zoom: camera.zoom,
       }
-      const to = coords
-      console.table(from)
-      console.table(to)
+      const to = {
+        x: coords.x,
+        y: coords.y,
+        z: coords.z,
+        zoom,
+      }
+      // console.table(from)
+      // console.table(to)
 
-      console.log(from.zoom, coords.zoom)
-
-      const isZooming = !!(from.zoom != coords!.zoom)
-      // console.log('isZooming', isZooming)
+      // console.log(from.zoom, coords.zoom)
 
       // console.log(from, coords)
       this.tween = new TWEEN.Tween(from)
         .to(to, duration)
         .easing(TWEEN.Easing.Quadratic.InOut) // Add this line for a bezier curve effect
         .onUpdate(() => {
-          if (isZooming) {
+          if (hasAppliedZoom) {
             camera.zoom = from.zoom
-            camera.updateProjectionMatrix()
-          } else {
+          }
+          if (hasAppliedPan || hasAppliedDolly) {
             camera.position.set(from.x, from.y, from.z)
           }
         })
 
       this.tween.start().onComplete(() => {
         console.log('Tween complete')
+        if (hasAppliedZoom) {
+          camera.updateProjectionMatrix()
+        }
 
         this.tween = null
         this.latestEvents = []
@@ -196,6 +308,14 @@ class GestureService {
   }
   handleEventDown(event: Event) {
     console.log('gestures > handleKeyDown')
+  }
+
+  reset() {
+    if (this.tween) {
+      this.tween.stop()
+      this.tween = null
+      this.latestEvents
+    }
   }
 }
 

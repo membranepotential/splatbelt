@@ -1,3 +1,9 @@
+<script>
+  import { app } from '$lib/stores'
+  import { VIEWER_STATE } from '$lib/types'
+  import ShotsService from '$lib/services/shots'
+</script>
+
 <button
   class="absolute right-2 top-2 rounded-lg bg-slate-900 px-2.5 py-2.5 text-indigo-200 duration-150 hover:bg-slate-950 active:bg-slate-950"
 >
@@ -26,6 +32,10 @@
 </button>
 <button
   class="absolute left-2 top-2 rounded-lg bg-slate-900 px-2.5 py-2.5 text-indigo-600 duration-150 hover:bg-slate-950 active:bg-slate-950"
+  on:click={() => {
+    app.set({ VIEWER_STATE: VIEWER_STATE.FREE })
+    ShotsService.back()
+  }}
 >
   <svg
     width="24px"

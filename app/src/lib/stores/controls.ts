@@ -9,5 +9,5 @@ export type Controls = {
 }
 export const controls = writable<Controls>({
   x: CAMERA_RECORDING_MODE.PAN,
-  y: CAMERA_RECORDING_MODE.DOLLY,
+  y: CAMERA_RECORDING_MODE.PAN,
 })

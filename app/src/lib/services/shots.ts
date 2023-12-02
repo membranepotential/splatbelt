@@ -104,6 +104,14 @@ class ShotsService {
     console.log('shots updated')
     this.currentShotIdx.set(currentShotCount)
   }
+
+  back() {
+    this.shots.update((shots) => {
+      const newShots = shots.slice(0, shots.length - 1)
+      return newShots
+    })
+    this.currentShotIdx.update((current) => current - 1)
+  }
 }
 
 const shotsService = new ShotsService()

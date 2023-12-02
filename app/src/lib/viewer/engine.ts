@@ -90,10 +90,10 @@ export class ViewerEngine {
         break
       case VIEWER_STATE.RECORD:
         this.handleRecordState()
+
         break
-      // case VIEWER_STATE.PLAY:
-      //   this.handlePlayState()
-      //   break
+      case VIEWER_STATE.PLAY:
+        break
     }
   }
 
@@ -127,7 +127,7 @@ export class ViewerEngine {
   }
 
   saveInitialPosition() {
-    this.viewer.controls?.saveState()
+    this.viewer?.controls?.saveState()
   }
 
   saveAndPlayShot() {

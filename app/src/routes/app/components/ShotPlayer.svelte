@@ -6,8 +6,21 @@
   const shots = ShotsService.getShots()
   const currentShot = ShotsService.getCurrentShot()
 
+  let sameShot = -1
+
+  function checkAndSetShot(i) {
+    if (sameShot == i) {
+      ShotsService.setCurrentShot(-1)
+      sameShot = -1
+    } else {
+      ShotsService.setCurrentShot(i)
+      sameShot = i
+    }
+  }
+
   $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
   $: isVisible = $app.VIEWER_STATE === VIEWER_STATE.PLAY
+  // let isVisible = true
 
   $: console.log($currentShot)
 </script>
@@ -18,7 +31,7 @@
       <div
         class="shot"
         class:active={$currentShot === i}
-        on:click={() => ShotsService.setCurrentShot(i)}
+        on:click={() => checkAndSetShot(i)}
       >
         {i + 1}
 

@@ -7,7 +7,7 @@
 </script>
 
 <div
-  class="absolute bottom-0 top-0 z-10 h-4 w-14 bg-red-400"
+  class="absolute bottom-0 top-0 z-10 h-1 w-14 bg-red-400"
   class:hidden={!isVisible}
 >
   <div class="relative h-full">

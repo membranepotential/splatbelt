@@ -31,9 +31,9 @@
 
   $: console.log($currentShot)
 
-  $: {
-    if (percentDone > 99) nextShot($currentShot, $shots)
-  }
+  // $: {
+  //   if (percentDone > 99) nextShot($currentShot, $shots)
+  // }
 </script>
 
 {#if isVisible}
@@ -55,7 +55,9 @@
       </div>
     {/each}
 
-    <div class="shot bg-slate-500" on:click={() => addAndSetCurrent()}>+</div>
+    <div class="shot add-new bg-slate-500" on:click={() => addAndSetCurrent()}>
+      +
+    </div>
   </div>
 {/if}
 
@@ -64,21 +66,24 @@
   width: 100%
   position: absolute
   bottom: 14vh
-  display: inline-flex
+  display: flex
   justify-content: center
   align-items: center
-
+  overflow: scroll
   .shot 
     color: white
     position: relative
-    margin: 2px
-    height: 40px
-    width: 40px
+    margin: 3px
+    height: 60px
+    width: 50px
     display: flex
     justify-content: center
     align-items: center
     overflow: hidden
-    @apply bg-slate-800
+    border-radius: 7px
+    @apply bg-slate-900
+    &.add-new
+      height: 50px
     
     &.active
       background-color: white

@@ -7,6 +7,9 @@
   import ShotSettings from './ShotSettings.svelte'
   import { createEventDispatcher } from 'svelte'
   import { events } from '$lib/stores'
+  import TopNav from './TopNav.svelte'
+  import Upload from './Upload.svelte'
+  import Export from './Export.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -33,6 +36,9 @@
 <TempProgressBar />
 <ShotPlayer />
 <ShotSettings />
+<TopNav />
+<Export />
+<Upload />
 
 <style>
 </style>

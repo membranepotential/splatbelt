@@ -16,7 +16,7 @@
 
 {#if !isPlaying}
   <div
-    class="absolute left-1/3 top-32 flex w-1/6 translate-x-[55%] flex-col items-center justify-center"
+    class="absolute left-1/3 top-16 flex w-1/6 translate-x-[52%] flex-col items-center justify-center"
   >
     <button
       on:click={toggle}
@@ -94,7 +94,6 @@
 >
   <span class:hidden={isRecording || isPlaying}>View and Move Model</span>
   <span class:hidden={!isRecording || isPlaying}>Swipe to record shot</span>
-  <span class:hidden={!isPlaying}>Preview of all shots</span>
 </div>
 
 <style lang="sass">

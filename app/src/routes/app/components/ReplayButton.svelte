@@ -19,7 +19,7 @@
 
 <button
   on:click={replay}
-  class="color-white absolute right-0 top-0 z-10 bg-red-400"
+  class="color-white absolute right-1/2 top-0 z-10 bg-red-400"
   class:hidden={!isVisible}
 >
   Replay {count} events

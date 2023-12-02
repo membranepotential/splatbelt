@@ -1,8 +1,6 @@
 <script>
   import ViewRecordToggle from './ViewRecordToggle.svelte'
   import SettingsPane from './SettingsPane.svelte'
-  import ReplayButton from './ReplayButton.svelte'
-  import TempProgressBar from './TempProgressBar.svelte'
   import ShotPlayer from './ShotPlayer.svelte'
   import ShotSettings from './ShotSettings.svelte'
   import { createEventDispatcher } from 'svelte'
@@ -23,23 +21,17 @@
   }
 </script>
 
-<button
-  on:click={replayLast}
-  class="color-white absolute right-0 top-0 z-10 bg-red-400"
->
-  Replay {count} events
-</button>
+<div class="z-30">
+  <!-- <ReplayButton on:replay /> -->
+  <ViewRecordToggle />
+  <SettingsPane />
+  <ShotPlayer />
+  <ShotSettings />
+  <TopNav />
+  <Export />
+</div>
 
-<ReplayButton on:replay />
-<ViewRecordToggle />
-<SettingsPane />
-<TempProgressBar />
-<ShotPlayer />
-<ShotSettings />
-<TopNav />
-
-<!-- <Export />
-<Upload /> -->
+<!-- <Upload /> -->
 
 <style>
 </style>

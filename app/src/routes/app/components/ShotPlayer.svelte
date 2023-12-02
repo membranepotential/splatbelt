@@ -25,10 +25,10 @@
     deselectionFlag = false
     deselectionCheck = -1
   }
+  const currentShotIdx = ShotsService.getCurrentShotIdx()
 
   $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
   $: isVisible = $app.VIEWER_STATE === VIEWER_STATE.PLAY
-
   $: console.log($currentShot)
 
   // $: {
@@ -39,7 +39,8 @@
 {#if isVisible}
   <div class="shot-player-bar">
     {#each $shots as shot, i}
-      <div
+      <button
+        tabindex={i}
         class="shot"
         class:active={$currentShot === i}
         on:click={() => checkAndSetShot(i)}
@@ -52,12 +53,15 @@
             class="indicator"
           />
         {/if}
-      </div>
+      </button>
     {/each}
 
-    <div class="shot add-new bg-slate-500" on:click={() => addAndSetCurrent()}>
+    <button
+      class="shot add-new bg-slate-500"
+      on:click={() => addAndSetCurrent()}
+    >
       +
-    </div>
+    </button>
   </div>
 {/if}
 

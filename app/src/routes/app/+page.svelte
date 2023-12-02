@@ -35,7 +35,7 @@
   })
 
   const replayEvents = () => {
-    engine?.replayEvents()
+    engine?.saveAndPlayShot()
   }
 </script>
 
@@ -43,7 +43,7 @@
   <UI on:replay={replayEvents} />
   {#if $app.VIEWER_STATE === VIEWER_STATE.RECORD}
     <div
-      class="canvaswrap absolute inset-0"
+      class="canvaswrap absolute inset-0 z-20"
       on:pointermove={GestureService.handleEventMoveThrottled}
       on:pointerdown={GestureService.handleEventDown}
       on:pointerup={GestureService.handleEventUp}
@@ -51,7 +51,7 @@
     />
   {/if}
   <div
-    class="canvas"
+    class="canvas z-10"
     bind:this={canvasContainer}
     class:pointer-events-none={$app.VIEWER_STATE === VIEWER_STATE.RECORD}
   />

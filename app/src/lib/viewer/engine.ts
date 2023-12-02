@@ -3,7 +3,15 @@ import { app, events, playerProgress } from '$lib/stores'
 import { get } from 'svelte/store'
 import { throttle } from 'lodash-es'
 import { VIEWER_STATE } from '$lib/types'
-import type { Interaction, Shot } from '$lib/types'
+import type { Shot } from '$lib/types'
+import ShotsService from '$lib/services/shots'
+
+const currentShot = ShotsService.getCurrentShot()
+const shots = ShotsService.getShots()
+
+// console.log(currentShot)
+// $: console.log('Current shot is now: ', get(currentShot))
+// $: console.log('Shots length is now: ', get(shots).length)
 
 export class ViewerEngine {
   viewer: Viewer
@@ -42,6 +50,19 @@ export class ViewerEngine {
         this.handleStateUpdate(currentState)
       }
     })
+
+    // currentShot.subscribe((idx) => {
+    //   this.resetForNewShot()
+    // })
+  }
+
+  resetForNewShot() {
+    app.set({
+      VIEWER_STATE: VIEWER_STATE.FREE,
+    })
+    this.viewer.controls?.reset()
+    // events.set([])
+    clearInterval(this.loopTimer!)
   }
 
   loadShot(shot: Shot) {
@@ -107,8 +128,18 @@ export class ViewerEngine {
   }
 
   saveInitialPosition() {
-    events.set([])
     this.viewer.controls?.saveState()
+  }
+
+  saveAndPlayShot() {
+    const currentShot = get(ShotsService.getCurrentShot())
+    currentShot.initialPosition = {
+      target: this.viewer.controls!.target0.clone(),
+      position: this.viewer.controls!.position0.clone(),
+      zoom: this.viewer.controls!.zoom0,
+    }
+
+    this.replayEvents()
   }
 
   replayEvents() {

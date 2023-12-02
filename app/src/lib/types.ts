@@ -1,4 +1,5 @@
 // import rotation type from threejs
+import type { Writable } from 'svelte/store'
 import type { Vector3 } from 'three'
 
 export enum VIEWER_STATE {

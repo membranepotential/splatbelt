@@ -27,7 +27,7 @@
   const activeY = derived(controls, ($controls) => $controls.y)
 </script>
 
-{#if !isPlay}
+{#if isFree}
   <div
     class="settings-slider absolute left-0 top-full w-full overflow-hidden"
     class:slider-open={toggleState}

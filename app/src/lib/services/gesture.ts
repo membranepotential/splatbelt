@@ -4,6 +4,7 @@ import type { Viewer } from '$splats'
 import { throttle } from 'lodash-es'
 import * as TWEEN from '@tweenjs/tween.js'
 import type { PerspectiveCamera } from 'three'
+import { VIEWER_STATE } from '$lib/types'
 import { Vector3 } from 'three'
 
 class GestureService {
@@ -28,6 +29,7 @@ class GestureService {
     this.viewer = null
     this.camera = null
     this.tween = null
+    this.tweenPending = false
   }
 
   link(viewer: Viewer) {
@@ -202,20 +204,16 @@ class GestureService {
   handleEventUp(event: Event) {
     if (get(app).VIEWER_STATE === 'RECORD') {
       console.log('Ending recording', !!this.tween)
-      if (this.tween) {
-        this.tween.stop()
-        this.tween = null
-      }
-      this.latestEvents = []
+      app.set({ VIEWER_STATE: VIEWER_STATE.PLAY })
     }
   }
   handleEventDown(event: Event) {
     if (get(app).VIEWER_STATE === 'RECORD') {
-      console.log('Starting recording')
       if (this.tween) {
         this.tween.stop()
         this.tween = null
       }
+
       this.latestEvents = []
     }
   }

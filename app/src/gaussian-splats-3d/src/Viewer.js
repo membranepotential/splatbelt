@@ -9,6 +9,7 @@ import { SplatMesh } from './SplatMesh.js'
 import { createSortWorker } from './worker/SortWorker.js'
 import { Constants } from './Constants.js'
 import { getCurrentTime } from './Util.js'
+import TWEEN from '@tweenjs/tween.js'
 
 const THREE_CAMERA_FOV = 50
 const MINIMUM_DISTANCE_TO_NEW_FOCAL_POINT = 0.75
@@ -776,6 +777,7 @@ export class Viewer {
     }
     if (!this.initialized || !this.splatRenderingInitialized) return
     if (this.controls) this.controls.update()
+    TWEEN.update()
     this.updateView()
     this.updateForRendererSizeChanges()
     this.updateSplatMeshUniforms()

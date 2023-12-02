@@ -98,41 +98,27 @@ class GestureService {
         console.log('zooming')
         var scale = dominantDirection === 'x' ? directionX : directionY
 
-        coords.zoom = 10 * Math.random()
+        coords.zoom = coords.zoom + 0.2 * scale
 
         break
       case 'PAN':
-        console.log('panning x', x, 'and y ', y)
-        // const direction = new Vector3()
-        // camera.getWorldDirection(direction)
-
-        // // Calculate the right vector
-        // const right = new Vector3()
-        // right.crossVectors(camera.up, direction).normalize()
-
-        // // Horizontal Pan (move along the right vector)
-        // const horizontalPan = right.multiplyScalar(directionX)
-        // camera.position.add(horizontalPan)
-
-        // // Vertical Pan (move along the camera's up vector)
-        // const verticalPan = new Vector3()
-        //   .copy(camera.up)
-        //   .multiplyScalar(-1 * directionY)
-        // camera.position.add(verticalPan)
-
-        const direction = new Vector3()
-        camera.getWorldDirection(direction).negate() // Direction from the camera towards the target
+        var direction = new Vector3()
+        direction
+          .subVectors(this.viewer!.controls.target, camera.position)
+          .normalize()
 
         // Calculate the right vector
         const right = new Vector3()
         right.crossVectors(camera.up, direction).normalize()
 
         // Calculate horizontal pan (move along the right vector)
-        const horizontalPan = right.clone().multiplyScalar(x)
+        const horizontalPan = right.clone().multiplyScalar(directionX)
         camera.position.add(horizontalPan)
 
         // Calculate vertical pan (move along the camera's up vector)
-        const verticalPan = new Vector3().copy(camera.up).multiplyScalar(y)
+        const verticalPan = new Vector3()
+          .copy(camera.up)
+          .multiplyScalar(directionY)
         camera.position.add(verticalPan)
 
         coords.x = camera.position.x
@@ -168,10 +154,11 @@ class GestureService {
       console.log(from.zoom, coords.zoom)
 
       const isZooming = !!(from.zoom != coords!.zoom)
-      console.log('isZooming', isZooming)
+      // console.log('isZooming', isZooming)
 
+      // console.log(from, coords)
       this.tween = new TWEEN.Tween(from)
-        .to(coords, duration)
+        .to(to, duration)
         .easing(TWEEN.Easing.Quadratic.InOut) // Add this line for a bezier curve effect
         .onUpdate(() => {
           if (isZooming) {

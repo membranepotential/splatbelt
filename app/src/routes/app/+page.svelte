@@ -18,10 +18,10 @@
   onMount(async () => {
     viewer = new GaussianSplat3D.Viewer(
       canvasContainer, // rootElement
-      [0, -1, -0.6], // initialCameraPos
-      [-1, -4, 6], // initialCameraLookAt
-      [0, 4, -0], // splatAlphaRemovalThreshold
-      20 //
+      [-0.27, -0.87, -0.41], // up
+      [7.35, 3.6, -12.6], // pos
+      [0, 0, 0], // lookAt
+      20 // splatAlphaRemovalThreshold
     )
     viewer.init()
 

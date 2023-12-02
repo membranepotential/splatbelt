@@ -87,7 +87,7 @@ class GestureService {
 
         console.log(dir)
         // Zoom in or out
-        var dollyZoom = dir.multiplyScalar(scale * 1.4)
+        var dollyZoom = dir.multiplyScalar(scale * 1.25)
         camera.position.add(dollyZoom)
 
         coords.x = camera.position.x
@@ -102,30 +102,53 @@ class GestureService {
 
         break
       case 'PAN':
-        var direction = new Vector3()
-        direction
-          .subVectors(this.viewer!.controls.target, camera.position)
-          .normalize()
+        console.log('Panning ', directionX, ' and ', directionY)
+        // Calculate direction vector from camera to the origin
+        function toSpherical(cartesian) {
+          var radius = cartesian.length()
+          var phi = Math.acos(cartesian.y / radius) // Angle from the Y-axis
+          var theta = Math.atan2(cartesian.x, cartesian.z) // Angle from the Z-axis in XZ plane
 
-        // Calculate the right vector
-        const right = new Vector3()
-        right.crossVectors(camera.up, direction).normalize()
+          return { radius, phi, theta }
+        }
 
-        // Calculate horizontal pan (move along the right vector)
-        const horizontalPan = right.clone().multiplyScalar(directionX)
-        camera.position.add(horizontalPan)
+        // Function to convert from Spherical to Cartesian coordinates
+        function toCartesian(spherical) {
+          var x =
+            spherical.radius *
+            Math.sin(spherical.phi) *
+            Math.sin(spherical.theta)
+          var y = spherical.radius * Math.cos(spherical.phi)
+          var z =
+            spherical.radius *
+            Math.sin(spherical.phi) *
+            Math.cos(spherical.theta)
 
-        // Calculate vertical pan (move along the camera's up vector)
-        const verticalPan = new Vector3()
-          .copy(camera.up)
-          .multiplyScalar(directionY)
-        camera.position.add(verticalPan)
+          return new Vector3(x, y, z)
+        }
+
+        var spherical = toSpherical(camera.position)
+
+        console.log(spherical.theta, spherical.phi)
+        // Adjust phi and theta for panning
+        spherical.theta += directionX / 50
+        spherical.phi += directionY / 150
+
+        // Ensure phi is within bounds to prevent flip
+        spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi))
+
+        // Convert back to Cartesian coordinates
+        camera.position.copy(toCartesian(spherical))
 
         coords.x = camera.position.x
         coords.y = camera.position.y
         coords.z = camera.position.z
         break
     }
+    coords.x = Math.min(coords.x, 80)
+    coords.y = Math.min(coords.y, 80)
+    coords.z = Math.min(coords.z, 80)
+    coords.zoom = Math.min(Math.max(coords.zoom, 0), 30)
 
     return coords
   }

@@ -42,19 +42,20 @@
 
 <div class="relative">
   <UI on:replay={replayEvents} />
-  <div
-    class="canvaswrap"
-    on:pointermove={GestureService.handleEventMoveThrottled}
-    on:pointerdown={GestureService.handleEventDown}
-    on:pointerup={GestureService.handleEventUp}
-    on:pointercancel={GestureService.handleEventUp}
-  >
+  {#if $app.VIEWER_STATE === VIEWER_STATE.RECORD}
     <div
-      class="canvas"
-      bind:this={canvasContainer}
-      class:pointer-events-none={$app.VIEWER_STATE === VIEWER_STATE.RECORD}
+      class="canvaswrap absolute inset-0"
+      on:pointermove={GestureService.handleEventMoveThrottled}
+      on:pointerdown={GestureService.handleEventDown}
+      on:pointerup={GestureService.handleEventUp}
+      on:pointercancel={GestureService.handleEventUp}
     />
-  </div>
+  {/if}
+  <div
+    class="canvas"
+    bind:this={canvasContainer}
+    class:pointer-events-none={$app.VIEWER_STATE === VIEWER_STATE.RECORD}
+  />
 </div>
 
 <style>

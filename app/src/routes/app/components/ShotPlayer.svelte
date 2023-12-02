@@ -1,6 +1,7 @@
 <script>
   import { app, playerProgress } from '$lib/stores'
   import { VIEWER_STATE } from '$lib/types'
+<<<<<<< Updated upstream
   import ShotsService from '$lib/services/shots'
 
   const shots = ShotsService.getShots()
@@ -26,6 +27,10 @@
     deselectionCheck = -1
   }
 
+=======
+
+  let currentShot = 1
+>>>>>>> Stashed changes
   $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
   $: isVisible = $app.VIEWER_STATE === VIEWER_STATE.PLAY
 
@@ -36,9 +41,24 @@
   // }
 </script>
 
+<<<<<<< Updated upstream
 {#if isVisible}
   <div class="shot-player-bar">
     {#each $shots as shot, i}
+=======
+<div class="shot-player-bar">
+  <div class="shot bg-slate-800">
+    1
+
+    {#if currentShot == 1 && percentDone > 0}
+      <!-- {test()} -->
+      <div style="transform: translateX({percentDone}%)" class="indicator" />
+    {/if}
+  </div>
+  <div class="shot bg-slate-800">
+    2
+    {#if currentShot == 2}
+>>>>>>> Stashed changes
       <div
         class="shot"
         class:active={$currentShot === i}

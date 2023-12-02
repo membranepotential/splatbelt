@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <script lang="ts">
   import { app, controls } from '$lib/stores'
   import { CAMERA_RECORDING_MODE, VIEWER_STATE } from '$lib/types'
@@ -5,6 +6,11 @@
 
   import CameraService from '$lib/services/camera'
   import TimeSensitiveButton from '$lib/components/TimeSensitiveButton.svelte'
+=======
+<script>
+  import { app } from '$lib/stores'
+  import { VIEWER_STATE } from '$lib/types'
+>>>>>>> Stashed changes
 
   $: isFree = $app.VIEWER_STATE === VIEWER_STATE.FREE
   $: isRecord = $app.VIEWER_STATE === VIEWER_STATE.RECORD
@@ -19,6 +25,7 @@
     centerLockState = !centerLockState
   }
   $: console.log(isPlay)
+<<<<<<< Updated upstream
 
   function updateControls(key: string, mode: CAMERA_RECORDING_MODE) {
     controls.update((c) => ({
@@ -29,6 +36,8 @@
 
   const activeX = derived(controls, ($controls) => $controls.x)
   const activeY = derived(controls, ($controls) => $controls.y)
+=======
+>>>>>>> Stashed changes
 </script>
 
 {#if !isPlay}
@@ -68,8 +77,11 @@
             <button
               type="button"
               class="settings-radio-button active relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
+<<<<<<< Updated upstream
               on:click={() => updateControls('y', CAMERA_RECORDING_MODE.DOLLY)}
               class:active={$activeY === CAMERA_RECORDING_MODE.DOLLY}
+=======
+>>>>>>> Stashed changes
             >
               <svg
                 width="24px"
@@ -107,12 +119,18 @@
               >
               Dolly
             </button>
+<<<<<<< Updated upstream
 
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
               on:click={() => updateControls('y', CAMERA_RECORDING_MODE.ZOOM)}
               class:active={$activeY === CAMERA_RECORDING_MODE.ZOOM}
+=======
+            <button
+              type="button"
+              class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
+>>>>>>> Stashed changes
             >
               <svg
                 width="24px"
@@ -176,12 +194,18 @@
               >
               Zoom
             </button>
+<<<<<<< Updated upstream
 
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
               on:click={() => updateControls('y', CAMERA_RECORDING_MODE.PAN)}
               class:active={$activeY === CAMERA_RECORDING_MODE.PAN}
+=======
+            <button
+              type="button"
+              class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
+>>>>>>> Stashed changes
             >
               <svg
                 width="24px"
@@ -219,8 +243,11 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
+<<<<<<< Updated upstream
               on:click={() => updateControls('x', CAMERA_RECORDING_MODE.DOLLY)}
               class:active={$activeX === CAMERA_RECORDING_MODE.DOLLY}
+=======
+>>>>>>> Stashed changes
             >
               <svg
                 width="24px"
@@ -261,8 +288,11 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
+<<<<<<< Updated upstream
               on:click={() => updateControls('x', CAMERA_RECORDING_MODE.ZOOM)}
               class:active={$activeX === CAMERA_RECORDING_MODE.ZOOM}
+=======
+>>>>>>> Stashed changes
             >
               <svg
                 width="24px"
@@ -329,8 +359,11 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
+<<<<<<< Updated upstream
               on:click={() => updateControls('x', CAMERA_RECORDING_MODE.PAN)}
               class:active={$activeX === CAMERA_RECORDING_MODE.PAN}
+=======
+>>>>>>> Stashed changes
             >
               <svg
                 width="24px"

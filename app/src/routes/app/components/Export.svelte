@@ -1,12 +1,12 @@
 <script>
-  let uploadStarted = false
+  let exported = true
   function saveToDevice() {
-    uploadStarted = !uploadStarted
+    exported = !exported
   }
 </script>
 
 <div
-  class:hidden={uploadStarted}
+  class:hidden={exported}
   class="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-slate-950"
 >
   <div

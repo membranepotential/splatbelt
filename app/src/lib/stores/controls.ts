@@ -8,6 +8,6 @@ export type Controls = {
   y: CAMERA_RECORDING_MODE
 }
 export const controls = writable<Controls>({
-  x: CAMERA_RECORDING_MODE.DOLLY,
-  y: CAMERA_RECORDING_MODE.DOLLY,
+  x: CAMERA_RECORDING_MODE.ZOOM,
+  y: CAMERA_RECORDING_MODE.ZOOM,
 })

@@ -10,6 +10,7 @@ export enum VIEWER_STATE {
 
 export type Interaction = {
   timeStamp: number
+
   x: number
   y: number
 }
@@ -23,10 +24,25 @@ export type Shot = {
     position: Vector3
     zoom: number
   }
+  newCameraPosition: MotionDestinaton
 }
 
 export enum CAMERA_RECORDING_MODE {
   DOLLY = 'DOLLY',
   ZOOM = 'ZOOM',
   PAN = 'PAN',
+}
+
+export type XYZ = {
+  x: number
+  y: number
+  z: number
+}
+
+export type MotionDestination = {
+  coords: XYZ
+  zoom: number
+  hasAppliedDolly: boolean
+  hasAppliedZoom: boolean
+  hasAppliedPan: boolean
 }

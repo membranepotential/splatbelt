@@ -1,10 +1,11 @@
 import type { Viewer } from '$splats'
-import { app, events, playerProgress } from '$lib/stores'
+import { app, events } from '$lib/stores'
 import { get } from 'svelte/store'
 import { throttle } from 'lodash-es'
 import { VIEWER_STATE } from '$lib/types'
 import type { Shot } from '$lib/types'
 import ShotsService from '$lib/services/shots'
+import GestureService from '$lib/services/gesture'
 
 const currentShotIdx = ShotsService.getCurrentShotIdx()
 const shots = ShotsService.getShots()
@@ -140,117 +141,111 @@ export class ViewerEngine {
       zoom: this.viewer.controls!.zoom0,
     }
 
-    this.replayEvents()
+    // this.replayEvents()
+    this.playLoop(currentShot)
   }
 
-  replayEvents() {
-    clearInterval(this.loopTimer!)
-    get(app).VIEWER_STATE = VIEWER_STATE.PLAY
-    let trace: Interaction[] = get(events)
+  // replayEvents() {
+  //   clearInterval(this.loopTimer!)
+  //   get(app).VIEWER_STATE = VIEWER_STATE.PLAY
+  //   let trace: Interaction[] = get(events)
 
-    // viewer.controls?.setState(initialPosition)
+  //   // viewer.controls?.setState(initialPosition)
 
-    this.duration = trace[trace.length - 1].timeStamp - trace[0].timeStamp
+  //   this.duration = trace[trace.length - 1].timeStamp - trace[0].timeStamp
 
-    this.playLoop()
-    this.loopTimer = setInterval(
-      this.playLoop.bind(this, trace),
-      this.duration + 20000
-    )
-  }
+  //   this.playLoop()
+  //   this.loopTimer = setInterval(
+  //     this.playLoop.bind(this, trace),
+  //     this.duration + 20000
+  //   )
+  // }
 
   playLoop(shot: Shot) {
     // check initial position and reset
 
-    console.log('apply shot', shot)
-    shot.initialPosition.position.copy(this.viewer.camera.position)
     // shot.initialPosition.target.copy(this.viewer.camera.target) // 0,0,0 anyway
 
     this.viewer.camera.zoom = shot.initialPosition.zoom
     this.viewer.camera.updateProjectionMatrix()
 
-    console.log('Playing this shot ')
-    this.loopTimer = setInterval(
+    GestureService.applyNewCameraPosition(shot.newCameraPosition, shot.duration)
+    setTimeout(() => {
+      // shot.initialPosition.position.copy(this.viewer.camera.position)
+      this.viewer.controls?.reset()
+    }, shot.duration + 200)
+
+    this.loopTimer = setTimeout(
       this.playLoop.bind(this, shot),
-      shot.duration + 5000
+      shot.duration + 3000
     )
   }
 
-  playLoopOLD(trace: Interaction[]) {
-    app.update(() => {
-      return {
-        VIEWER_STATE: VIEWER_STATE.PLAY,
-      }
-    })
-    console.log('playLoop duration ', this.duration, ' events: ', trace.length)
+  // playLoopOLD(trace: Interaction[]) {
+  //   app.update(() => {
+  //     return {
+  //       VIEWER_STATE: VIEWER_STATE.PLAY,
+  //     }
+  //   })
+  //   console.log('playLoop duration ', this.duration, ' events: ', trace.length)
 
-    const { timeStamp: firstEventTimestamp } = trace[0]
+  //   const { timeStamp: firstEventTimestamp } = trace[0]
 
-    playerProgress.set({
-      current: 0,
-      total: this.duration,
-    })
-    this.viewer.controls?.reset()
-    let loopStartTime = Date.now()
-    let lastFrameTime = Date.now()
+  //   this.viewer.controls?.reset()
+  //   let loopStartTime = Date.now()
+  //   let lastFrameTime = Date.now()
 
-    // const mapOfPlayedEvents = new WeakMap()
+  //   // const mapOfPlayedEvents = new WeakMap()
 
-    let eventsPlayed = 0
-    const report = () => {
-      console.log('Events played: ', eventsPlayed)
-    }
+  //   let eventsPlayed = 0
+  //   const report = () => {
+  //     console.log('Events played: ', eventsPlayed)
+  //   }
 
-    const playFrame = () => {
-      // Check for different mode
-      if (get(app).VIEWER_STATE !== VIEWER_STATE.PLAY) {
-        return report()
-      }
+  //   const playFrame = () => {
+  //     // Check for different mode
+  //     if (get(app).VIEWER_STATE !== VIEWER_STATE.PLAY) {
+  //       return report()
+  //     }
 
-      // Check for loop done
-      const currentOffset = Date.now() - loopStartTime
-      if (currentOffset > this.duration) {
-        return report()
-      }
+  //     // Check for loop done
+  //     const currentOffset = Date.now() - loopStartTime
+  //     if (currentOffset > this.duration) {
+  //       return report()
+  //     }
 
-      const idealTime = loopStartTime + currentOffset
+  //     const idealTime = loopStartTime + currentOffset
 
-      /**
-       * Find the element in the store that has the closest delta to the current offset
-       */
-      const closestEntry = trace.reduce((prev, curr) => {
-        const currDelta = curr.timeStamp - firstEventTimestamp
-        const prevDelta = prev.timeStamp - firstEventTimestamp
+  //     /**
+  //      * Find the element in the store that has the closest delta to the current offset
+  //      */
+  //     const closestEntry = trace.reduce((prev, curr) => {
+  //       const currDelta = curr.timeStamp - firstEventTimestamp
+  //       const prevDelta = prev.timeStamp - firstEventTimestamp
 
-        const currDiff = Math.abs(currDelta - currentOffset)
-        const prevDiff = Math.abs(prevDelta - currentOffset)
+  //       const currDiff = Math.abs(currDelta - currentOffset)
+  //       const prevDiff = Math.abs(prevDelta - currentOffset)
 
-        return currDiff < prevDiff ? curr : prev
-      })
+  //       return currDiff < prevDiff ? curr : prev
+  //     })
 
-      if (closestEntry) {
-        // mapOfPlayedEvents.set(closestEntry, true)
-        this.viewer.rootElement!.dispatchEvent(closestEntry)
-        eventsPlayed++
-      }
+  //     if (closestEntry) {
+  //       // mapOfPlayedEvents.set(closestEntry, true)
+  //       this.viewer.rootElement!.dispatchEvent(closestEntry)
+  //       eventsPlayed++
+  //     }
 
-      const currentTime = Date.now()
-      const timeSinceLastFrame = currentTime - lastFrameTime
-      const timeToNextFrame = Math.max(0, 16 - timeSinceLastFrame)
+  //     const currentTime = Date.now()
+  //     const timeSinceLastFrame = currentTime - lastFrameTime
+  //     const timeToNextFrame = Math.max(0, 16 - timeSinceLastFrame)
 
-      lastFrameTime = currentTime
+  //     lastFrameTime = currentTime
 
-      setTimeout(playFrame.bind(this), timeToNextFrame)
+  //     setTimeout(playFrame.bind(this), timeToNextFrame)
 
-      // Do this when we have time
-      requestAnimationFrame(() => {
-        playerProgress.set({
-          current: currentOffset,
-          total: this.duration,
-        })
-      })
-    }
+  //     // Do this when we have time
+  //   }
 
-    playFrame()
-  }
+  //   playFrame()
+  // }
 }

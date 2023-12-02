@@ -44,11 +44,11 @@
   <UI on:replay={replayEvents} />
   {#if $app.VIEWER_STATE === VIEWER_STATE.RECORD}
     <div
+      id="canvaswrap"
       class="canvaswrap absolute inset-0 z-20"
-      on:pointermove={GestureService.handleEventMoveThrottled}
+      on:pointermove={GestureService.handleEventMove}
       on:pointerdown={GestureService.handleEventDown}
       on:pointerup={GestureService.handleEventUp}
-      on:pointercancel={GestureService.handleEventUp}
     />
   {/if}
   <div

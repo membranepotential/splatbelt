@@ -1,18 +1,13 @@
 import { get } from 'svelte/store'
-import { app, controls } from '$lib/stores'
+import { app, controls, playerProgress } from '$lib/stores'
 import type { Viewer } from '$splats'
 import { throttle } from 'lodash-es'
 import * as TWEEN from '@tweenjs/tween.js'
 import type { PerspectiveCamera } from 'three'
 import { Spherical, Vector3 } from 'three'
 import { VIEWER_STATE, CAMERA_RECORDING_MODE } from '$lib/types'
+import type { MotionDestination, XYZ } from '$lib/types'
 import ShotsService from './shots'
-
-type XYZ = {
-  x: number
-  y: number
-  z: number
-}
 
 type TransformationParams = {
   axis: string
@@ -33,20 +28,17 @@ const cameraToXYZ = (camera: PerspectiveCamera): XYZ => ({
 })
 
 class GestureService {
-  handleEventMoveThrottled: (event: Event) => void
   latestEvents: Event[]
 
   viewer: Viewer | null
   camera: PerspectiveCamera | null
+  cameraAtBeginning: PerspectiveCamera | null
   tween: TWEEN.Tween<any> | null
 
-  constructor() {
-    this.handleEventMoveThrottled = throttle(this.handleEvent.bind(this), 100, {
-      leading: true,
-      trailing: true,
-    })
+  static DURATION = 1200
 
-    this.handleEvent = this.handleEvent.bind(this)
+  constructor() {
+    this.handleEventMove = this.handleEventMove.bind(this)
     this.handleEventDown = this.handleEventDown.bind(this)
     this.handleEventUp = this.handleEventUp.bind(this)
 
@@ -54,6 +46,7 @@ class GestureService {
     this.viewer = null
     this.camera = null
     this.tween = null
+    this.cameraAtBeginning = null
 
     app.subscribe((state) => {
       if (state.VIEWER_STATE === VIEWER_STATE.RECORD) {
@@ -127,7 +120,6 @@ class GestureService {
     if (params.hasAppliedPan) {
       return { zoom, coords, hasAppliedPan: true }
     }
-
     const _camera = camera.clone()
     const _coods = cameraToXYZ(_camera)
 
@@ -154,8 +146,8 @@ class GestureService {
 
     console.log(spherical.theta, spherical.phi)
     // Adjust phi and theta for panning
-    spherical.theta += directionX / 50
-    spherical.phi += directionY / 150
+    spherical.theta += directionX * 2
+    spherical.phi += directionY / 20
 
     // Ensure phi is within bounds to prevent flip
     spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi))
@@ -242,84 +234,121 @@ class GestureService {
     return results
   }
 
-  handleEvent(event: Event) {
-    // console.log(event)
+  applyNewCameraPosition(
+    newCameraPosition: MotionDestination,
+    duration: number
+  ) {
+    const { coords, zoom, hasAppliedDolly, hasAppliedZoom, hasAppliedPan } =
+      newCameraPosition
+    const camera: PerspectiveCamera = this.camera!
 
-    const DURATION = 1200
-    const cameraAtBeginning = this.camera?.clone()
-    if (this.latestEvents.length > 1 && !this.tween) {
-      const [first, second] = this.latestEvents
+    const from = {
+      x: camera.position.x,
+      y: camera.position.y,
+      z: camera.position.z,
+      zoom: camera.zoom,
+    }
+    const to = {
+      x: coords.x,
+      y: coords.y,
+      z: coords.z,
+      zoom,
+    }
+    // console.table(from)
+    // console.table(to)
 
-      const camera: PerspectiveCamera = this.camera!
-      const { coords, zoom, hasAppliedDolly, hasAppliedZoom, hasAppliedPan } =
-        this.calculateNewCameraPosition([first, second])
+    // console.log(from.zoom, coords.zoom)
 
-      const from = {
-        x: camera.position.x,
-        y: camera.position.y,
-        z: camera.position.z,
-        zoom: camera.zoom,
-      }
-      const to = {
-        x: coords.x,
-        y: coords.y,
-        z: coords.z,
-        zoom,
-      }
-      // console.table(from)
-      // console.table(to)
+    // console.log(from, coords)
+    const startTime = new Date()
+    this.tween = new TWEEN.Tween(from)
+      .to(to, duration)
+      .easing(TWEEN.Easing.Quadratic.InOut) // Add this line for a bezier curve effect
+      .onUpdate(function () {
+        let time = new Date()
 
-      // console.log(from.zoom, coords.zoom)
-
-      // console.log(from, coords)
-      this.tween = new TWEEN.Tween(from)
-        .to(to, DURATION)
-        .easing(TWEEN.Easing.Quadratic.InOut) // Add this line for a bezier curve effect
-        .onUpdate(() => {
-          if (hasAppliedZoom) {
-            camera.zoom = from.zoom
-          }
-          if (hasAppliedPan || hasAppliedDolly) {
-            camera.position.set(from.x, from.y, from.z)
-          }
+        playerProgress.set({
+          current: +new Date() - startTime.getTime(),
+          total: duration,
         })
 
-      this.tween.start().onComplete(() => {
-        console.log('Tween complete')
-        if (hasAppliedZoom) {
-          camera.updateProjectionMatrix()
+        if (hasAppliedPan || hasAppliedDolly) {
+          camera.position.set(from.x, from.y, from.z)
         }
+      })
 
-        this.tween = null
-        this.latestEvents = []
+    this.tween.start().onComplete(() => {
+      console.log('Tween complete')
 
+      if (hasAppliedZoom) {
+        camera.zoom = from.zoom
+        camera.updateProjectionMatrix()
+      }
+
+      if (get(app).VIEWER_STATE === VIEWER_STATE.RECORD) {
         ShotsService.updateCurrentShot({
-          duration: DURATION,
+          duration: duration,
           initialPosition: {
             target: this.viewer!.controls!.target0.clone(),
-            position: cameraAtBeginning!.position.clone(),
-            zoom: cameraAtBeginning!.zoom,
+            position: this.cameraAtBeginning!.position.clone(),
+            zoom: this.cameraAtBeginning!.zoom,
           },
+          newCameraPosition: newCameraPosition,
         })
-
+        this.tween = null
+        this.latestEvents = []
+        this.cameraAtBeginning = null
         app.set({ VIEWER_STATE: VIEWER_STATE.PLAY })
-      })
-    }
+      }
+    })
+  }
+
+  handleEventMove(event: Event) {
     this.latestEvents.push(event)
+
+    // const timeElapsed =
+    //   this.latestEvents[this.latestEvents.length - 1].timeStamp -
+    //   this.latestEvents[0].timeStamp
+    // console.log(timeElapsed)
+
+    // /    if (timeElapsed > 200 && !this.tween) {
+    if (this.latestEvents.length > 4 && !this.tween) {
+      const first = this.latestEvents[0]
+      const fourth = this.latestEvents[3]
+
+      const { coords, zoom, hasAppliedDolly, hasAppliedZoom, hasAppliedPan } =
+        this.calculateNewCameraPosition([first, fourth])
+      this.applyNewCameraPosition(
+        {
+          coords,
+          zoom,
+          hasAppliedDolly,
+          hasAppliedZoom,
+          hasAppliedPan,
+        },
+        GestureService.DURATION
+      )
+    }
   }
 
   handleEventUp(event: Event) {
     console.log('gestures > handleKeyUp')
+    document
+      .getElementById('canvaswrap')!
+      .releasePointerCapture(event.pointerId)
   }
   handleEventDown(event: Event) {
     console.log('gestures > handleKeyDown')
+    document.getElementById('canvaswrap')!.setPointerCapture(event.pointerId)
+    this.cameraAtBeginning = this.camera!.clone()
+    this.latestEvents = []
   }
 
   reset() {
     if (this.tween) {
       this.tween.stop()
       this.tween = null
-      this.latestEvents
+      this.latestEvents = []
     }
   }
 }

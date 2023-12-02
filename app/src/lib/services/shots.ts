@@ -83,20 +83,16 @@ class ShotsService {
   }
 
   getCurrentShotIdx() {
-    return this.currentShot
+    return this.currentShotIdx
   }
 
-  updateCurrentShot(payload: Partial<Shot>, events: any[] = []) {
+  updateCurrentShot(payload: Partial<Shot>) {
     this.shots.update((shots) => {
       const currentShotIdx = get(this.currentShotIdx)
       const currentShot = shots[currentShotIdx]
-      const currentEvents = get(currentShot.events)
       const newShot = {
         ...currentShot,
         ...payload,
-        ...(events && {
-          events: writable(...currentEvents, events),
-        }),
       }
 
       console.log('updating shot at index ', currentShotIdx, newShot)

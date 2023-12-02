@@ -4,7 +4,7 @@
   import ShotsService from '$lib/services/shots'
 
   const shots = ShotsService.getShots()
-  const currentShot = ShotsService.getCurrentShot()
+  const currentShotIdx = ShotsService.getCurrentShotIdx()
   let deselectionCheck = -1
   let deselectionFlag = false
 
@@ -25,11 +25,10 @@
     deselectionFlag = false
     deselectionCheck = -1
   }
-  const currentShotIdx = ShotsService.getCurrentShotIdx()
 
   $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
   $: isVisible = $app.VIEWER_STATE === VIEWER_STATE.PLAY
-  $: console.log($currentShot)
+  $: console.log($currentShotIdx)
 
   // $: {
   //   if (percentDone > 99) nextShot($currentShot, $shots)
@@ -42,12 +41,12 @@
       <button
         tabindex={i}
         class="shot"
-        class:active={$currentShot === i}
+        class:active={$currentShotIdx === i}
         on:click={() => checkAndSetShot(i)}
       >
         {i + 1}
 
-        {#if $currentShot == i || deselectionCheck == i}
+        {#if $currentShotIdx === i || deselectionCheck == i}
           <div
             style="transform: translateX({percentDone}%);"
             class="indicator"

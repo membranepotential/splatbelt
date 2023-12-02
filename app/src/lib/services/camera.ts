@@ -1,4 +1,4 @@
-import type { Viewer } from '$lib/splats'
+import type { Viewer } from '$splats'
 import * as TWEEN from '@tweenjs/tween.js'
 
 import { PerspectiveCamera, Vector3 } from 'three'

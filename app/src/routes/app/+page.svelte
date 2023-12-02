@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import * as GaussianSplat3D from '$lib/splats'
+  import { Viewer } from '$splats'
   import type { PageData } from './$types'
   import UI from './components/UI.svelte'
   import { ViewerEngine } from '$lib/viewer/engine'
@@ -16,16 +16,16 @@
   let engine = null
 
   onMount(async () => {
-    viewer = new GaussianSplat3D.Viewer(
-      canvasContainer, // rootElement
-      [-0.07, -0.71, -0.7], // up
-      [5.99, 5.1, -12.77], // pos
-      [0, 0, 0], // lookAt
-      20 // splatAlphaRemovalThreshold
-    )
+    viewer = new Viewer({
+      rootElement: canvasContainer,
+      initialCameraPosition: [5.99, 5.1, -12.77],
+      initialCameraLookAt: [0, 0, 0],
+      cameraUp: [-0.07, -0.71, -0.7],
+      splatAlphaRemovalThreshold: 20,
+    })
     viewer.init()
 
-    await viewer.loadBlob(data.pointCloud)
+    await viewer.loadFile(data.pointCloudUrl)
     viewer.start()
 
     engine = new ViewerEngine(viewer)

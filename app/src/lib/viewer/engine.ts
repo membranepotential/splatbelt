@@ -1,4 +1,4 @@
-import type { Viewer } from '$lib/splats'
+import type { Viewer } from '$splats'
 import { app, events, playerProgress } from '$lib/stores'
 import { get } from 'svelte/store'
 import { throttle } from 'lodash-es'

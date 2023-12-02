@@ -1,6 +1,0 @@
-[submodule "app/src/splats"]
-	path = app/src/splats
-	url = https://github.com/mkkellogg/GaussianSplats3D.git
-[submodule "app/gaussian-splats-3d"]
-	path = app/gaussian-splats-3d
-	url = https://github.com/mkkellogg/GaussianSplats3D.git

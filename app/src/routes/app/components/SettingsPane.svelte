@@ -10,7 +10,7 @@
   $: isRecord = $app.VIEWER_STATE === VIEWER_STATE.RECORD
   $: isPlay = $app.VIEWER_STATE === VIEWER_STATE.PLAY
 
-  let toggleState = true
+  let toggleState = false
   let centerLockState = true
   function toggle() {
     toggleState = !toggleState

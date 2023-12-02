@@ -5,22 +5,23 @@
 
   const shots = ShotsService.getShots()
   const currentShot = ShotsService.getCurrentShot()
-
-  let sameShot = -1
+  let deselectionCheck = -1
+  let deselectionFlag = false
 
   function checkAndSetShot(i) {
-    if (sameShot == i) {
+    if (deselectionCheck == i && !deselectionFlag) {
+      deselectionCheck = i
+      deselectionFlag = true
       ShotsService.setCurrentShot(-1)
-      sameShot = -1
     } else {
       ShotsService.setCurrentShot(i)
-      sameShot = i
+      deselectionCheck = i
+      deselectionFlag = false
     }
   }
 
   $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
   $: isVisible = $app.VIEWER_STATE === VIEWER_STATE.PLAY
-  // let isVisible = true
 
   $: console.log($currentShot)
 </script>
@@ -35,7 +36,7 @@
       >
         {i + 1}
 
-        {#if $currentShot === i}
+        {#if $currentShot == i || deselectionCheck == i}
           <div
             style="transform: translateX({percentDone}%);"
             class="indicator"

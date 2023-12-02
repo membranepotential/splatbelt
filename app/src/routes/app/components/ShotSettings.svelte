@@ -15,7 +15,7 @@
 </script>
 
 <div
-  class:open={$currentShot > -1}
+  class:open={$currentShot > -1 && isPlaying}
   class="shot-settings-container w-100 flex overflow-hidden"
 >
   <div class="duration mr-6 w-10/12 p-4">

@@ -65,7 +65,6 @@ class CameraService {
         .to(
           {
             x: camera.position.x,
-
             y: camera.position.y - 100,
             z: camera.position.z,
           },

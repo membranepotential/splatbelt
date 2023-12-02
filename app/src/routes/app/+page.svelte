@@ -1,11 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { Viewer } from '$splats'
+  import { app } from '$lib/stores'
   import type { PageData } from './$types'
   import UI from './components/UI.svelte'
   import { ViewerEngine } from '$lib/viewer/engine'
-
+  import GestureService from '$lib/services/gesture'
   import CameraService from '$lib/services/camera'
+  import { VIEWER_STATE } from '$lib/types'
 
   export let data: PageData
   let canvasContainer: HTMLDivElement
@@ -30,6 +32,7 @@
 
     engine = new ViewerEngine(viewer)
     CameraService.link(viewer)
+    GestureService.link(viewer)
   })
 
   const replayEvents = () => {
@@ -39,7 +42,19 @@
 
 <div class="relative">
   <UI on:replay={replayEvents} />
-  <div class="canvas" bind:this={canvasContainer} />
+  <div
+    class="canvaswrap"
+    on:pointermove={GestureService.handleEventMoveThrottled}
+    on:pointerdown={GestureService.handleEventDown}
+    on:pointerup={GestureService.handleEventUp}
+    on:pointercancel={GestureService.handleEventUp}
+  >
+    <div
+      class="canvas"
+      bind:this={canvasContainer}
+      class:pointer-events-none={$app.VIEWER_STATE === VIEWER_STATE.RECORD}
+    />
+  </div>
 </div>
 
 <style>

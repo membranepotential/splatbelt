@@ -5,5 +5,5 @@ type App = {
   VIEWER_STATE: VIEWER_STATE
 }
 export const app = writable<App>({
-  VIEWER_STATE: VIEWER_STATE.FREE,
+  VIEWER_STATE: VIEWER_STATE.RECORD,
 })

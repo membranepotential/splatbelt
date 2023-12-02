@@ -13,7 +13,9 @@
   $: isRecording = $app.VIEWER_STATE === VIEWER_STATE.RECORD
 </script>
 
-<div class="absolute top-32 flex w-full flex-col items-center justify-center">
+<div
+  class="absolute left-1/3 top-32 flex w-1/6 translate-x-[55%] flex-col items-center justify-center"
+>
   <button
     on:click={toggle}
     type="button"
@@ -79,8 +81,19 @@
       </span>
     </span>
   </button>
-  <div class="flex py-2 text-white">
+  <div class="flex pt-2 text-white">
     <span class:hidden={!isRecording}>Record</span>
     <span class:hidden={isRecording}>View</span>
   </div>
 </div>
+
+<div
+  class="help-text pointer-events-none absolute bottom-32 left-0 w-full text-center text-white opacity-30"
+>
+  <span class:hidden={isRecording}>View and Move Model</span>
+  <span class:hidden={!isRecording}>Swipe to record shot</span>
+</div>
+
+<style lang="sass">
+
+</style>

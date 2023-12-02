@@ -1,16 +1,24 @@
 <script>
   let toggleState = false
+  let centerLockState = true
   function toggle() {
     toggleState = !toggleState
   }
+
+  function toggleCenterLock() {
+    centerLockState = !centerLockState
+  }
 </script>
 
-<div class="absolute bottom-0 left-0 w-full overflow-hidden">
-  <div class="flex justify-center" class:translate-y-64={!toggleState}>
+<div
+  class="settings-slider absolute left-0 top-full w-full overflow-hidden"
+  class:slider-open={toggleState}
+>
+  <div class="flex justify-center">
     <button
       type="button"
       on:click={toggle}
-      class="inline-flex items-center gap-x-1.5 rounded-t-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      class="inline-flex items-center gap-x-1.5 rounded-t-md bg-slate-900 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-800"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -28,16 +36,16 @@
       </svg>
     </button>
   </div>
-  <div class="h-64 w-full bg-indigo-600" class:translate-y-64={!toggleState}>
-    <div class="w-100 flex h-20 border-t-2 border-white">
-      <div class="flex h-full w-4/12 items-center px-4 font-bold text-white">
+  <div class="settings-rows relative flex h-1/2 w-full flex-col bg-slate-900">
+    <div class="w-100 relative flex py-4">
+      <div class="  flex h-full w-4/12 items-center p-4 font-bold text-white">
         Up / Down
       </div>
       <div class="flex w-8/12 items-center overflow-y-scroll px-1">
         <span class="isolate inline-flex rounded-md shadow-sm">
           <button
             type="button"
-            class="relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md bg-white px-1 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+            class="settings-radio-button active relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
           >
             <svg
               width="24px"
@@ -77,7 +85,7 @@
           </button>
           <button
             type="button"
-            class="relative inline-flex w-20 flex-col items-center gap-x-1.5 bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+            class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
           >
             <svg
               width="24px"
@@ -143,7 +151,7 @@
           </button>
           <button
             type="button"
-            class="relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+            class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
           >
             <svg
               width="24px"
@@ -172,15 +180,15 @@
         </span>
       </div>
     </div>
-    <div class="w-100 flex h-20 border-t-2 border-white">
-      <div class="flex h-full w-4/12 items-center px-4 font-bold text-white">
-        Up / Down
+    <div class="w-100 flex py-4">
+      <div class="flex h-full w-4/12 items-center p-4 font-bold text-white">
+        Left / Right
       </div>
       <div class="flex w-8/12 items-center overflow-y-scroll px-1">
         <span class="isolate inline-flex rounded-md shadow-sm">
           <button
             type="button"
-            class="relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md bg-white px-1 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+            class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
           >
             <svg
               width="24px"
@@ -220,7 +228,7 @@
           </button>
           <button
             type="button"
-            class="relative inline-flex w-20 flex-col items-center gap-x-1.5 bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+            class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
           >
             <svg
               width="24px"
@@ -286,7 +294,7 @@
           </button>
           <button
             type="button"
-            class="relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+            class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
           >
             <svg
               width="24px"
@@ -315,11 +323,55 @@
         </span>
       </div>
     </div>
-    <div class="w-100 flex h-20 border-t-2 border-white">
-      <div class="flex h-full w-4/12 items-center px-4 font-bold text-white">
+    <div class="w-100 flex py-4">
+      <div class="flex h-full w-4/12 items-center p-4 font-bold text-white">
         Center Lock
       </div>
-      <div class="flex w-8/12 items-center overflow-y-scroll px-1" />
+      <div class="flex w-8/12 items-center justify-end overflow-y-scroll px-6">
+        <button
+          on:click={toggleCenterLock}
+          type="button"
+          class="group relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer items-center justify-center rounded-full bg-transparent"
+          role="switch"
+          aria-checked="false"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute h-full w-full rounded-full border-2 bg-transparent"
+            class:border-gray-700={!centerLockState}
+          />
+          <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute mx-auto h-4 w-9 rounded-full bg-transparent transition-colors duration-200 ease-in-out"
+            class:bg-gray-300={!centerLockState}
+          />
+          <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+          <span
+            class:translate-x-6={centerLockState}
+            aria-hidden="true"
+            class="pointer-events-none absolute left-1 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out"
+          />
+        </button>
+      </div>
     </div>
   </div>
 </div>
+
+<style lang="sass">
+  .settings-slider
+    top: calc(100% - 36px)
+    transition: all 400ms ease
+  .slider-open 
+    transform: translateY(-32vh)
+  
+
+  .settings-radio-button
+    color: white
+    &.active 
+      opacity: 1
+    opacity: 0.3
+    svg
+      path
+        stroke: white
+</style>

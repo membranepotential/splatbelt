@@ -18,8 +18,8 @@
   onMount(async () => {
     viewer = new GaussianSplat3D.Viewer(
       canvasContainer, // rootElement
-      [-0.27, -0.87, -0.41], // up
-      [7.35, 3.6, -12.6], // pos
+      [-0.07, -0.71, -0.7], // up
+      [5.99, 5.1, -12.77], // pos
       [0, 0, 0], // lookAt
       20 // splatAlphaRemovalThreshold
     )

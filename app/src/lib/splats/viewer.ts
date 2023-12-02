@@ -171,7 +171,8 @@ export class Viewer {
     if (!this.controls) {
       this.controls = new OrbitControls(this.camera, this.renderer.domElement)
       this.controls.rotateSpeed = 0.5
-      this.controls.maxPolarAngle = (0.9 * Math.PI) / 2
+      this.controls.minPolarAngle = 0
+      this.controls.maxPolarAngle = 2 * Math.PI
       this.controls.enableDamping = true
       this.controls.dampingFactor = 0.15
       this.controls.target.copy(this.initialCameraLookAt)

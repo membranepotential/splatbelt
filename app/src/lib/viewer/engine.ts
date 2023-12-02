@@ -123,10 +123,11 @@ export class ViewerEngine {
   }
 
   playLoop(recordedEvents: Event[]) {
-    app.set({
-      VIEWER_STATE: VIEWER_STATE.PLAY,
+    app.update(() => {
+      return {
+        VIEWER_STATE: VIEWER_STATE.PLAY,
+      }
     })
-
     console.log(
       'playLoop duration ',
       this.duration,

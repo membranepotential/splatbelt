@@ -1,7 +1,9 @@
+import { app, events } from '$lib/stores'
 import type { Shot } from '$lib/types'
 import { get, writable, type Writable } from 'svelte/store'
 import { toast } from '$lib/notifications/notifications'
 import { Vector3 } from 'three'
+import { VIEWER_STATE } from '$lib/types'
 
 class ShotsService {
   shots: Writable<Shot[]>
@@ -74,6 +76,11 @@ class ShotsService {
 
     this.shots.update((shots) => [...shots, newShot])
     this.currentShot.set(currentShotCount)
+    app.update(() => {
+      return {
+        VIEWER_STATE: VIEWER_STATE.FREE,
+      }
+    })
   }
 }
 

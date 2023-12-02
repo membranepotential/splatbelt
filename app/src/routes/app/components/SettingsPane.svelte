@@ -360,10 +360,10 @@
 
 <style lang="sass">
   .settings-slider
-    top: calc(100% - 36px)
+    top: calc(99vh - 32px)
     transition: all 400ms ease
   .slider-open 
-    transform: translateY(-32vh)
+    transform: translateY(-31vh)
   
 
   .settings-radio-button

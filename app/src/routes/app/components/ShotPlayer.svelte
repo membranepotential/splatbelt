@@ -1,31 +1,23 @@
 <script>
-  let progress = 0
+  import { app, playerProgress } from '$lib/stores'
   let currentShot = 1
-
-  setInterval(() => {
-    progress++
-    if (progress > 1000) {
-      if (currentShot == 1) {
-        currentShot = 2
-      } else {
-        currentShot = 1
-      }
-      progress = 0
-    }
-  })
+  $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
 </script>
 
 <div class="shot-player-bar">
   <div class="shot bg-slate-800">
     1
     {#if currentShot == 1}
-      <div style="transform: translateX({progress / 10}%)" class="indicator" />
+      <div style="transform: translateX({percentDone}%)" class="indicator" />
     {/if}
   </div>
   <div class="shot bg-slate-800">
     2
     {#if currentShot == 2}
-      <div style="transform: translateX({progress / 10}%)" class="indicator" />
+      <div
+        style="transform: translateX({percentDone / 10}%)"
+        class="indicator"
+      />
     {/if}
   </div>
   <div class="shot settings bg-slate-500">+</div>

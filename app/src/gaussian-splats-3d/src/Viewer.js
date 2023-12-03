@@ -582,7 +582,7 @@ export class Viewer {
     this.splatMesh.build(allSplatBuffers, allSplatBufferOptions)
     if (this.renderer) this.splatMesh.setRenderer(this.renderer)
     const splatCount = this.splatMesh.getSplatCount()
-    console.log(`Total splat count: ${splatCount}`)
+    // console.log(`Total splat count: ${splatCount}`)
     this.splatMesh.frustumCulled = false
     this.splatRenderCount = splatCount
   }
@@ -602,7 +602,7 @@ export class Viewer {
         } else if (e.data.sortCanceled) {
           this.sortRunning = false
         } else if (e.data.sortSetupPhase1Complete) {
-          console.log('Sorting web worker WASM setup complete.')
+          // console.log('Sorting web worker WASM setup complete.')
           sortWorker.postMessage({
             centers: this.splatMesh.getIntegerCenters(true).buffer,
           })
@@ -624,23 +624,23 @@ export class Viewer {
           for (let i = 0; i < splatCount; i++)
             this.sortWorkerIndexesToSort[i] = i
         } else if (e.data.sortSetupComplete) {
-          console.log('Sorting web worker ready.')
+          // console.log('Sorting web worker ready.')
           this.splatMesh.updateIndexes(this.sortWorkerSortedIndexes, splatCount)
           const splatDataTextures = this.splatMesh.getSplatDataTextures()
           const covariancesTextureSize = splatDataTextures.covariances.size
           const centersColorsTextureSize = splatDataTextures.centerColors.size
-          console.log(
-            'Covariances texture size: ' +
-              covariancesTextureSize.x +
-              ' x ' +
-              covariancesTextureSize.y
-          )
-          console.log(
-            'Centers/colors texture size: ' +
-              centersColorsTextureSize.x +
-              ' x ' +
-              centersColorsTextureSize.y
-          )
+          // console.log(
+          // 'Covariances texture size: ' +
+          //   covariancesTextureSize.x +
+          //   ' x ' +
+          //   covariancesTextureSize.y
+          // )
+          // console.log(
+          //   'Centers/colors texture size: ' +
+          //     centersColorsTextureSize.x +
+          //     ' x ' +
+          //     centersColorsTextureSize.y
+          // )
           this.sortWorker = sortWorker
           resolve()
         }

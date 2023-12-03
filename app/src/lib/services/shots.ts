@@ -6,6 +6,7 @@ import {
   type Readable,
   type Writable,
 } from 'svelte/store'
+import { controls } from '$lib/stores'
 import { toast } from '$lib/notifications/notifications'
 import { Vector3 } from 'three'
 
@@ -38,36 +39,6 @@ class ShotsService {
         return activeShot
       }
     )
-
-    if (false) {
-      this.shots.set([
-        {
-          trace: [],
-          initialPosition: {
-            target: new Vector3(),
-            position: new Vector3(),
-            zoom: 4,
-          },
-        },
-        {
-          trace: [],
-          initialPosition: {
-            target: new Vector3(),
-            position: new Vector3(),
-            zoom: 4,
-          },
-        },
-        {
-          trace: [],
-          initialPosition: {
-            target: new Vector3(),
-            position: new Vector3(),
-            zoom: 4,
-          },
-        },
-      ])
-      this.currentShot.set(2)
-    }
   }
 
   createEmptyShot() {
@@ -79,6 +50,8 @@ class ShotsService {
         position: new Vector3(),
         zoom: 4,
       },
+      duration: get(controls).duration,
+      newCameraPosition: null,
     }
   }
 
@@ -131,6 +104,9 @@ class ShotsService {
   }
 
   back() {
+    if (get(this.currentShotIdx) === 0) {
+      return
+    }
     this.shots.update((shots) => {
       const newShots = shots.slice(0, shots.length - 1)
       return newShots

@@ -2,19 +2,21 @@
   import { app, controls } from '$lib/stores'
   import { CAMERA_RECORDING_MODE, VIEWER_STATE } from '$lib/types'
   import { derived } from 'svelte/store'
-  import CameraService from '$lib/services/camera'
-  import TimeSensitiveButton from '$lib/components/TimeSensitiveButton.svelte'
   $: isFree = $app.VIEWER_STATE === VIEWER_STATE.FREE
   $: isRecord = $app.VIEWER_STATE === VIEWER_STATE.RECORD
   $: isPlay = $app.VIEWER_STATE === VIEWER_STATE.PLAY
 
   let toggleState = false
-  let centerLockState = true
-  function toggle() {
-    toggleState = !toggleState
+  function toggle(newState?: boolean) {
+    if (typeof newState === 'boolean') {
+      toggleState = newState
+    } else {
+      toggleState = !toggleState
+    }
   }
   function toggleCenterLock() {
-    centerLockState = !centerLockState
+    alert('NYI')
+    //TODO: Add to controls store
   }
   function updateControls(key: string, mode: CAMERA_RECORDING_MODE) {
     controls.update((c) => ({
@@ -25,6 +27,10 @@
 
   const activeX = derived(controls, ($controls) => $controls.x)
   const activeY = derived(controls, ($controls) => $controls.y)
+
+  app.subscribe(() => {
+    toggle(false)
+  })
 </script>
 
 {#if isFree}
@@ -35,7 +41,7 @@
     <div class="flex justify-center">
       <button
         type="button"
-        on:click={toggle}
+        on:click={() => toggle()}
         class="inline-flex items-center gap-x-1.5 rounded-t-md bg-slate-900 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-800"
       >
         <svg
@@ -370,17 +376,17 @@
             <span
               aria-hidden="true"
               class="pointer-events-none absolute h-full w-full rounded-full border-2 bg-transparent"
-              class:border-gray-700={!centerLockState}
+              class:border-gray-700={!$controls.centerLock}
             />
             <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
             <span
               aria-hidden="true"
               class="pointer-events-none absolute mx-auto h-4 w-9 rounded-full bg-transparent transition-colors duration-200 ease-in-out"
-              class:bg-gray-300={!centerLockState}
+              class:bg-gray-300={!$controls.centerLock}
             />
             <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
             <span
-              class:translate-x-6={centerLockState}
+              class:translate-x-6={$controls.centerLock}
               aria-hidden="true"
               class="pointer-events-none absolute left-1 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out"
             />

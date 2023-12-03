@@ -6,8 +6,13 @@ type ControlKey = 'x' | 'y' | 'centerLock'
 export type Controls = {
   x: CAMERA_RECORDING_MODE
   y: CAMERA_RECORDING_MODE
+  duration: number
+  centerLock: boolean
+  [key: string]: any
 }
 export const controls = writable<Controls>({
   x: CAMERA_RECORDING_MODE.PAN,
   y: CAMERA_RECORDING_MODE.ZOOM,
+  duration: 1200,
+  centerLock: true,
 })

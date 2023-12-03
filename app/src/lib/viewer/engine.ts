@@ -85,6 +85,12 @@ export class ViewerEngine {
     // TODO: check initial position and reset
     // shot.initialPosition.target.copy(this.viewer.camera.target) // 0,0,0 anyway
 
+    if (!shot.newCameraPosition) {
+      throw new Error(
+        'No new camera position defined for shot. How did this happen?'
+      )
+    }
+
     this.viewer.camera.zoom = shot.initialPosition.zoom
     this.viewer.camera.updateProjectionMatrix()
 

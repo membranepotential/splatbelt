@@ -1,10 +1,9 @@
 import { get } from 'svelte/store'
 import { app, controls, playerProgress } from '$lib/stores'
 import type { Viewer } from '$splats'
-import { throttle } from 'lodash-es'
 import * as TWEEN from '@tweenjs/tween.js'
 import type { PerspectiveCamera } from 'three'
-import { Spherical, Vector3 } from 'three'
+import { Vector3 } from 'three'
 import { VIEWER_STATE, CAMERA_RECORDING_MODE } from '$lib/types'
 import type { MotionDestination, XYZ } from '$lib/types'
 import ShotsService from './shots'
@@ -34,8 +33,6 @@ class GestureService {
   camera: PerspectiveCamera | null
   cameraAtBeginning: PerspectiveCamera | null
   tween: TWEEN.Tween<any> | null
-
-  static DURATION = 1200
 
   constructor() {
     this.handleEventMove = this.handleEventMove.bind(this)
@@ -114,7 +111,7 @@ class GestureService {
 
     var scale = axis === 'x' ? directionX : directionY
 
-    const _zoom = zoom + 0.2 * scale
+    const _zoom = zoom + 0.6 * scale
 
     return { zoom: _zoom, coords, hasAppliedZoom: true }
   }
@@ -167,13 +164,11 @@ class GestureService {
   }
 
   calculateNewCameraPosition(events: Event[]) {
-    const currentSettings = get(controls)
-
-    const [first, second] = this.latestEvents
-    const directionX = second.clientX - first.clientX
+    const [a, b] = this.latestEvents
+    const directionX = b.clientX - a.clientX
     // console.log('x dir', directionX)
 
-    const directionY = first.clientY - second.clientY
+    const directionY = a.clientY - b.clientY
 
     const orderOfApplication = [
       CAMERA_RECORDING_MODE.PAN,
@@ -194,8 +189,9 @@ class GestureService {
     console.table([...Object.values(state.coords), state.zoom])
     let operationCounter = 0
     const results = orderOfApplication.reduce((prev, current) => {
-      return Object.entries(get(controls))
-        .filter(([, mode]) => mode === current)
+      return ['x', 'y']
+        .map((key) => [key, get(controls)[key]])
+        .filter(([key, mode]) => mode === current)
         .reduce((prevI, [currentAxis, currentMode]) => {
           const intermediateResults = this.applyTransformation(
             prevI.coords,
@@ -205,7 +201,7 @@ class GestureService {
               hasAppliedZoom: prevI.hasAppliedZoom,
               hasAppliedPan: prevI.hasAppliedPan,
               axis: currentAxis,
-              mode: currentMode,
+              mode: currentMode as CAMERA_RECORDING_MODE,
               directionX,
               directionY,
               camera: this.camera!,
@@ -288,8 +284,9 @@ class GestureService {
         camera.zoom = from.zoom
         camera.updateProjectionMatrix()
       }
+      const currentState = get(app).VIEWER_STATE
 
-      if (get(app).VIEWER_STATE === VIEWER_STATE.RECORD) {
+      if (currentState === VIEWER_STATE.RECORD) {
         ShotsService.updateCurrentShot({
           duration: duration,
           initialPosition: {
@@ -299,11 +296,20 @@ class GestureService {
           },
           newCameraPosition: newCameraPosition,
         })
-        this.tween = null
+
         this.latestEvents = []
         this.cameraAtBeginning = null
         app.set({ VIEWER_STATE: VIEWER_STATE.PLAY })
       }
+
+      if (currentState === VIEWER_STATE.PLAY) {
+        playerProgress.set({
+          current: 0,
+          total: duration,
+        })
+      }
+
+      this.tween = null
     })
   }
 
@@ -330,7 +336,7 @@ class GestureService {
           hasAppliedZoom,
           hasAppliedPan,
         },
-        GestureService.DURATION
+        1200
       )
     }
   }

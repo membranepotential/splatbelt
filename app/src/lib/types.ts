@@ -1,5 +1,3 @@
-// import rotation type from threejs
-import type { Writable } from 'svelte/store'
 import type { Vector3 } from 'three'
 
 export enum VIEWER_STATE {
@@ -8,23 +6,15 @@ export enum VIEWER_STATE {
   PLAY = 'PLAY',
 }
 
-export type Interaction = {
-  timeStamp: number
-
-  x: number
-  y: number
-}
-
 export type Shot = {
   id: number
-  trace: Interaction[]
   duration: number
   initialPosition: {
     target: Vector3
     position: Vector3
     zoom: number
   }
-  newCameraPosition: MotionDestination
+  newCameraPosition: MotionDestination | null
 }
 
 export enum CAMERA_RECORDING_MODE {

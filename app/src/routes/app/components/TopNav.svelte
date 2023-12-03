@@ -2,10 +2,40 @@
   import { app } from '$lib/stores'
   import { VIEWER_STATE } from '$lib/types'
   import ShotsService from '$lib/services/shots'
+
+  const currentShotIdx = ShotsService.getCurrentShotIdx()
+  const shots = ShotsService.getShots()
+
+  /**
+   * TODO: Improve back behavior, e.g.(?):
+   *
+   * If in play, delete motion and go back to free
+   * If in free, delete current, get activeShot -= 1, go back to free
+   */
+  function handleBack() {
+    app.set({ VIEWER_STATE: VIEWER_STATE.FREE })
+    ShotsService.back()
+  }
+
+  $: canGoBack =
+    $app.VIEWER_STATE !== VIEWER_STATE.RECORD && // never when recording
+    ($app.VIEWER_STATE === VIEWER_STATE.PLAY || // always when playing
+      ($app.VIEWER_STATE === VIEWER_STATE.FREE && currentShotIdx > 0)) // only in free when not in first shot
+
+  /**
+   * TODO: When do you export? Can you do it at free or also at play?
+   */
+  function handleExport() {
+    alert('NYI')
+  }
+
+  $: canExport = $shots.filter((s) => s.newCameraPosition).length > 0
 </script>
 
 <button
   class="absolute right-2 top-2 rounded-lg bg-slate-900 px-2.5 py-2.5 text-indigo-200 duration-150 hover:bg-slate-950 active:bg-slate-950"
+  on:click={handleExport}
+  class:hidden={!canExport}
 >
   <svg
     width="24px"
@@ -32,10 +62,8 @@
 </button>
 <button
   class="absolute left-2 top-2 rounded-lg bg-slate-900 px-2.5 py-2.5 text-indigo-600 duration-150 hover:bg-slate-950 active:bg-slate-950"
-  on:click={() => {
-    app.set({ VIEWER_STATE: VIEWER_STATE.FREE })
-    ShotsService.back()
-  }}
+  on:click={handleBack}
+  class:hidden={!canGoBack}
 >
   <svg
     width="24px"

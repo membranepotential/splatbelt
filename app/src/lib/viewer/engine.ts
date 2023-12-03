@@ -1,34 +1,16 @@
 import type { Viewer } from '$splats'
-import { app, events } from '$lib/stores'
+import { app } from '$lib/stores'
 import { get } from 'svelte/store'
-import { throttle } from 'lodash-es'
 import { VIEWER_STATE } from '$lib/types'
 import type { Shot } from '$lib/types'
 import ShotsService from '$lib/services/shots'
 import GestureService from '$lib/services/gesture'
 
 const currentShotIdx = ShotsService.getCurrentShotIdx()
-const shots = ShotsService.getShots()
-
-// console.log(currentShot)
-// $: console.log('Current shot is now: ', get(currentShot))
-// $: console.log('Shots length is now: ', get(shots).length)
 
 export class ViewerEngine {
   viewer: Viewer
   lastState: VIEWER_STATE
-
-  static eventsToTrack = [
-    'contextmenu',
-    'keydown',
-    'pointercancel',
-    'pointerdown',
-    'pointermove',
-    'pointerup',
-    'wheel',
-  ]
-
-  trackMouseMove: (e: PointerEvent) => void
 
   loopTimer: null | ReturnType<typeof setInterval>
   duration: number = 0
@@ -36,11 +18,6 @@ export class ViewerEngine {
   constructor(viewer: Viewer) {
     this.viewer = viewer
     this.lastState = VIEWER_STATE.FREE
-
-    this.trackMouseMove = throttle(this.trackEvent, 16, {
-      leading: true,
-      trailing: true,
-    })
 
     this.loopTimer = null
 
@@ -72,14 +49,6 @@ export class ViewerEngine {
       this.viewer.controls.zoom0 = shot.initialPosition.zoom
       this.viewer.controls.reset()
     }
-    events.set(shot.trace)
-  }
-
-  trackEvent(e: PointerEvent) {
-    events.update((contents) => [
-      ...contents,
-      { timeStamp: e.timeStamp, x: e.clientX, y: e.clientY },
-    ])
   }
 
   handleStateUpdate(newState: VIEWER_STATE) {
@@ -87,46 +56,14 @@ export class ViewerEngine {
 
     switch (newState) {
       case VIEWER_STATE.FREE:
-        this.handleFreeState()
         break
       case VIEWER_STATE.RECORD:
-        this.handleRecordState()
-
         break
       case VIEWER_STATE.PLAY:
         const currentShot = get(ShotsService.getCurrentShot())
         this.playLoop(currentShot)
         break
     }
-  }
-
-  handleRecordState() {
-    this.saveInitialPosition()
-    for (const eventType of ViewerEngine.eventsToTrack) {
-      const fn =
-        eventType === 'mousemove' ? this.trackMouseMove : this.trackEvent
-
-      this.viewer.rootElement.addEventListener(eventType, fn)
-    }
-
-    this.viewer.rootElement.addEventListener(
-      'pointerdown',
-      this.saveInitialPosition
-    )
-  }
-
-  handleFreeState() {
-    for (const eventType of ViewerEngine.eventsToTrack) {
-      const fn =
-        eventType === 'mousemove' ? this.trackMouseMove : this.trackEvent
-
-      this.viewer.rootElement.removeEventListener(eventType, fn)
-    }
-
-    this.viewer.rootElement.removeEventListener(
-      'pointerdown',
-      this.saveInitialPosition
-    )
   }
 
   saveInitialPosition() {
@@ -141,29 +78,11 @@ export class ViewerEngine {
       zoom: this.viewer.controls!.zoom0,
     }
 
-    // this.replayEvents()
     this.playLoop(currentShot)
   }
 
-  // replayEvents() {
-  //   clearInterval(this.loopTimer!)
-  //   get(app).VIEWER_STATE = VIEWER_STATE.PLAY
-  //   let trace: Interaction[] = get(events)
-
-  //   // viewer.controls?.setState(initialPosition)
-
-  //   this.duration = trace[trace.length - 1].timeStamp - trace[0].timeStamp
-
-  //   this.playLoop()
-  //   this.loopTimer = setInterval(
-  //     this.playLoop.bind(this, trace),
-  //     this.duration + 20000
-  //   )
-  // }
-
   playLoop(shot: Shot) {
-    // check initial position and reset
-
+    // TODO: check initial position and reset
     // shot.initialPosition.target.copy(this.viewer.camera.target) // 0,0,0 anyway
 
     this.viewer.camera.zoom = shot.initialPosition.zoom
@@ -180,72 +99,4 @@ export class ViewerEngine {
       shot.duration + 3000
     )
   }
-
-  // playLoopOLD(trace: Interaction[]) {
-  //   app.update(() => {
-  //     return {
-  //       VIEWER_STATE: VIEWER_STATE.PLAY,
-  //     }
-  //   })
-  //   console.log('playLoop duration ', this.duration, ' events: ', trace.length)
-
-  //   const { timeStamp: firstEventTimestamp } = trace[0]
-
-  //   this.viewer.controls?.reset()
-  //   let loopStartTime = Date.now()
-  //   let lastFrameTime = Date.now()
-
-  //   // const mapOfPlayedEvents = new WeakMap()
-
-  //   let eventsPlayed = 0
-  //   const report = () => {
-  //     console.log('Events played: ', eventsPlayed)
-  //   }
-
-  //   const playFrame = () => {
-  //     // Check for different mode
-  //     if (get(app).VIEWER_STATE !== VIEWER_STATE.PLAY) {
-  //       return report()
-  //     }
-
-  //     // Check for loop done
-  //     const currentOffset = Date.now() - loopStartTime
-  //     if (currentOffset > this.duration) {
-  //       return report()
-  //     }
-
-  //     const idealTime = loopStartTime + currentOffset
-
-  //     /**
-  //      * Find the element in the store that has the closest delta to the current offset
-  //      */
-  //     const closestEntry = trace.reduce((prev, curr) => {
-  //       const currDelta = curr.timeStamp - firstEventTimestamp
-  //       const prevDelta = prev.timeStamp - firstEventTimestamp
-
-  //       const currDiff = Math.abs(currDelta - currentOffset)
-  //       const prevDiff = Math.abs(prevDelta - currentOffset)
-
-  //       return currDiff < prevDiff ? curr : prev
-  //     })
-
-  //     if (closestEntry) {
-  //       // mapOfPlayedEvents.set(closestEntry, true)
-  //       this.viewer.rootElement!.dispatchEvent(closestEntry)
-  //       eventsPlayed++
-  //     }
-
-  //     const currentTime = Date.now()
-  //     const timeSinceLastFrame = currentTime - lastFrameTime
-  //     const timeToNextFrame = Math.max(0, 16 - timeSinceLastFrame)
-
-  //     lastFrameTime = currentTime
-
-  //     setTimeout(playFrame.bind(this), timeToNextFrame)
-
-  //     // Do this when we have time
-  //   }
-
-  //   playFrame()
-  // }
 }

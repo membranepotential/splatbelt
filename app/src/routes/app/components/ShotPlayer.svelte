@@ -10,11 +10,14 @@
 
   function checkAndSetShot(i) {
     if (deselectionCheck == i && !deselectionFlag) {
+      console.log(
+        'Attempting to set current shot to -1 ?? What is a deselection flag?'
+      )
       deselectionCheck = i
       deselectionFlag = true
       ShotsService.setCurrentShot(-1)
     } else {
-      ShotsService.setCurrentShot(i)
+      ShotsService.setCurrentShotIdx(i)
       deselectionCheck = i
       deselectionFlag = false
     }
@@ -28,11 +31,6 @@
 
   $: percentDone = ($playerProgress.current / $playerProgress.total) * 100
   $: isVisible = $app.VIEWER_STATE === VIEWER_STATE.PLAY
-  $: console.log($currentShotIdx)
-
-  // $: {
-  //   if (percentDone > 99) nextShot($currentShot, $shots)
-  // }
 </script>
 
 {#if isVisible}

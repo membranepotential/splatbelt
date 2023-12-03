@@ -24,7 +24,7 @@ export type Shot = {
     position: Vector3
     zoom: number
   }
-  newCameraPosition: MotionDestinaton
+  newCameraPosition: MotionDestination
 }
 
 export enum CAMERA_RECORDING_MODE {

@@ -26,7 +26,17 @@ class ShotsService {
 
     this.currentShot = derived(
       [this.shots, this.currentShotIdx],
-      ([$shots, $currentShotIdx]) => $shots[$currentShotIdx]
+      ([$shots, $currentShotIdx]) => {
+        const activeShot = $shots[$currentShotIdx]
+        if (!activeShot) {
+          console.error(
+            "Warning: Can't get current shot",
+            $shots.length,
+            $currentShotIdx
+          )
+        }
+        return activeShot
+      }
     )
 
     if (false) {

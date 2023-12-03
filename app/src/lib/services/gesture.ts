@@ -63,6 +63,10 @@ class GestureService {
   applyTransformation(coords: XYZ, zoom: number, params: TransformationParams) {
     const { mode } = params
 
+    if (!params.camera.position) {
+      throw new Error("Can't apply transformation without camera position")
+    }
+
     switch (mode) {
       case 'DOLLY':
         return this.applyDollyTransform(coords, zoom, params)

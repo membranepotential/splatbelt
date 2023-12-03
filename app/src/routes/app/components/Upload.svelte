@@ -48,11 +48,11 @@
       /></svg
     >
 
-    <span
+    <button
       on:click={start}
       class="font-medium transition-colors group-hover:text-white"
     >
       Upload a Video
-    </span>
+    </button>
   </div>
 </div>

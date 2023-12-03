@@ -45,11 +45,11 @@
       /></svg
     >
 
-    <span
+    <button
       on:click={saveToDevice}
       class="font-medium transition-colors group-hover:text-white"
     >
       Download to device
-    </span>
+    </button>
   </div>
 </div>

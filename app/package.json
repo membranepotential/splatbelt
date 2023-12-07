@@ -51,6 +51,7 @@
     "@threlte/core": "^6.0.10",
     "@threlte/extras": "^7.0.0",
     "@tweenjs/tween.js": "^21.0.0",
+    "gaussian-splats-3d": "github:mkkellogg/GaussianSplats3D#v0.1.8",
     "humanize-duration": "^3.30.0",
     "lodash-es": "^4.17.21",
     "three": "^0.159.0",

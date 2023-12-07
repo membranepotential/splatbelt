@@ -1,9 +1,25 @@
 import { sveltekit } from '@sveltejs/kit/vite'
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vite'
+
+// @ts-ignore
+import { base64 } from './node_modules/gaussian-splats-3d/util/import-base-64.js'
 
 export default defineConfig({
-  plugins: [sveltekit()],
+  plugins: [
+    base64({ include: '**/*.wasm' }),
+    sveltekit(),
+  ],
+  assetsInclude: ['**/*.wasm'],
   ssr: {
-    noExternal: ['three', 'troika-three-text', 'troika-three-utils'],
+    noExternal: [
+      'three',
+      'troika-three-text',
+      'troika-three-utils',
+      'gaussian-splats-3d',
+    ],
+  },
+  test: {
+    environment: 'jsdom',
+    include: ['src/**/*.{test,spec}.{js,ts}'],
   },
 })

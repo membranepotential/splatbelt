@@ -2,12 +2,8 @@
   import type { FrameConfig, S3Object } from '$lib/schemas'
 
   export let object: S3Object
-<<<<<<<< HEAD:app/src/routes/admin/projects/[id=integer]/uploads/ObjectItem.svelte
-  export let disabled = false
-========
   export let config: FrameConfig
   export let disabled: boolean = false
->>>>>>>> f3393f0 (Save old app):app/src/routes/admin/projects/[id=integer]/uploads/FrameSelection.svelte
 
   $: isVideo = object.type.startsWith('video')
 </script>

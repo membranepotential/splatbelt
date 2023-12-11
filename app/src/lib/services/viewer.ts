@@ -65,6 +65,10 @@ export default class Viewer extends EventDispatcher<{
   }
 
   moveTo(to: { camera: PerspectiveCamera; target: Vector3 }) {
+    if (to.camera.zoom !== this.camera.zoom) {
+      to.camera.updateProjectionMatrix()
+    }
+
     this.camera.copy(to.camera)
     this.target.copy(to.target)
 

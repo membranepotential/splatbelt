@@ -18,4 +18,5 @@
     "prettier.configPath": "app/.prettierrc",
     "prettier.prettierPath": "app/node_modules/prettier",
     "javascript.validate.enable": false,
+    "python.languageServer": "Jedi",
 }

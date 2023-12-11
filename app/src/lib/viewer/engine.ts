@@ -1,13 +1,12 @@
-import type { Viewer } from '$splats'
-import { app } from '$lib/stores'
-import { get } from 'svelte/store'
-import { VIEWER_STATE } from '$lib/types'
-import type { Shot } from '$lib/types'
 import ShotsService from '$lib/services/shots'
-import GestureService from '$lib/services/gesture'
+import { app } from '$lib/stores'
+import { VIEWER_STATE, type Shot } from '$lib/types'
+import type { Viewer } from 'gaussian-splats-3d'
+import { get } from 'svelte/store'
 
 const currentShotIdx = ShotsService.getCurrentShotIdx()
 
+/* Also obsolete, left here for reference */
 export class ViewerEngine {
   viewer: Viewer
   lastState: VIEWER_STATE
@@ -94,7 +93,6 @@ export class ViewerEngine {
     this.viewer.camera.zoom = shot.initialPosition.zoom
     this.viewer.camera.updateProjectionMatrix()
 
-    GestureService.applyNewCameraPosition(shot.newCameraPosition, shot.duration)
     setTimeout(() => {
       // shot.initialPosition.position.copy(this.viewer.camera.position)
       this.viewer.controls?.reset()

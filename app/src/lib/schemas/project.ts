@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { ModelConfig } from './modelConfig'
+import { Shot } from './shot'
 
 export const AnalysisState = z.enum([
   'configuring',
@@ -19,10 +20,11 @@ export type LogEntry = z.infer<typeof LogEntry>
 
 export const Project = z.object({
   id: z.coerce.number(),
-  name: z.string().default('New Project'),
+  name: z.string(),
   created: z.coerce.date(),
   updated: z.coerce.date(),
   state: AnalysisState.default('configuring'),
+  shots: z.array(Shot).default([]),
   config: ModelConfig,
   logs: z.array(LogEntry).default([]),
 })
@@ -32,6 +34,7 @@ export type Project = z.infer<typeof Project>
 export const ProjectUpdate = Project.pick({
   name: true,
   state: true,
+  shots: true,
   config: true,
 }).partial()
 

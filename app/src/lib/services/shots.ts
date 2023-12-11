@@ -15,6 +15,7 @@ const id = (function () {
   return () => counter++
 })()
 
+/* This is already obsolete, will be reimplemented in the Player component */
 class ShotsService {
   shots: Writable<Shot[]>
   currentShotIdx: Writable<number>
@@ -22,9 +23,7 @@ class ShotsService {
 
   constructor() {
     this.currentShotIdx = writable(0)
-
     this.shots = writable([this.createEmptyShot()])
-
     this.currentShot = derived(
       [this.shots, this.currentShotIdx],
       ([$shots, $currentShotIdx]) => {
@@ -55,14 +54,12 @@ class ShotsService {
     }
   }
 
-  getShotCount() {}
-
   getShots() {
     return this.shots
   }
 
   getCurrentShot() {
-    return this.currentShot
+    return get(this.currentShot)
   }
 
   getCurrentShotIdx() {
@@ -115,6 +112,4 @@ class ShotsService {
   }
 }
 
-const shotsService = new ShotsService()
-
-export default shotsService
+export default new ShotsService()

@@ -1,7 +1,15 @@
-<script>
+<script lang="ts">
+  import type { Project } from '$lib/schemas'
+
+  export let project: Project
+
   let uploadStarted = false
-  function start() {
-    uploadStarted = !uploadStarted
+
+  function start(event: Event) {
+    const target = event.target as HTMLInputElement
+    const file = target.files![0]
+
+    console.log('start upload', file.name)
   }
 </script>
 
@@ -9,9 +17,9 @@
   class:hidden={uploadStarted}
   class="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-slate-950"
 >
-  <div
-    class="group inline-flex flex-col items-center justify-between gap-4 rounded-lg border-2 border-slate-800 bg-slate-900 px-6 py-7 text-lg text-indigo-100 transition-colors"
-    href="#"
+  <label
+    for="file-input"
+    class="inline-flex flex-col items-center justify-between gap-4 rounded-lg border-2 border-slate-800 bg-slate-900 px-6 py-7 text-lg font-medium text-indigo-100 transition-colors transition-colors hover:cursor-pointer hover:text-white"
   >
     <svg
       width="80px"
@@ -45,14 +53,16 @@
         stroke-width="0.8"
         stroke-linecap="round"
         stroke-linejoin="round"
-      /></svg
-    >
+      />
+    </svg>
+    Upload a Video
+  </label>
 
-    <button
-      on:click={start}
-      class="font-medium transition-colors group-hover:text-white"
-    >
-      Upload a Video
-    </button>
-  </div>
+  <input
+    id="file-input"
+    type="file"
+    accept="video/*"
+    class="hidden"
+    on:change={start}
+  />
 </div>

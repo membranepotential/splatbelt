@@ -54,6 +54,7 @@
     "gaussian-splats-3d": "github:mkkellogg/GaussianSplats3D#v0.1.8",
     "humanize-duration": "^3.30.0",
     "lodash-es": "^4.17.21",
+    "simplify-js": "^1.2.4",
     "three": "^0.159.0",
     "threlte": "^3.13.1",
     "uuid": "^9.0.1",

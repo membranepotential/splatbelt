@@ -12,7 +12,7 @@
       label: 'Projects',
     },
     {
-      href: '/app',
+      href: '/projects/1',
       label: 'App',
     },
     {

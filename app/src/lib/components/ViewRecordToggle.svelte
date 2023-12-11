@@ -1,22 +1,31 @@
-<script>
-  import { app } from '$lib/stores'
+<script lang="ts">
   import { VIEWER_STATE } from '$lib/types'
+  import { createEventDispatcher } from 'svelte'
+
+  export let state: VIEWER_STATE = VIEWER_STATE.FREE
+
+  $: isRecording = state === VIEWER_STATE.RECORD
+  $: isFree = state === VIEWER_STATE.FREE
+
+  const dispatch = createEventDispatcher<{ toggle: { state: VIEWER_STATE } }>()
 
   function toggle() {
-    app.update(({ VIEWER_STATE: currentState }) => ({
-      VIEWER_STATE:
-        currentState === VIEWER_STATE.RECORD
-          ? VIEWER_STATE.FREE
-          : VIEWER_STATE.RECORD,
-    }))
+    switch (state) {
+      case VIEWER_STATE.FREE:
+        dispatch('toggle', { state: VIEWER_STATE.RECORD })
+        break
+      case VIEWER_STATE.RECORD:
+        dispatch('toggle', { state: VIEWER_STATE.FREE })
+        break
+      default:
+        break
+    }
   }
-  $: isRecording = $app.VIEWER_STATE === VIEWER_STATE.RECORD
-  $: isFree = $app.VIEWER_STATE === VIEWER_STATE.FREE
 </script>
 
-{#if isFree}
+{#if isFree || isRecording}
   <div
-    class="absolute left-1/3 top-16 flex w-1/6 translate-x-[52%] flex-col items-center justify-center"
+    class="absolute left-1/3 top-16 z-30 flex w-1/6 translate-x-[52%] flex-col items-center justify-center"
   >
     <button
       on:click={toggle}
@@ -84,21 +93,15 @@
       </span>
     </button>
     <div class="flex pt-2 text-white">
+      <span class:hidden={!isFree}>View</span>
       <span class:hidden={!isRecording}>Record</span>
-      <span class:hidden={isRecording}>View</span>
     </div>
   </div>
+
+  <div
+    class="help-text pointer-events-none absolute bottom-52 left-0 w-full text-center text-white opacity-30"
+  >
+    <span class:hidden={!isFree}>View and Move Model</span>
+    <span class:hidden={!isRecording}>Swipe to record shot</span>
+  </div>
 {/if}
-<div
-  class="help-text pointer-events-none absolute bottom-52 left-0 w-full text-center text-white opacity-30"
->
-  <span class:hidden={$app.VIEWER_STATE === VIEWER_STATE.PLAY}
-    >View and Move Model</span
-  >
-  <span class:hidden={$app.VIEWER_STATE !== 'RECORD'}>Swipe to record shot</span
-  >
-</div>
-
-<style lang="sass">
-
-</style>

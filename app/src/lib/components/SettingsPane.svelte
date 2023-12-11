@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { app, controls } from '$lib/stores'
-  import { CAMERA_RECORDING_MODE, VIEWER_STATE } from '$lib/types'
+  import { controls } from '$lib/stores'
+  import { Movement } from '$lib/schemas/shot'
+  import { VIEWER_STATE } from '$lib/types'
   import { derived } from 'svelte/store'
-  $: isFree = $app.VIEWER_STATE === VIEWER_STATE.FREE
-  $: isRecord = $app.VIEWER_STATE === VIEWER_STATE.RECORD
-  $: isPlay = $app.VIEWER_STATE === VIEWER_STATE.PLAY
+
+  export let state: VIEWER_STATE
+
+  $: isFree = state === VIEWER_STATE.FREE
 
   let toggleState = false
   function toggle(newState?: boolean) {
@@ -18,7 +20,7 @@
     alert('NYI')
     //TODO: Add to controls store
   }
-  function updateControls(key: string, mode: CAMERA_RECORDING_MODE) {
+  function updateControls(key: string, mode: Movement) {
     controls.update((c) => ({
       ...c,
       [key]: mode,
@@ -27,10 +29,6 @@
 
   const activeX = derived(controls, ($controls) => $controls.x)
   const activeY = derived(controls, ($controls) => $controls.y)
-
-  app.subscribe(() => {
-    toggle(false)
-  })
 </script>
 
 {#if isFree}
@@ -69,8 +67,8 @@
           <span class="isolate inline-flex rounded-md shadow-sm">
             <button
               class="settings-radio-button active relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('y', CAMERA_RECORDING_MODE.DOLLY)}
-              class:active={$activeY === CAMERA_RECORDING_MODE.DOLLY}
+              on:click={() => updateControls('y', Movement.DOLLY)}
+              class:active={$activeY === Movement.DOLLY}
             >
               <svg
                 width="24px"
@@ -111,8 +109,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('y', CAMERA_RECORDING_MODE.ZOOM)}
-              class:active={$activeY === CAMERA_RECORDING_MODE.ZOOM}
+              on:click={() => updateControls('y', Movement.ZOOM)}
+              class:active={$activeY === Movement.ZOOM}
             >
               <svg
                 width="24px"
@@ -180,8 +178,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('y', CAMERA_RECORDING_MODE.PAN)}
-              class:active={$activeY === CAMERA_RECORDING_MODE.PAN}
+              on:click={() => updateControls('y', Movement.ORBIT)}
+              class:active={$activeY === Movement.ORBIT}
             >
               <svg
                 width="24px"
@@ -219,8 +217,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('x', CAMERA_RECORDING_MODE.DOLLY)}
-              class:active={$activeX === CAMERA_RECORDING_MODE.DOLLY}
+              on:click={() => updateControls('x', Movement.DOLLY)}
+              class:active={$activeX === Movement.DOLLY}
             >
               <svg
                 width="24px"
@@ -261,8 +259,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('x', CAMERA_RECORDING_MODE.ZOOM)}
-              class:active={$activeX === CAMERA_RECORDING_MODE.ZOOM}
+              on:click={() => updateControls('x', Movement.ZOOM)}
+              class:active={$activeX === Movement.ZOOM}
             >
               <svg
                 width="24px"
@@ -329,8 +327,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('x', CAMERA_RECORDING_MODE.PAN)}
-              class:active={$activeX === CAMERA_RECORDING_MODE.PAN}
+              on:click={() => updateControls('x', Movement.ORBIT)}
+              class:active={$activeX === Movement.ORBIT}
             >
               <svg
                 width="24px"

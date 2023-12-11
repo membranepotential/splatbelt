@@ -3,5 +3,7 @@
   import Toast from '$lib/notifications/Toast.svelte'
 </script>
 
-<slot />
+<div class="h-screen w-screen bg-slate-950">
+  <slot />
+</div>
 <Toast />

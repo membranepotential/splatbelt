@@ -1,5 +1,4 @@
 <script>
-  import { app } from '$lib/stores'
   import { VIEWER_STATE } from '$lib/types'
   import ShotsService from '$lib/services/shots'
   import { get } from 'svelte/store'

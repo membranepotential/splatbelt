@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS api.projects (
   updated TIMESTAMP DEFAULT now(),
   name text NOT NULL,
   state api.analysis_state NOT NULL DEFAULT 'configuring',
+  shots jsonb NOT NULL DEFAULT '[]',
   config jsonb NOT NULL DEFAULT '{}',
   logs jsonb NOT NULL DEFAULT '[]'
 );

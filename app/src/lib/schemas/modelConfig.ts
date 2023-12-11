@@ -5,7 +5,7 @@ import { PairingConfig } from './pairingConfig'
 import { MatchingConfig } from './matchingConfig'
 
 export const ModelConfig = z.object({
-  frames: z.record(FrameConfig),
+  frames: z.record(FrameConfig).default({}),
   pairing: PairingConfig,
   matching: MatchingConfig,
   minMatchScore: z.coerce.number().optional(),

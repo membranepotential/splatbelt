@@ -1,35 +1,30 @@
-<script>
-  import { app } from '$lib/stores'
+<script lang="ts">
   import { VIEWER_STATE } from '$lib/types'
   import ShotsService from '$lib/services/shots'
 
-  const currentShot = ShotsService.getCurrentShot()
+  export let state: VIEWER_STATE
 
-  let selectedSpeedSetting = 2
-
-  $: isPlaying = $app.VIEWER_STATE === VIEWER_STATE.PLAY
-
-  let settingsOpen = false
-
-  function toggleSettings() {
-    settingsOpen = !settingsOpen
+  const SETTINGS = {
+    levels: [
+      { value: 0.4, label: '0.4' },
+      { value: 0.7, label: '0.7' },
+      { value: 1, label: ' x1 ' },
+      { value: 2, label: ' x2 ' },
+      { value: 4, label: ' x4 ' },
+    ],
+    default: 2,
   }
+
+  $: isPlaying = state === VIEWER_STATE.PLAY
+  $: shotsNotEmpty = ShotsService.getCurrentShot() !== undefined
 
   function changeSpeed(i) {
     selectedSpeedSetting = i
   }
-
-  let speed = [
-    { index: 0, label: '0.4' },
-    { index: 1, label: '0.7' },
-    { index: 2, label: ' x1 ' },
-    { index: 3, label: ' x2 ' },
-    { index: 4, label: ' x4 ' },
-  ]
 </script>
 
 <div
-  class:open={$currentShot > -1 && isPlaying}
+  class:open={shotsNotEmpty && isPlaying}
   class="shot-settings-container w-100 flex overflow-hidden"
 >
   <div class="duration mr-6 w-10/12 p-4">
@@ -37,9 +32,9 @@
     <span
       class="isolate inline-flex w-full items-center justify-center rounded-md text-center shadow-sm"
     >
-      {#each speed as speed, i}
+      {#each SETTINGS.levels as speed, i}
         <button
-          class:active={selectedSpeedSetting === i}
+          class:active={SETTINGS.default === i}
           type="button"
           on:click={() => changeSpeed(i)}
           class="text-md relative inline-flex items-center justify-center rounded-md bg-transparent px-3 py-2 font-semibold text-gray-900 text-indigo-300"

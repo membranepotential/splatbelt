@@ -1,10 +1,12 @@
-<script>
-  import { app } from '$lib/stores'
+<script lang="ts">
+  import { page } from '$app/stores'
+  import type { Shot } from '$lib/stores/gesture'
   import { VIEWER_STATE } from '$lib/types'
-  import ShotsService from '$lib/services/shots'
 
-  const currentShotIdx = ShotsService.getCurrentShotIdx()
-  const shots = ShotsService.getShots()
+  export let state: VIEWER_STATE
+  export let shots: Shot[]
+
+  $: activeIdx = parseInt($page.params?.shotIdx)
 
   /**
    * TODO: Improve back behavior, e.g.(?):
@@ -12,15 +14,12 @@
    * If in play, delete motion and go back to free
    * If in free, delete current, get activeShot -= 1, go back to free
    */
-  function handleBack() {
-    app.set({ VIEWER_STATE: VIEWER_STATE.FREE })
-    ShotsService.back()
-  }
+  function handleBack() {}
 
   $: canGoBack =
-    $app.VIEWER_STATE !== VIEWER_STATE.RECORD && // never when recording
-    ($app.VIEWER_STATE === VIEWER_STATE.PLAY || // always when playing
-      ($app.VIEWER_STATE === VIEWER_STATE.FREE && currentShotIdx > 0)) // only in free when not in first shot
+    state !== VIEWER_STATE.RECORD && // never when recording
+    (state === VIEWER_STATE.PLAY || // always when playing
+      (state === VIEWER_STATE.FREE && activeIdx > 0)) // only in free when not in first shot
 
   /**
    * TODO: When do you export? Can you do it at free or also at play?
@@ -29,7 +28,7 @@
     alert('NYI')
   }
 
-  $: canExport = $shots.filter((s) => s.newCameraPosition).length > 0
+  $: canExport = shots.length > 0
 </script>
 
 <button

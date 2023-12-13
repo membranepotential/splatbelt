@@ -1,18 +1,5 @@
 import { API_URL } from '$env/static/private'
-
-import { STATUS_CODES } from 'http'
-
-export class HTTPError extends Error {
-  status: number
-  extras?: any
-
-  constructor(status: number, extras?: any) {
-    super(STATUS_CODES[status])
-    this.name = 'HTTPError'
-    this.status = status
-    this.extras = extras
-  }
-}
+import { error } from '@sveltejs/kit'
 
 function withBaseURL(input: RequestInfo | URL): RequestInfo | URL {
   if (input instanceof Request) {
@@ -27,7 +14,7 @@ export async function fetch(input: RequestInfo | URL, init?: RequestInit) {
   const response = await global.fetch(withBaseURL(input), init)
 
   if (!response.ok) {
-    throw new HTTPError(response.status)
+    throw error(response.status, response.statusText)
   }
 
   return response

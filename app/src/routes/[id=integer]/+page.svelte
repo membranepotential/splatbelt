@@ -1,17 +1,29 @@
 <script lang="ts">
-  import type { PageData } from './$types'
+  import { error } from '@sveltejs/kit'
   import Upload from './Upload.svelte'
   import Analysis from './Analysis.svelte'
   import Viewer from './Viewer.svelte'
+  import type { SvelteComponent } from 'svelte'
 
-  export let data: PageData
+  export let data: SvelteComponent
   $: project = data.project
+
+  let component: any
+  $: switch (project.state) {
+    case 'configuring':
+      component = Upload
+      break
+    case 'pending':
+    case 'running':
+    case 'failed':
+      component = Analysis
+      break
+    case 'complete':
+      component = Viewer
+      break
+    default:
+      throw error(500, 'Invalid project state')
+  }
 </script>
 
-{#if project.state === 'configuring'}
-  <Upload {project} />
-{:else if project.state in ['pending', 'running', 'failed']}
-  <Analysis {project} />
-{:else if project.state === 'complete'}
-  <Viewer {project} />
-{/if}
+<svelte:component this={component} {project} />

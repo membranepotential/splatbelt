@@ -1,45 +1,23 @@
 <script lang="ts">
   import { controls } from '$lib/stores'
-  import { Movement } from '$lib/schemas/shot'
-  import { VIEWER_STATE } from '$lib/types'
-  import { derived } from 'svelte/store'
+  import { VIEWER_STATE, Movement } from '$lib/types'
 
   export let state: VIEWER_STATE
 
   $: isFree = state === VIEWER_STATE.FREE
 
-  let toggleState = false
-  function toggle(newState?: boolean) {
-    if (typeof newState === 'boolean') {
-      toggleState = newState
-    } else {
-      toggleState = !toggleState
-    }
-  }
-  function toggleCenterLock() {
-    alert('NYI')
-    //TODO: Add to controls store
-  }
-  function updateControls(key: string, mode: Movement) {
-    controls.update((c) => ({
-      ...c,
-      [key]: mode,
-    }))
-  }
-
-  const activeX = derived(controls, ($controls) => $controls.x)
-  const activeY = derived(controls, ($controls) => $controls.y)
+  let isOpen = false
 </script>
 
 {#if isFree}
   <div
     class="settings-slider absolute left-0 top-full w-full overflow-hidden"
-    class:slider-open={toggleState}
+    class:slider-open={isOpen}
   >
     <div class="flex justify-center">
       <button
         type="button"
-        on:click={() => toggle()}
+        on:click={() => (isOpen = !isOpen)}
         class="inline-flex items-center gap-x-1.5 rounded-t-md bg-slate-900 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-800"
       >
         <svg
@@ -60,15 +38,17 @@
     </div>
     <div class="settings-rows relative flex h-1/2 w-full flex-col bg-slate-900">
       <div class="w-100 relative flex py-4">
-        <div class="  flex h-full w-4/12 items-center p-4 font-bold text-white">
+        <div
+          class="flex h-full basis-1/3 items-center p-4 font-bold text-white"
+        >
           Up / Down
         </div>
-        <div class="flex w-8/12 items-center overflow-y-scroll px-1">
+        <div class="flex basis-2/3 items-center overflow-y-scroll px-1">
           <span class="isolate inline-flex rounded-md shadow-sm">
             <button
-              class="settings-radio-button active relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('y', Movement.DOLLY)}
-              class:active={$activeY === Movement.DOLLY}
+              class="settings-radio-button active relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md text-sm font-semibold text-gray-900"
+              on:click={() => ($controls.y = Movement.DOLLY)}
+              class:active={$controls.y === Movement.DOLLY}
             >
               <svg
                 width="24px"
@@ -109,8 +89,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('y', Movement.ZOOM)}
-              class:active={$activeY === Movement.ZOOM}
+              on:click={() => ($controls.y = Movement.ZOOM)}
+              class:active={$controls.y === Movement.ZOOM}
             >
               <svg
                 width="24px"
@@ -178,8 +158,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('y', Movement.ORBIT)}
-              class:active={$activeY === Movement.ORBIT}
+              on:click={() => ($controls.y = Movement.ORBIT)}
+              class:active={$controls.y === Movement.ORBIT}
             >
               <svg
                 width="24px"
@@ -217,8 +197,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-l-md px-1 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('x', Movement.DOLLY)}
-              class:active={$activeX === Movement.DOLLY}
+              on:click={() => ($controls.x = Movement.DOLLY)}
+              class:active={$controls.x === Movement.DOLLY}
             >
               <svg
                 width="24px"
@@ -259,8 +239,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('x', Movement.ZOOM)}
-              class:active={$activeX === Movement.ZOOM}
+              on:click={() => ($controls.x = Movement.ZOOM)}
+              class:active={$controls.x === Movement.ZOOM}
             >
               <svg
                 width="24px"
@@ -327,8 +307,8 @@
             <button
               type="button"
               class="settings-radio-button relative inline-flex w-20 flex-col items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900"
-              on:click={() => updateControls('x', Movement.ORBIT)}
-              class:active={$activeX === Movement.ORBIT}
+              on:click={() => ($controls.x = Movement.ORBIT)}
+              class:active={$controls.x === Movement.ORBIT}
             >
               <svg
                 width="24px"
@@ -365,7 +345,7 @@
           class="flex w-8/12 items-center justify-end overflow-y-scroll px-6"
         >
           <button
-            on:click={toggleCenterLock}
+            on:click={() => ($controls.centerLock = !$controls.centerLock)}
             type="button"
             class="group relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer items-center justify-center rounded-full bg-transparent"
             role="switch"

@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store'
+import { writable, get } from 'svelte/store'
 import { Vector2, SplineCurve } from 'three'
 import simplify from 'simplify-js'
 
@@ -9,7 +9,8 @@ Points are added with addEvent and addPoint.
 The whole shot may be overwritten with setShot.
 */
 export default (function (n: number = 20, tolerance: number = 10) {
-  const { subscribe, set } = writable<Vector2[]>([])
+  const store = writable<Vector2[]>([])
+  const { subscribe, set } = store
 
   let points: Vector2[] = []
 
@@ -51,6 +52,7 @@ export default (function (n: number = 20, tolerance: number = 10) {
   }
 
   return {
+    getPoints: () => get(store),
     subscribe,
     addPoint,
     addEvent,

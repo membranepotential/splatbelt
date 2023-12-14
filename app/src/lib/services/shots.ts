@@ -8,6 +8,7 @@ import {
 } from 'svelte/store'
 import { controls } from '$lib/stores'
 import { toast } from '$lib/notifications/notifications'
+import { DefaultMovement } from '$lib/stores/controls'
 import { Vector3 } from 'three'
 
 const id = (function () {
@@ -40,17 +41,28 @@ class ShotsService {
     )
   }
 
-  createEmptyShot() {
+  createEmptyShot(): Shot {
     return {
       id: id(),
-      events: writable<Event[]>([]),
-      initialPosition: {
-        target: new Vector3(),
-        position: new Vector3(),
-        zoom: 4,
+      duration: 12000,
+      motion: {
+        x: {
+          movement: DefaultMovement,
+          scale: 1,
+        },
+        y: {
+          movement: DefaultMovement,
+          scale: 1,
+        },
       },
-      duration: get(controls).duration,
-      newCameraPosition: null,
+      initial: {
+        camera: {
+          position: new Vector3(0, 0, 0),
+          zoom: 1,
+        },
+        target: new Vector3(0, 0, 0),
+      },
+      points: [],
     }
   }
 

@@ -29,7 +29,16 @@ export const Project = z.object({
   logs: z.array(LogEntry).default([]),
 })
 
-export type Project = z.infer<typeof Project>
+export type Project = {
+  id: number
+  name: string
+  created: Date
+  updated: Date
+  state: AnalysisState
+  shots: Shot[]
+  config: ModelConfig
+  logs: LogEntry[]
+}
 
 export const ProjectUpdate = Project.pick({
   name: true,

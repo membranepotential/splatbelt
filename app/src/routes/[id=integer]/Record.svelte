@@ -1,10 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy } from 'svelte'
   import { Vector2 } from 'three'
+  import { get } from 'svelte/store'
   import { curve, controls, composedMotion } from '$lib/stores'
   import type { CameraSetting } from '$lib/stores/motions'
   import type Viewer from '$lib/services/viewer'
-  import { DEFAULT_SCALES, type Shot } from '$lib/schemas/shot'
+  import { DEFAULT_SCALES } from '$lib/schemas/shot'
+  import type { Shot } from '$lib/types'
 
   /* Records a swipe gesture into a shot, paints a trace and controls the camera */
 
@@ -12,6 +14,7 @@
   export let shot: Shot | undefined
 
   let initial: CameraSetting | undefined
+  let isRecording = false
 
   $: if (viewer) initial = viewer.saveState()
   $: if (initial && shot) {
@@ -52,16 +55,21 @@
   }>()
 
   function handleEventMove(event: PointerEvent) {
-    curve.addEvent(event)
+    if (isRecording) {
+      curve.addEvent(event)
+    }
   }
 
   function handleEventDown(event: PointerEvent) {
+    console.log('event:down')
     canvasWrapper.setPointerCapture(event.pointerId)
     viewer.reset()
     curve.reset()
+    isRecording = true
   }
 
   function handleEventUp(event: PointerEvent) {
+    console.log('event:up')
     canvasWrapper.releasePointerCapture(event.pointerId)
 
     if (!initial) return
@@ -79,10 +87,11 @@
         target: initial.target,
       },
       duration: $controls.duration,
-      points: $curve,
+      points: curve.getPoints(),
     }
 
     dispatch('shotRecorded', { shot })
+    isRecording = false
   }
 </script>
 

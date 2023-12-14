@@ -1,8 +1,18 @@
 import { writable } from 'svelte/store'
-import type { Movement } from '$lib/schemas/shot'
+import { Movement } from '$lib/types'
 
-export default writable<{
+type Controls = {
   x: Movement
   y: Movement
   duration: number
-}>({ x: 'orbit', y: 'orbit', duration: 1200 })
+  centerLock: boolean
+}
+
+export const DefaultMovement = Movement.ORBIT
+
+export default writable<Controls>({
+  x: DefaultMovement,
+  y: DefaultMovement,
+  duration: 1200,
+  centerLock: true,
+})

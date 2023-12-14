@@ -1,5 +1,6 @@
 import { Vector2, Vector3, PerspectiveCamera } from 'three'
-import { type Movement, DEFAULT_SCALES } from '$lib/schemas/shot'
+import { DEFAULT_SCALES } from '$lib/schemas/shot'
+import { Movement } from '$lib/types'
 import { derived } from 'svelte/store'
 import controls from '$lib/stores/controls'
 
@@ -63,10 +64,10 @@ function orbitY(state: CameraSetting, delta: number) {
 }
 
 const motions = {
-  dolly: { x: dolly, y: dolly },
-  zoom: { x: zoom, y: zoom },
-  pan: { x: panX, y: panY },
-  orbit: { x: orbitX, y: orbitY },
+  [Movement.DOLLY]: { x: dolly, y: dolly },
+  [Movement.ZOOM]: { x: zoom, y: zoom },
+  [Movement.PAN]: { x: panX, y: panY },
+  [Movement.ORBIT]: { x: orbitX, y: orbitY },
 }
 
 export function composeMotion(

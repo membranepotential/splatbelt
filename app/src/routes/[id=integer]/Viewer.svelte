@@ -7,11 +7,9 @@
   import TopNav from '$lib/components/TopNav.svelte'
   import ViewRecordToggle from '$lib/components/ViewRecordToggle.svelte'
   import type { Project } from '$lib/schemas'
-  import type { Shot } from '$lib/schemas/shot'
   import Viewer from '$lib/services/viewer'
-  import { VIEWER_STATE } from '$lib/types'
+  import { VIEWER_STATE, type Shot } from '$lib/types'
   import { onMount } from 'svelte'
-  import { z } from 'zod'
   import Player from './Player.svelte'
   import Record from './Record.svelte'
 
@@ -22,27 +20,32 @@
    - shot: index of the active shot
   */
 
-  const ParamSchema = z.object({
-    state: z.coerce
-      .string()
-      .transform(
-        (s) =>
-          VIEWER_STATE[s.toUpperCase() as keyof typeof VIEWER_STATE] ||
-          VIEWER_STATE.FREE
-      ),
-    shot: z.coerce.number().int().min(0).default(0),
-  })
-
   export let project: Project
   let viewer: Viewer
 
   let canvasContainer: HTMLDivElement
 
-  $: params = ParamSchema.parse(Object.fromEntries($page.url.searchParams))
-  $: state = params.state || VIEWER_STATE.FREE
+  let state = VIEWER_STATE.FREE
+  let shotIdx = 0
+
+  page.subscribe((p) => {
+    const params = Object.fromEntries(
+      p.url.searchParams.entries()
+    ) as unknown as {
+      state?: VIEWER_STATE
+      shot?: string
+    }
+    if (params.state) {
+      state = params.state
+    }
+    if (typeof params.shot === 'string') {
+      shotIdx = parseInt(params.shot)
+    }
+  })
+
+  $: console.log('state is now: ', state)
   $: shots = project.shots
-  $: shotIdx = params.shot || 0
-  $: shot = shots?.[shotIdx]
+  $: shot = shots[shotIdx] as Shot
 
   onMount(() => {
     viewer = new Viewer(canvasContainer, {
@@ -63,7 +66,7 @@
     } else {
       project.shots[shotIdx] = event.detail.shot
     }
-    goto(`?state=play&shot=${shotIdx}`)
+    goto(`?state=PLAY&shot=${shotIdx}`)
   }
 </script>
 

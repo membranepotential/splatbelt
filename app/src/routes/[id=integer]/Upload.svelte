@@ -19,7 +19,7 @@
 >
   <label
     for="file-input"
-    class="inline-flex flex-col items-center justify-between gap-4 rounded-lg border-2 border-slate-800 bg-slate-900 px-6 py-7 text-lg font-medium text-indigo-100 transition-colors transition-colors hover:cursor-pointer hover:text-white"
+    class="inline-flex flex-col items-center justify-between gap-4 rounded-lg border-2 border-slate-800 bg-slate-900 px-6 py-7 text-lg font-medium text-indigo-100 transition-colors hover:cursor-pointer hover:text-white"
   >
     <svg
       width="80px"

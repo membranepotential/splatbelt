@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
   import { page } from '$app/stores'
   import type { Shot } from '$lib/stores/gesture'
   import { VIEWER_STATE } from '$lib/types'
@@ -6,7 +7,7 @@
   export let state: VIEWER_STATE
   export let shots: Shot[]
 
-  $: activeIdx = parseInt($page.params?.shotIdx)
+  $: currentShotIndex = parseInt($page.url.searchParams.get('shot') ?? '0')
 
   /**
    * TODO: Improve back behavior, e.g.(?):
@@ -14,12 +15,16 @@
    * If in play, delete motion and go back to free
    * If in free, delete current, get activeShot -= 1, go back to free
    */
-  function handleBack() {}
+  function handleBack() {
+    if (state === VIEWER_STATE.PLAY) {
+      goto(`?state=FREE&shot=${currentShotIndex}`)
+    }
+  }
 
   $: canGoBack =
     state !== VIEWER_STATE.RECORD && // never when recording
     (state === VIEWER_STATE.PLAY || // always when playing
-      (state === VIEWER_STATE.FREE && activeIdx > 0)) // only in free when not in first shot
+      (state === VIEWER_STATE.FREE && currentShotIndex > 0)) // only in free when not in first shot
 
   /**
    * TODO: When do you export? Can you do it at free or also at play?

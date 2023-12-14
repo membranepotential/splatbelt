@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { Shot } from '$lib/schemas/shot'
   import { createEventDispatcher } from 'svelte'
+  import ShotsService from '$lib/services/shots'
 
-  export let shots: Shot[]
-  export let shotIdx: number
+  const { shots, currentShotIdx } = ShotsService
   export let progress: number
 
   const dispatch = createEventDispatcher<{
@@ -13,16 +13,16 @@
 </script>
 
 <div class="shot-player-bar">
-  {#each shots as shot, i}
+  {#each $shots as shot, i}
     <button
       tabindex={i}
       class="shot"
-      class:active={shotIdx === i}
+      class:active={$currentShotIdx === i}
       on:click={() => dispatch('changeShot', { to: i })}
     >
       {i + 1}
 
-      {#if shotIdx === i}
+      {#if $currentShotIdx === i}
         <div
           style="transform: translateX({progress * 100}%);"
           class="indicator"
@@ -46,7 +46,6 @@
   display: flex
   justify-content: center
   align-items: center
-  overflow: scroll
   .shot 
     color: white
     position: relative

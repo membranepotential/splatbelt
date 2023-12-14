@@ -6,13 +6,16 @@ type Controls = {
   y: Movement
   duration: number
   centerLock: boolean
+  speedFactor: number
 }
 
 export const DefaultMovement = Movement.ORBIT
+export const DefaultSpeed = 1
 
 export default writable<Controls>({
   x: DefaultMovement,
   y: DefaultMovement,
   duration: 1200,
   centerLock: true,
+  speedFactor: 1,
 })

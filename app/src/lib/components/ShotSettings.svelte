@@ -1,25 +1,23 @@
 <script lang="ts">
   import { VIEWER_STATE } from '$lib/types'
   import ShotsService from '$lib/services/shots'
+  import { controls } from '$lib/stores'
 
   export let state: VIEWER_STATE
 
-  const SETTINGS = {
-    levels: [
-      { value: 0.4, label: '0.4' },
-      { value: 0.7, label: '0.7' },
-      { value: 1, label: ' x1 ' },
-      { value: 2, label: ' x2 ' },
-      { value: 4, label: ' x4 ' },
-    ],
-    default: 2,
-  }
+  const speedLevelMap = new Map([
+    [0.4, '0.4'],
+    [0.7, '0.7'],
+    [1, 'x1'],
+    [2, 'x2'],
+    [4, 'x4'],
+  ])
 
   $: isPlaying = state === VIEWER_STATE.PLAY
   $: shotsNotEmpty = ShotsService.getCurrentShot() !== undefined
 
-  function changeSpeed(i) {
-    selectedSpeedSetting = i
+  function deleteCurrentShot() {
+    ShotsService.deleteCurrentShot()
   }
 </script>
 
@@ -32,14 +30,15 @@
     <span
       class="isolate inline-flex w-full items-center justify-center rounded-md text-center shadow-sm"
     >
-      {#each SETTINGS.levels as speed, i}
+      {#each speedLevelMap as [speed, label]}
         <button
-          class:active={SETTINGS.default === i}
+          class:active={speed === $controls.speedFactor}
           type="button"
-          on:click={() => changeSpeed(i)}
-          class="text-md relative inline-flex items-center justify-center rounded-md bg-transparent px-3 py-2 font-semibold text-gray-900 text-indigo-300"
-          >{speed.label}</button
+          on:click={() => ($controls.speedFactor = speed)}
+          class="text-md relative inline-flex items-center justify-center rounded-md bg-transparent px-3 py-2 font-semibold text-indigo-300"
         >
+          {label}
+        </button>
       {/each}
     </span>
   </div>
@@ -50,6 +49,7 @@
       <button
         type="button"
         class="text-md items-cente relative inline-flex bg-slate-200 bg-transparent px-3 py-2 font-semibold text-indigo-900"
+        on:click={() => deleteCurrentShot()}
       >
         <svg
           width="24px"

@@ -13,6 +13,7 @@
     getMovementConfig,
     type CameraSetting,
   } from '$lib/stores/motions'
+  import { controls } from '$lib/stores'
 
   /* Plays the shot and offers settings to modify the shot */
 
@@ -60,7 +61,7 @@
     viewer.moveTo(initial)
     tween = tweened(0, {
       delay: 500,
-      duration: 1200,
+      duration: shot.duration * (1 / $controls.speedFactor),
       easing: quadInOut,
     })
     unsubsscribe = tween.subscribe((t) => {

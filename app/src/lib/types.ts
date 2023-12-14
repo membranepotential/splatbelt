@@ -4,6 +4,7 @@ export enum VIEWER_STATE {
   FREE = 'FREE',
   RECORD = 'RECORD',
   PLAY = 'PLAY',
+  EXPORT = 'EXPORT',
 }
 
 export enum Movement {

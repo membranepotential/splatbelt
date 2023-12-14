@@ -6,6 +6,7 @@
 
   $: isRecording = state === VIEWER_STATE.RECORD
   $: isFree = state === VIEWER_STATE.FREE
+  $: isExporting = state === VIEWER_STATE.EXPORT
 
   const dispatch = createEventDispatcher<{ toggle: { state: VIEWER_STATE } }>()
 
@@ -23,7 +24,7 @@
   }
 </script>
 
-{#if isFree || isRecording}
+{#if isFree || isRecording || isExporting}
   <div
     class="absolute left-1/3 top-16 z-30 flex w-1/6 translate-x-[52%] flex-col items-center justify-center"
   >
@@ -98,6 +99,7 @@
     </div>
   </div>
 
+  <!-- Move these to <Hints />? -->
   <div
     class="help-text pointer-events-none absolute bottom-52 left-0 w-full text-center text-white opacity-50"
   >
@@ -106,5 +108,8 @@
       Tap to assign center
     </p>
     <span class:hidden={!isRecording}>Swipe to record shot</span>
+    <span class:hidden={!isExporting}
+      >Sit back and relax while we capture your shots</span
+    >
   </div>
 {/if}

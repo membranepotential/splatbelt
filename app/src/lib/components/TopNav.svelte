@@ -30,7 +30,7 @@
    * TODO: When do you export? Can you do it at free or also at play?
    */
   function handleExport() {
-    alert('NYI')
+    goto(`?state=EXPORT&shot=0`)
   }
 
   $: canExport = shots.length > 0

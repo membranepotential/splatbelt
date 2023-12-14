@@ -12,6 +12,7 @@
   import { onMount } from 'svelte'
   import Player from './Player.svelte'
   import Record from './Record.svelte'
+  import Exporter from './Exporter.svelte'
 
   /*
   Root component that views the uploaded model.
@@ -83,6 +84,8 @@
     <Record {viewer} {shot} on:shotRecorded={shotRecorded} />
   {:else if state === VIEWER_STATE.PLAY}
     <Player {viewer} shots={project.shots} {shotIdx} />
+  {:else if state === VIEWER_STATE.EXPORT}
+    <Exporter {viewer} shots={project.shots} />
   {/if}
 
   <div

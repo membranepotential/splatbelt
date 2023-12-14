@@ -18,8 +18,8 @@
   /* Plays the shot and offers settings to modify the shot */
 
   export let viewer: Viewer
-  export let shots: Shot[] | undefined
-  export let shotIdx: number | undefined
+  export let shots: Shot[]
+  export let shotIdx: number
 
   $: shot = shots[shotIdx]
   $: if (!shot) {
@@ -90,9 +90,14 @@
 
 <div class="z-30">
   <ShotList
+    {shots}
+    {shotIdx}
     progress={$tween * 100 || 0.0}
     on:changeShot={(event) => {
       goto(`?state=PLAY&shot=${event.detail.to}`)
+    }}
+    on:newShot={() => {
+      goto(`?state=FREE&shot=${shotIdx + 1}`)
     }}
   />
 </div>

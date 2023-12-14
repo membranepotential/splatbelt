@@ -48,6 +48,7 @@ export default (function (n: number = 20, tolerance: number = 10) {
   }
 
   function reset() {
+    points.splice(0, points.length)
     setShot([])
   }
 

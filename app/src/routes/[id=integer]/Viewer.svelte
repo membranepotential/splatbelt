@@ -26,7 +26,7 @@
   let canvasContainer: HTMLDivElement
 
   let state = VIEWER_STATE.FREE
-  let shotIdx = 0
+  let shotIdx: number = 0
 
   page.subscribe((p) => {
     const params = Object.fromEntries(

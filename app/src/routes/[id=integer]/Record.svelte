@@ -92,6 +92,7 @@
 
     dispatch('shotRecorded', { shot })
     isRecording = false
+    curve.reset()
   }
 </script>
 

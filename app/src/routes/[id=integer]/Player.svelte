@@ -14,6 +14,7 @@
     type CameraSetting,
   } from '$lib/stores/motions'
   import { controls } from '$lib/stores'
+  import { writable } from 'svelte/store'
 
   /* Plays the shot and offers settings to modify the shot */
 
@@ -56,6 +57,8 @@
 
   let unsubsscribe: () => void
 
+  let progress = writable()
+
   function loop() {
     console.log('tween started')
     viewer.moveTo(initial)
@@ -64,15 +67,20 @@
       duration: shot.duration * (1 / $controls.speedFactor),
       easing: quadInOut,
     })
+    progress.set(0)
     unsubsscribe = tween.subscribe((t) => {
+      progress.set(t)
+
       if (aborting) {
         return
       }
       const delta = curve.getPointAt(t).sub(curve.points[0])
       viewer.moveTo(motion(initial, delta))
     })
+
     tween.set(1).finally(() => {
       console.log('tween done')
+      progress.set(0)
       if (!aborting) {
         setTimeout(loop, 1000)
       } else {
@@ -92,7 +100,7 @@
   <ShotList
     {shots}
     {shotIdx}
-    progress={$tween * 100 || 0.0}
+    {progress}
     on:changeShot={(event) => {
       goto(`?state=PLAY&shot=${event.detail.to}`)
     }}

@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { Shot } from '$lib/types'
   import { createEventDispatcher } from 'svelte'
+  import type { Writable } from 'svelte/store'
 
-  export let progress: number
+  export let progress: Writable<number>
   export let shots: Shot[]
   export let shotIdx: number
 
@@ -24,7 +25,7 @@
 
       {#if shotIdx === i}
         <div
-          style="transform: translateX({progress * 100}%);"
+          style="transform: translateX({$progress * 100}%);"
           class="indicator"
         />
       {/if}

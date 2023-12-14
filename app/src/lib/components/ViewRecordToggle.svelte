@@ -99,9 +99,12 @@
   </div>
 
   <div
-    class="help-text pointer-events-none absolute bottom-52 left-0 w-full text-center text-white opacity-30"
+    class="help-text pointer-events-none absolute bottom-52 left-0 w-full text-center text-white opacity-50"
   >
-    <span class:hidden={!isFree}>View and Move Model</span>
+    <p class:hidden={!isFree}>
+      View and Move Model<br />
+      Tap to assign center
+    </p>
     <span class:hidden={!isRecording}>Swipe to record shot</span>
   </div>
 {/if}

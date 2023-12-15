@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { Project } from '$lib/schemas'
+  // import type { Project } from '$lib/schemas'
 
-  export let project: Project
+  // export let project: Project
 
   let uploadStarted = false
 

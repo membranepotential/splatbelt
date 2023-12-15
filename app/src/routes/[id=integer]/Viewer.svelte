@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
-  import Export from '$lib/components/Export.svelte'
+  import ExportScreen from '$lib/components/ExportScreen.svelte'
   import SettingsPane from '$lib/components/SettingsPane.svelte'
   import ShotSettings from '$lib/components/ShotSettings.svelte'
   import TopNav from '$lib/components/TopNav.svelte'
@@ -69,15 +69,27 @@
     }
     goto(`?state=PLAY&shot=${shotIdx}`)
   }
+
+  /**
+   * Spec: delete button entfernt shot aus der timline
+   *
+   * Actions:
+   *  - Move to Free
+   *  - Remove shot from project
+   */
+  function deleteCurrentShot() {
+    goto(`?state=FREE&shot=${shotIdx}`)
+    project.shots = project.shots.slice(0, -1)
+  }
 </script>
 
 <div class="relative">
   <div class="z-30">
     <ViewRecordToggle {state} on:toggle={stateChange} />
     <SettingsPane {state} />
-    <ShotSettings {state} />
+    <ShotSettings {state} on:delete={deleteCurrentShot} />
     <TopNav {state} {shots} />
-    <Export />
+    <ExportScreen />
   </div>
 
   {#if state === VIEWER_STATE.RECORD}

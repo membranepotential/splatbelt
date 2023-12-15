@@ -15,7 +15,6 @@ export enum Movement {
 }
 
 export type Shot = {
-  id: number
   duration: number
   motion: { x: Motion; y: Motion }
   initial: {

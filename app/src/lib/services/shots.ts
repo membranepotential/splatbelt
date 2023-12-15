@@ -44,7 +44,6 @@ class ShotsService {
 
   createEmptyShot(): Shot {
     return {
-      id: id(),
       duration: 12000,
       motion: {
         x: {
@@ -96,21 +95,6 @@ class ShotsService {
 
   setCurrentShotIdx(idx: number) {
     this.currentShotIdx.set(idx)
-  }
-
-  addShotAndSetCurrent() {
-    const currentShotCount = get(this.shots).length
-
-    if (currentShotCount > 7) {
-      return toast('Maximum number of shots reached')
-    }
-
-    const newShot = this.createEmptyShot()
-
-    console.log('new shot', newShot)
-    this.shots.update((shots) => [...shots, newShot])
-    console.log('shots updated')
-    this.currentShotIdx.set(currentShotCount)
   }
 
   deleteCurrentShot() {

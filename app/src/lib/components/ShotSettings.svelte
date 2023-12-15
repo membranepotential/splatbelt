@@ -2,6 +2,7 @@
   import { VIEWER_STATE } from '$lib/types'
   import ShotsService from '$lib/services/shots'
   import { controls } from '$lib/stores'
+  import { createEventDispatcher } from 'svelte'
 
   export let state: VIEWER_STATE
 
@@ -13,12 +14,10 @@
     [4, 'x4'],
   ])
 
+  const dispatch = createEventDispatcher()
+
   $: isPlaying = state === VIEWER_STATE.PLAY
   $: shotsNotEmpty = ShotsService.getCurrentShot() !== undefined
-
-  function deleteCurrentShot() {
-    ShotsService.deleteCurrentShot()
-  }
 </script>
 
 <div
@@ -49,7 +48,7 @@
       <button
         type="button"
         class="text-md items-cente relative inline-flex bg-slate-200 bg-transparent px-3 py-2 font-semibold text-indigo-900"
-        on:click={() => deleteCurrentShot()}
+        on:click={() => dispatch('delete')}
       >
         <svg
           width="24px"

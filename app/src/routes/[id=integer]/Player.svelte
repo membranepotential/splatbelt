@@ -1,7 +1,6 @@
 <script lang="ts">
   import { tweened, type Tweened } from 'svelte/motion'
   import { quadInOut } from 'svelte/easing'
-  import { error } from '@sveltejs/kit'
   import { onDestroy, onMount } from 'svelte'
   import { goto } from '$app/navigation'
   import type Viewer from '$lib/services/viewer'
@@ -23,23 +22,42 @@
   export let shotIdx: number
 
   $: shot = shots[shotIdx]
-  $: if (!shot) {
-    throw error(400, 'Shot not found')
-  }
+  let motion: ReturnType<typeof composeMotion>
+  let curve: SplineCurve
 
-  $: motion = composeMotion(
-    {
-      ...getMovementConfig(shot.motion.x.movement, 'x'),
-      scale: shot.motion.x.scale,
-    },
-    {
-      ...getMovementConfig(shot.motion.y.movement, 'y'),
-      scale: shot.motion.y.scale,
-    }
-  )
+  let isCancelling = false
 
   let initial: CameraSetting
-  $: if (viewer) {
+
+  let tween: Tweened<number>
+
+  let unsubsscribe: () => void
+  let timer: ReturnType<typeof setTimeout> | null
+
+  let progress = writable<number>()
+
+  onMount(() => {
+    loop()
+  })
+
+  $: if (!shot) {
+    console.log('no more shot, cancelling playback')
+    cancelPlayback()
+    isCancelling = false
+  } else {
+    curve = new SplineCurve(shot.points)
+
+    motion = composeMotion(
+      {
+        ...getMovementConfig(shot.motion.x.movement, 'x'),
+        scale: shot.motion.x.scale,
+      },
+      {
+        ...getMovementConfig(shot.motion.y.movement, 'y'),
+        scale: shot.motion.y.scale,
+      }
+    )
+
     initial = { camera: viewer.camera, target: viewer.target }
     initial.camera.position.copy(shot.initial.camera.position)
     initial.camera.zoom = shot.initial.camera.zoom
@@ -47,20 +65,17 @@
     viewer.moveTo(initial)
     viewer.saveState()
   }
-  $: curve = new SplineCurve(shot.points)
 
-  let tween: Tweened<number>
-
-  onMount(() => loop())
-
-  let aborting = false
-
-  let unsubsscribe: () => void
-
-  let progress = writable()
+  function cancelPlayback() {
+    unsubsscribe && unsubsscribe()
+    clearTimeout(timer!)
+    isCancelling = true
+  }
 
   function loop() {
-    console.log('tween started')
+    if (isCancelling) {
+      return
+    }
     viewer.moveTo(initial)
     tween = tweened(0, {
       delay: 500,
@@ -69,30 +84,28 @@
     })
     progress.set(0)
     unsubsscribe = tween.subscribe((t) => {
-      progress.set(t)
-
-      if (aborting) {
-        return
+      if (isCancelling) {
+        return unsubsscribe()
       }
       const delta = curve.getPointAt(t).sub(curve.points[0])
       viewer.moveTo(motion(initial, delta))
+      requestAnimationFrame(() => {
+        progress.set(t)
+      })
     })
 
     tween.set(1).finally(() => {
-      console.log('tween done')
       progress.set(0)
-      if (!aborting) {
-        setTimeout(loop, 1000)
+      if (!isCancelling) {
+        timer = setTimeout(loop, 1000)
       } else {
-        unsubsscribe()
-        aborting = false
+        cancelPlayback()
       }
     })
   }
 
   onDestroy(() => {
-    unsubsscribe && unsubsscribe()
-    aborting = true
+    cancelPlayback()
   })
 </script>
 

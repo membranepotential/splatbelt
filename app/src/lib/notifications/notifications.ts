@@ -12,6 +12,6 @@ export function toast(message: string) {
 
 function removeToast() {
   notifications.update((state) => {
-    return [...state.slice(0, state.length - 1)]
+    return state.slice(0, state.length - 1)
   })
 }

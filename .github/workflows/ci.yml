@@ -40,8 +40,11 @@ jobs:
 
       - name: Typecheck
         run: npm run check
+
+      - name: OXLint
+        run: npm run oxlint
       
-      - name: Lint
+      - name: ESLint
         run: npm run lint
 
       - name: Test

@@ -12,6 +12,7 @@
     "test:e2e": "playwright test",
     "coverage": "vitest run --coverage",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
+    "oxlint": "oxlint",
     "format": "prettier --plugin-search-dir . --write ."
   },
   "devDependencies": {
@@ -31,6 +32,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte": "^2.34.0",
     "jsdom": "^23.0.1",
+    "oxlint": "^0.0.20",
     "postcss": "^8.4.31",
     "prettier": "^2.8.0",
     "prettier-plugin-svelte": "^2.10.1",

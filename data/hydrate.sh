@@ -9,7 +9,7 @@ MODEL_CONF=$(tr -d '\n' <model_conf.json)
 psql postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST <<EOF
 DELETE FROM api.projects WHERE id = 1;
 COPY api.projects (id, name, state, config) FROM stdin;
-1	Dev Project	complete	$MODEL_CONF
+1	Dev Project	COMPLETE	$MODEL_CONF
 \.
 EOF
 

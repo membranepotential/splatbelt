@@ -1,15 +1,23 @@
 #!/usr/bin/env python3
 import os
 from pathlib import Path
+from enum import Enum
 import subprocess
 from typing import Iterator, Literal
 import logging
+
 
 import click
 import psycopg
 from psycopg.sql import SQL
 
 
+class ProjectState(Enum):
+    PENDING = 'PENDING'
+    RUNNING = 'RUNNING'
+    FAILED = 'FAILED'
+    SUCCESS = 'SUCCESS'
+    
 class Projects:
     fetch_query = SQL(
         """
@@ -48,7 +56,7 @@ class Projects:
     def update_state(
         self,
         project_id: str,
-        state: Literal["running", "complete", "failed"],
+        state: Literal[ProjectState.RUNNING, ProjectState.COMPLETE, ProjectState.FAILED]
     ):
         self.cursor.execute(self.update_query, (state, project_id))
 
@@ -97,7 +105,7 @@ class MakeProcess:
 def process_project(project_id: str, config: str, projects: Projects, makefile: str):
     logging.info("Process project %s", project_id)
     try:
-        projects.update_state(project_id, "running")
+        projects.update_state(project_id, ProjectState.RUNNING)
 
         process = MakeProcess(project_id, config, makefile)
         for line in process:
@@ -105,13 +113,13 @@ def process_project(project_id: str, config: str, projects: Projects, makefile: 
 
         retcode = process.wait()
         if retcode != 0:
-            projects.update_state(project_id, "failed")
+            projects.update_state(project_id, ProjectState.FAILED)
         else:
-            projects.update_state(project_id, "complete")
+            projects.update_state(project_id, ProjectState.COMPLETE)
 
     except Exception as e:
         projects.append_log_entry(project_id, str(e))
-        projects.update_state(project_id, "failed")
+        projects.update_state(project_id, ProjectState.FAILED)
         raise
 
 

@@ -3,22 +3,23 @@
   import Upload from './Upload.svelte'
   import Analysis from './Analysis.svelte'
   import Viewer from './Viewer.svelte'
-  import type { SvelteComponent } from 'svelte'
+  import type { ComponentType } from 'svelte'
+  import type { LayoutLoadResponse } from './+layout.server.ts'
 
-  export let data: SvelteComponent
+  export let data: LayoutLoadResponse
   $: project = data.project
 
-  let component: any
+  let component: ComponentType
   $: switch (project.state) {
-    case 'configuring':
+    case 'CONFIGURING':
       component = Upload
       break
-    case 'pending':
-    case 'running':
-    case 'failed':
+    case 'PENDING':
+    case 'RUNNING':
+    case 'FAILED':
       component = Analysis
       break
-    case 'complete':
+    case 'COMPLETE':
       component = Viewer
       break
     default:

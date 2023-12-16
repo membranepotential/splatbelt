@@ -6,10 +6,6 @@
   export let viewer: Viewer
   export let shots: Shot[]
 
-  interface DataAvailableEvent extends Event {
-    data: Blob
-  }
-
   const canvas = viewer.rootElement as unknown as HTMLCanvasElement
   const FRAMERATE = 60
 
@@ -31,7 +27,7 @@
     mediaRecorder.stop()
   }
   function playShot(shot: Shot) {
-    console.log('playing shot ', shot.id)
+    console.log('playing shot ', shot)
     // viewer.playShot(shot)
   }
 
@@ -55,7 +51,7 @@
       chunks.push(e.data)
     }
 
-    mediaRecorder.onstop = function (e: Event) {
+    mediaRecorder.onstop = function (/* e: Event */) {
       var blob = new Blob(chunks, { type: 'video/mp4' }) // other types are available such as 'video/webm' for instance, see the doc for more info
       // chunks = []
       var link$ = document.createElement('a')

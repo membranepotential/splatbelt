@@ -35,7 +35,7 @@ export async function head(key: string) {
 export async function list(projectId: string) {
   const contents = await listObjects(`${projectId}/uploads`)
 
-  const sortKey = (a: any) => a.LastModified?.getTime() ?? 0
+  const sortKey = (a: any) => a.LastModified?.getTime() ?? 0 // eslint-disable-line
   contents.sort((a, b) => sortKey(a) - sortKey(b))
 
   return contents.map(({ Key, Size }) => {

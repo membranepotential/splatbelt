@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy } from 'svelte'
   import { Vector2 } from 'three'
-  import { get } from 'svelte/store'
   import { curve, controls, composedMotion } from '$lib/stores'
   import type { CameraSetting } from '$lib/stores/motions'
   import type Viewer from '$lib/services/viewer'

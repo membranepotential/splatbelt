@@ -4,6 +4,7 @@
 
   export let project: Project
 </script>
+
 <div>
   The project {project.name} is in state {project.state}
 </div>

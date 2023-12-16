@@ -1,11 +1,11 @@
 CREATE schema IF NOT EXISTS api;
 
 CREATE TYPE api.analysis_state AS enum (
-  'configuring',    -- initial state, config can still be changed
-  'pending',        -- waiting for analysis, config is locked from here
-  'running',        -- analysis is running
-  'failed',         -- analysis failed
-  'complete'       -- analysis completed
+  'CONFIGURING',    -- initial state, config can still be changed
+  'PENDING',        -- waiting for analysis, config is locked from here
+  'RUNNING',        -- analysis is running
+  'FAILED',         -- analysis failed
+  'COMPLETE'       -- analysis completed
 );
 
 CREATE TABLE IF NOT EXISTS api.projects (
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS api.projects (
   created TIMESTAMP DEFAULT now(),
   updated TIMESTAMP DEFAULT now(),
   name text NOT NULL,
-  state api.analysis_state NOT NULL DEFAULT 'configuring',
+  state api.analysis_state NOT NULL DEFAULT 'CONFIGURING',
   shots jsonb NOT NULL DEFAULT '[]',
   config jsonb NOT NULL DEFAULT '{}',
   logs jsonb NOT NULL DEFAULT '[]'

@@ -47,6 +47,8 @@
   } else {
     curve = new SplineCurve(shot.points)
 
+    console.log('config: ', shot.motion)
+
     motion = composeMotion(
       {
         ...getMovementConfig(shot.motion.x.movement, 'x'),
@@ -68,7 +70,7 @@
 
   function cancelPlayback() {
     unsubsscribe && unsubsscribe()
-    clearTimeout(timer!)
+    timer && clearTimeout(timer)
     isCancelling = true
   }
 
@@ -88,6 +90,8 @@
         return unsubsscribe()
       }
       const delta = curve.getPointAt(t).sub(curve.points[0])
+      console.log('initial: ', initial)
+      console.log('delta: ', delta)
       viewer.moveTo(motion(initial, delta))
       requestAnimationFrame(() => {
         progress.set(t)

@@ -1,14 +1,13 @@
 <script lang="ts">
-  import type { PageData } from './$types'
   import type { ModelConfig } from '$lib/schemas'
 
   import Chooser from './Chooser.svelte'
 
-  export let data: PageData
+  export let data: any
   export let config: ModelConfig
 
   $: project = data.project
-  $: disabled = project.state != 'configuring'
+  $: disabled = project.state != 'CONFIGURING'
   $: config = project.config
 </script>
 

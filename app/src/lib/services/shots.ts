@@ -7,15 +7,8 @@ import {
   type Readable,
   type Writable,
 } from 'svelte/store'
-import { controls } from '$lib/stores'
-import { toast } from '$lib/notifications/notifications'
 import { DefaultMovement } from '$lib/stores/controls'
 import { Vector3 } from 'three'
-
-const id = (function () {
-  let counter = 0
-  return () => counter++
-})()
 
 /* This is already obsolete, will be reimplemented in the Player component */
 class ShotsService {

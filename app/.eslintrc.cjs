@@ -29,5 +29,16 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/ban-ts-comment': 'off',
+    'svelte/no-at-html-tags': 'off',
+    // Allows unused variables that start with an underscore, e.g. forEach((_, i) => ..
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'warn', // or "error"
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
+    ],
   },
 }

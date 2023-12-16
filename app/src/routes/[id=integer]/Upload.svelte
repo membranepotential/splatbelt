@@ -8,9 +8,11 @@
 
   function start(event: Event) {
     const target = event.target as HTMLInputElement
-    const file = target.files![0]
+    const files = target?.files
 
-    console.log('start upload', file.name)
+    if (files) {
+      console.log('start upload for ', files.length, ' files')
+    }
   }
 </script>
 

@@ -14,7 +14,7 @@
 </script>
 
 <div class="shot-player-bar">
-  {#each shots as shot, i}
+  {#each shots as _, i}
     <button
       tabindex={i}
       class="shot"

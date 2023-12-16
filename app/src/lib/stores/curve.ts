@@ -8,7 +8,7 @@ The curve is simplified and smoothed.
 Points are added with addEvent and addPoint.
 The whole shot may be overwritten with setShot.
 */
-export default (function (n: number = 20, tolerance: number = 10) {
+export default (function (n = 20, tolerance = 10) {
   const store = writable<Vector2[]>([])
   const { subscribe, set } = store
 
@@ -37,7 +37,7 @@ export default (function (n: number = 20, tolerance: number = 10) {
     }
   }
 
-  function smooth(n: number, tolerance: number, highQuality: boolean = false) {
+  function smooth(n: number, tolerance: number, highQuality = false) {
     if (points.length <= 3) return points
 
     const smoothed = simplify(points, tolerance, highQuality).map(

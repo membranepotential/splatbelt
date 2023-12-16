@@ -1,4 +1,4 @@
-import { Project, ProjectUpdate } from '$lib/schemas'
+import type { Project, ProjectUpdate } from '$lib/schemas'
 import * as postgrest from './postgrest'
 
 export function list(): Promise<Project[]> {
@@ -6,25 +6,26 @@ export function list(): Promise<Project[]> {
 }
 
 export function get(id: string): Promise<Project> {
-  return postgrest.getOne(`/projects?id=eq.${id}`).then(Project.parse)
+  return postgrest.getOne(`/projects?id=eq.${id}`)
 }
 
-export function create(name: string = 'New Project'): Promise<Project> {
-  const project = ProjectUpdate.parse({ name, config: {} })
+export function create(name = 'New Project'): Promise<Project> {
   return postgrest
     .fetch('/projects', {
       method: 'POST',
       headers: { Prefer: 'return=representation' },
-      body: JSON.stringify(project),
+      body: JSON.stringify({
+        name: name,
+      }),
     })
     .then((r) => r.json())
-    .then((data) => Project.parse(data[0]))
+    .then((data) => data[0])
 }
 
 export function update(id: string, data: ProjectUpdate) {
   return postgrest.fetch(`/projects?id=eq.${id}`, {
     method: 'PATCH',
-    body: JSON.stringify(ProjectUpdate.parse(data)),
+    body: JSON.stringify(data),
   })
 }
 

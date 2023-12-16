@@ -10,7 +10,7 @@ type ViewerOptions = {
 
 /* This should be refactored as a reactive component */
 export default class Viewer extends EventDispatcher<{
-  ready: {}
+  ready: object
   moved: { camera: PerspectiveCamera; target: Vector3 }
 }> {
   viewer: _Viewer

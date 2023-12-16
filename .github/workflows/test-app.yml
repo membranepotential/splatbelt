@@ -1,6 +1,9 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    paths:
+      - "app/**"
 
 env:
   AWS_REGION: us-east-1 # required so @aws/sdk/client-s3 builds

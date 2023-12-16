@@ -1,5 +1,4 @@
 <script lang="ts">
-  import humanizeDuration from 'humanize-duration'
   import { enhance } from '$app/forms'
   import { toast } from '$lib/notifications/notifications'
   import type { PageData } from './$types'

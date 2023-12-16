@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { ModelConfig } from './modelConfig'
-import { Shot } from './shot'
+import type { Shot } from '$lib/types'
 
 export const AnalysisState = z.enum([
   'configuring',
@@ -24,7 +24,7 @@ export const Project = z.object({
   created: z.coerce.date(),
   updated: z.coerce.date(),
   state: AnalysisState.default('configuring'),
-  shots: z.array(Shot).default([]),
+  shots: z.array(z.object({})).default([]),
   config: ModelConfig,
   logs: z.array(LogEntry).default([]),
 })

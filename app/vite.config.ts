@@ -8,15 +8,13 @@ export default defineConfig({
   plugins: [base64({ include: '**/*.wasm' }), sveltekit()],
   assetsInclude: ['**/*.wasm'],
   ssr: {
-    noExternal: [
-      'three',
-      'troika-three-text',
-      'troika-three-utils',
-      'gaussian-splats-3d',
-    ],
+    noExternal: ['three', 'gaussian-splats-3d'],
   },
   test: {
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,ts}'],
+  },
+  optimizeDeps: {
+    include: ['three', 'gaussian-splats-3d', 'simplify-js'],
   },
 })

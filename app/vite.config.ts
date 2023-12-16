@@ -5,10 +5,7 @@ import { defineConfig } from 'vite'
 import { base64 } from './node_modules/gaussian-splats-3d/util/import-base-64.js'
 
 export default defineConfig({
-  plugins: [
-    base64({ include: '**/*.wasm' }),
-    sveltekit(),
-  ],
+  plugins: [base64({ include: '**/*.wasm' }), sveltekit()],
   assetsInclude: ['**/*.wasm'],
   ssr: {
     noExternal: [

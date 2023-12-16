@@ -1,6 +1,8 @@
 <script lang="ts">
   import { VIEWER_STATE } from '$lib/types'
   import { createEventDispatcher } from 'svelte'
+  import TogglePlayIcon from '../icons/toggle-play.svg?raw'
+  import ToggleRecordIcon from '../icons/toggle-record.svg?raw'
 
   export let state: VIEWER_STATE = VIEWER_STATE.FREE
 
@@ -49,25 +51,7 @@
           class:opacity-0={isRecording}
           class:opacity-100={!isRecording}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="green"
-            class="h-6 w-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z"
-            />
-          </svg>
+          {@html TogglePlayIcon}
         </span>
         <!-- Enabled: "opacity-100 duration-200 ease-in", Not Enabled: "opacity-0 duration-100 ease-out" -->
         <span
@@ -76,20 +60,7 @@
           class:opacity-0={!isRecording}
           class:opacity-100={isRecording}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="red"
-            class="h-6 w-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
+          {@html ToggleRecordIcon}
         </span>
       </span>
     </button>

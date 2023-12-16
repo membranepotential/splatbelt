@@ -22,7 +22,7 @@
       component = Viewer
       break
     default:
-      throw error(500, 'Invalid project state')
+      error(500, 'Invalid project state: ' + project.state)
   }
 </script>
 

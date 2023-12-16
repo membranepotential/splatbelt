@@ -7,8 +7,8 @@ so we comply and simply redirect.
 */
 export async function load({ params }) {
   if (await exists(params.id)) {
-    throw redirect(302, await getDownloadUrl(params.id))
+    redirect(302, await getDownloadUrl(params.id));
   } else {
-    throw error(404, 'Not Found')
+    error(404, 'Not Found');
   }
 }

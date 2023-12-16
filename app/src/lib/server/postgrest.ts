@@ -14,7 +14,7 @@ export async function fetch(input: RequestInfo | URL, init?: RequestInit) {
   const response = await global.fetch(withBaseURL(input), init)
 
   if (!response.ok) {
-    throw error(response.status, response.statusText)
+    error(response.status, response.statusText);
   }
 
   return response

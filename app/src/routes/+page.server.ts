@@ -7,7 +7,7 @@ export const load: PageServerLoad = async () => {
 
   if (projects.length === 0) {
     const newProject = await create()
-    throw redirect(302, `${newProject.id}`)
+    redirect(302, `${newProject.id}`);
   }
 
   return { projects }
@@ -16,6 +16,6 @@ export const load: PageServerLoad = async () => {
 export const actions = {
   default: async () => {
     const project = await create()
-    throw redirect(302, `${project.id}`)
+    redirect(302, `${project.id}`);
   },
 } satisfies Actions

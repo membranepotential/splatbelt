@@ -44,7 +44,7 @@ BEGIN
   END IF;
 
   -- Check if config is being modified when the state is 'pending' or beyond
-  IF (OLD.state != 'configuring' AND
+  IF (OLD.state != 'CONFIGURING' AND
       OLD.config IS DISTINCT FROM NEW.config) THEN
     RAISE EXCEPTION 'Modification of config is not allowed when state is pending or beyond.';
   END IF;

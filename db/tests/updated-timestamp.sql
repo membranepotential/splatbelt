@@ -14,7 +14,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN
     assert updated_timestamp_changed('name', 'test');
     assert updated_timestamp_changed('config', '{"key": "value"}');
-    assert updated_timestamp_changed('state', 'pending');
+    assert updated_timestamp_changed('state', 'PENDING');
     assert not updated_timestamp_changed('logs', '[{"message": "log entry"}]');
 END;
 $$ LANGUAGE plpgsql;

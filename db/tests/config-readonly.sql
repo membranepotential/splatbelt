@@ -18,10 +18,10 @@ DECLARE
     next_state api.analysis_state;
 BEGIN
     -- Updating config in initial state should succeed
-    UPDATE api.projects SET config = '"configuring"' WHERE id = 1;
+    UPDATE api.projects SET config = '"CONFIGURING"' WHERE id = 1;
 
     -- Updating config after succeeding states should fail
-    FOREACH next_state IN ARRAY enum_range('pending'::api.analysis_state, NULL)
+    FOREACH next_state IN ARRAY enum_range('PENDING'::api.analysis_state, NULL)
     LOOP
         UPDATE api.projects SET state = next_state WHERE id = 1;
         PERFORM assert_config_is_readonly(next_state::text);

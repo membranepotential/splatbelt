@@ -1,15 +1,7 @@
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke-width="1.5"
-  stroke="currentColor"
-  width="24px"
-  height="24px"
->
-  <path
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5"
-  />
+<svg stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+  stroke="currentColor">
+  <path d="M7 4L7 5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M7 9L7 10" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M17 20V4M17 4L20 7M17 4L14 7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M7 14V20M7 20L10 17M7 20L4 17" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
 </svg>

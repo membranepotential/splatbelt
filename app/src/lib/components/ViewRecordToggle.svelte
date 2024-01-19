@@ -10,15 +10,15 @@
   $: isFree = state === VIEWER_STATE.FREE
   $: isExporting = state === VIEWER_STATE.EXPORT
 
-  const dispatch = createEventDispatcher<{ toggle: { state: VIEWER_STATE } }>()
+  const dispatch = createEventDispatcher<{ toggle: VIEWER_STATE }>()
 
   function toggle() {
     switch (state) {
       case VIEWER_STATE.FREE:
-        dispatch('toggle', { state: VIEWER_STATE.RECORD })
+        dispatch('toggle', VIEWER_STATE.RECORD)
         break
       case VIEWER_STATE.RECORD:
-        dispatch('toggle', { state: VIEWER_STATE.FREE })
+        dispatch('toggle', VIEWER_STATE.FREE)
         break
       default:
         break
@@ -28,7 +28,7 @@
 
 {#if isFree || isRecording || isExporting}
   <div
-    class="absolute left-1/3 top-16 z-30 flex w-1/6 translate-x-[52%] flex-col items-center justify-center"
+    class="absolute left-1/3 top-16 flex w-1/6 translate-x-[52%] flex-col items-center justify-center"
   >
     <button
       on:click={toggle}

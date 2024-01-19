@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { VIEWER_STATE } from '$lib/types'
-  import ShotsService from '$lib/services/shots'
-  import { controls } from '$lib/stores'
+  import { VIEWER_STATE, type Shot } from '$lib/types'
+  import { shots } from '$lib/stores'
   import { createEventDispatcher } from 'svelte'
   import BucketIcon from '../icons/bucket.svg?raw'
 
   export let state: VIEWER_STATE
+  export let shot: Shot
 
   const speedLevelMap = new Map([
     [0.4, '0.4'],
@@ -18,7 +18,7 @@
   const dispatch = createEventDispatcher()
 
   $: isPlaying = state === VIEWER_STATE.PLAY
-  $: shotsNotEmpty = ShotsService.getCurrentShot() !== undefined
+  $: shotsNotEmpty = $shots.length > 0
 </script>
 
 <div
@@ -32,9 +32,9 @@
     >
       {#each speedLevelMap as [speed, label]}
         <button
-          class:active={speed === $controls.speedFactor}
+          class:active={speed === shot.speed}
           type="button"
-          on:click={() => ($controls.speedFactor = speed)}
+          on:click={() => dispatch('speed', { speed })}
           class="text-md relative inline-flex items-center justify-center rounded-md bg-transparent px-3 py-2 font-semibold text-indigo-300"
         >
           {label}
@@ -51,8 +51,8 @@
         class="text-md items-cente relative inline-flex bg-slate-200 bg-transparent px-3 py-2 font-semibold text-indigo-900"
         on:click={() => dispatch('delete')}
       >
-        {@html BucketIcon}</button
-      >
+        {@html BucketIcon}
+      </button>
     </span>
   </div>
 </div>

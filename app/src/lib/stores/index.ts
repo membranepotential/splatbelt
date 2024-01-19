@@ -1,3 +1,3 @@
-export { default as controls } from './controls'
-export { default as curve } from './curve'
-export { composedMotion } from './motions'
+export { default as app } from './app'
+export { default as upload } from './upload'
+export { default as shots } from './shots'

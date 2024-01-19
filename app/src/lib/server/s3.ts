@@ -10,36 +10,16 @@ import {
   ListObjectsV2Command,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import type { S3ClientConfigType } from '@aws-sdk/client-s3'
 
-import {
-  S3_ENDPOINT,
-  S3_BUCKET,
-  AWS_ACCESS_KEY_ID,
-  AWS_SECRET_ACCESS_KEY,
-  AWS_REGION,
-} from '$env/static/private'
+import { Bucket } from 'sst/node/bucket'
 
 const MAX_PART_SIZE = 1024 * 1024 * 5
 const EXPIRES_IN = 60 * 60 * 24
 
-const s3 = (() => {
-  const config: S3ClientConfigType = {
-    region: AWS_REGION,
-    credentials: {
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
-    },
-  }
-  if (S3_ENDPOINT) {
-    config.endpoint = S3_ENDPOINT
-    config.forcePathStyle = true
-  }
-  return new S3Client(config)
-})()
+const s3 = () => new S3Client({})
 
 export function generatePresignedUrl(key: string, method: 'GET' | 'PUT') {
-  const obj = { Key: key, Bucket: S3_BUCKET }
+  const obj = { Key: key, Bucket: Bucket.storage.bucketName }
   let command = null
   switch (method) {
     case 'GET':
@@ -51,7 +31,7 @@ export function generatePresignedUrl(key: string, method: 'GET' | 'PUT') {
     default:
       throw new Error('Invalid method')
   }
-  return getSignedUrl(s3, command, { expiresIn: EXPIRES_IN })
+  return getSignedUrl(s3(), command, { expiresIn: EXPIRES_IN })
 }
 
 function generatePresignedPartUrls(
@@ -61,23 +41,23 @@ function generatePresignedPartUrls(
 ) {
   const obj = {
     Key: key,
-    Bucket: S3_BUCKET,
-    Region: AWS_REGION,
+    Bucket: Bucket.storage.bucketName,
+    // Region: AWS_REGION,
     UploadId: uploadId,
   }
   const urls = range(partCount).map((index) => {
     const command = new UploadPartCommand({ ...obj, PartNumber: index + 1 })
-    return getSignedUrl(s3, command, { expiresIn: EXPIRES_IN })
+    return getSignedUrl(s3(), command, { expiresIn: EXPIRES_IN })
   })
   return Promise.all(urls)
 }
 
 function initiateMultipartUpload(key: string, type: string) {
-  return s3
+  return s3()
     .send(
       new CreateMultipartUploadCommand({
         Key: key,
-        Bucket: S3_BUCKET,
+        Bucket: Bucket.storage.bucketName,
         ContentType: type,
       })
     )
@@ -113,10 +93,10 @@ export function completeMultipartUpload(
     ETag: etag,
     PartNumber: index + 1,
   }))
-  return s3.send(
+  return s3().send(
     new CompleteMultipartUploadCommand({
       Key: key,
-      Bucket: S3_BUCKET,
+      Bucket: Bucket.storage.bucketName,
       MultipartUpload: { Parts: parts },
       UploadId: uploadId,
     })
@@ -124,10 +104,10 @@ export function completeMultipartUpload(
 }
 
 export function listObjects(prefix: string) {
-  return s3
+  return s3()
     .send(
       new ListObjectsV2Command({
-        Bucket: S3_BUCKET,
+        Bucket: Bucket.storage.bucketName,
         Prefix: prefix,
       })
     )
@@ -135,9 +115,9 @@ export function listObjects(prefix: string) {
 }
 
 export function headObject(key: string) {
-  return s3.send(
+  return s3().send(
     new HeadObjectCommand({
-      Bucket: S3_BUCKET,
+      Bucket: Bucket.storage.bucketName,
       Key: key,
     })
   )

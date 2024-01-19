@@ -2,14 +2,15 @@
 cd $(dirname $(realpath -s $0))
 
 DATE=$(date -Is)
+CAMERA='("{5.99, 5.1, -12.77}", "{-0.07, -0.71, -0.7}", "{0.0, 0.0, 0.0}", 50.0)'
 MODEL_CONF=$(tr -d '\n' <model_conf.json)
 
 # Replace test data
 # Columns must be tab (\t) separated
 psql postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST <<EOF
 DELETE FROM api.projects WHERE id = 1;
-COPY api.projects (id, name, state, config) FROM stdin;
-1	Dev Project	COMPLETE	$MODEL_CONF
+COPY api.projects (id, name, state, camera, config) FROM stdin;
+1	Dev Project	COMPLETE	$CAMERA	$MODEL_CONF
 \.
 EOF
 

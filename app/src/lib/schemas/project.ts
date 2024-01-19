@@ -1,4 +1,3 @@
-import { ModelConfig } from './modelConfig'
 import type { Shot } from '$lib/types'
 
 export enum AnalysisState {
@@ -7,6 +6,13 @@ export enum AnalysisState {
   RUNNING = 'RUNNING',
   COMPLETE = 'COMPLETE',
   FAILED = 'FAILED',
+}
+
+type CameraSetting = {
+  position: [number, number, number]
+  up: [number, number, number]
+  center: [number, number, number]
+  fov: number
 }
 
 export type LogEntry = {
@@ -20,11 +26,8 @@ export type Project = {
   created: Date
   updated: Date
   state: AnalysisState
+  camera?: CameraSetting
   shots: Shot[]
-  config: ModelConfig
-  logs: LogEntry[]
 }
 
-export type ProjectUpdate = Partial<
-  Pick<Project, 'name' | 'state' | 'shots' | 'config'>
->
+export type ProjectUpdate = Partial<Pick<Project, 'name' | 'state' | 'shots'>>

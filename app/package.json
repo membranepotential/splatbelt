@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite dev --port 8000",
+    "dev": "sst bind 'vite dev --port 8000'",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -24,7 +24,7 @@
     "@types/humanize-duration": "^3.27.1",
     "@types/lodash-es": "^4.17.9",
     "@types/mime": "^3.0.2",
-    "@types/three": "^0.159.0",
+    "@types/three": "^0.155.0",
     "@types/uuid": "^9.0.5",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
@@ -42,6 +42,7 @@
     "sass": "^1.69.5",
     "svelte": "^4.0.5",
     "svelte-check": "^3.4.3",
+    "svelte-kit-sst": "^2.39.2",
     "tailwindcss": "^3.3.3",
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
@@ -52,12 +53,13 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.414.0",
     "@aws-sdk/s3-request-presigner": "^3.414.0",
-    "@tweenjs/tween.js": "^21.0.0",
-    "gaussian-splats-3d": "github:mkkellogg/GaussianSplats3D#v0.1.8",
+    "@mkkellogg/gaussian-splats-3d": "^0.2.0",
+    "electrodb": "^2.12.3",
     "humanize-duration": "^3.30.0",
     "lodash-es": "^4.17.21",
     "simplify-js": "^1.2.4",
-    "three": "^0.159.0",
+    "three": "^0.155.0",
+    "ulid": "^2.3.0",
     "uuid": "^9.0.1",
     "zod": "^3.22.4"
   }

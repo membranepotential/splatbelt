@@ -1,22 +1,5 @@
 {
-    "[svelte]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.tabSize": 2
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.tabSize": 2
-    },
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.tabSize": 2
-    },
-    "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.tabSize": 4
-    },
-    "prettier.configPath": "app/.prettierrc",
-    "prettier.prettierPath": "app/node_modules/prettier",
-    "javascript.validate.enable": false,
-    "python.languageServer": "Jedi",
+  "search.exclude": {
+    "**/.sst": true
+  }
 }

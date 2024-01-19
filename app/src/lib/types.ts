@@ -11,20 +11,29 @@ export enum Movement {
   DOLLY = 'DOLLY',
   ZOOM = 'ZOOM',
   PAN = 'PAN',
-  ORBIT = 'ORBIT',
+  ROTATE = 'ROTATE',
+}
+
+export type CameraSetting = {
+  position: Vector3
+  target: Vector3
+  zoom: number
+}
+
+export type Sample = {
+  timeStamp: number
+  pointer: Vector2
+  camera: CameraSetting
 }
 
 export type Shot = {
-  duration: number
-  motion: { x: Motion; y: Motion }
-  initial: {
-    camera: { position: Vector3; zoom: number }
-    target: Vector3
-  }
-  points: Vector2[]
+  motion: { x: Movement; y: Movement }
+  speed: number
+  samples: Sample[]
 }
 
-export type Motion = {
-  movement: Movement
-  scale: number
+export const DEFAULT_SHOT = {
+  motion: { x: Movement.ROTATE, y: Movement.ROTATE },
+  speed: 1,
+  samples: [],
 }

@@ -1,40 +1,44 @@
 <script lang="ts">
-  import type { Shot } from '$lib/types'
   import { createEventDispatcher } from 'svelte'
-  import type { Writable } from 'svelte/store'
 
-  export let progress: Writable<number>
-  export let shots: Shot[]
-  export let shotIdx: number
+  export let current: number
+  export let total: number
+  export let progress: number
 
   const dispatch = createEventDispatcher<{
-    newShot: void
-    changeShot: { to: number }
+    new: void
+    redo: { idx: number }
+    change: { to: number }
   }>()
+
+  function handleClick(idx: number) {
+    if (idx === current) {
+      dispatch('redo', { idx })
+    } else {
+      dispatch('change', { to: idx })
+    }
+  }
 </script>
 
 <div class="shot-player-bar">
-  {#each shots as _, i}
+  {#each { length: total } as _, i}
     <button
       tabindex={i}
       class="shot"
-      class:active={shotIdx === i}
-      on:click={() => dispatch('changeShot', { to: i })}
+      class:active={current === i}
+      on:click={() => handleClick(i)}
     >
       {i + 1}
 
-      {#if shotIdx === i}
+      {#if current === i}
         <div
-          style="transform: translateX({$progress * 100}%);"
+          style="transform: translateX({progress * 100}%);"
           class="indicator"
         />
       {/if}
     </button>
   {/each}
-  <button
-    class="shot add-new bg-slate-500"
-    on:click={() => dispatch('newShot')}
-  >
+  <button class="shot add-new bg-slate-500" on:click={() => dispatch('new')}>
     +
   </button>
 </div>

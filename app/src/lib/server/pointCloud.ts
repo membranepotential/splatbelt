@@ -1,7 +1,7 @@
 import { generatePresignedUrl, headObject } from './s3'
 
 export function pointCloudKey(projectId: string) {
-  return `${projectId}/point_cloud.ply`
+  return `${projectId}/model.ply`
 }
 
 export function getDownloadUrl(projectId: string) {

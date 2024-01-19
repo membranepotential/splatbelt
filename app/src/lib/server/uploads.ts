@@ -7,12 +7,12 @@ import {
 import { S3Object } from '$lib/schemas/upload'
 
 const EXT_TO_TYPE: Record<string, string> = {
-  png: 'image/png',
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-  gif: 'image/gif',
-  webp: 'image/webp',
-  avif: 'image/avif',
+  // png: 'image/png',
+  // jpg: 'image/jpeg',
+  // jpeg: 'image/jpeg',
+  // gif: 'image/gif',
+  // webp: 'image/webp',
+  // avif: 'image/avif',
   mp4: 'video/mp4',
   webm: 'video/webm',
   mov: 'video/quicktime',
@@ -55,7 +55,7 @@ export async function listWithType(projectId: string) {
   return Promise.all(
     objects.map(async (object) => {
       if (
-        object.type.startsWith('image/') ||
+        // object.type.startsWith('image/') ||
         object.type.startsWith('video/')
       ) {
         return await head(object.key)

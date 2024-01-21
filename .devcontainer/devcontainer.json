@@ -6,13 +6,7 @@
   "remoteUser": "node",
   "shutdownAction": "stopCompose",
   "postCreateCommand": "/bin/sh /workspace/.devcontainer/post-create.sh",
-  "forwardPorts": [
-    8000,
-    "minio:9000",
-    "minio:9001",
-    "postgres:5432",
-    "postgrest:3000"
-  ],
+  "forwardPorts": [8000, "minio:9000", "minio:9001"],
   "customizations": {
     "vscode": {
       "extensions": [

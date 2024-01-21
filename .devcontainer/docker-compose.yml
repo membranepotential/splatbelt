@@ -20,10 +20,6 @@ services:
       - AWS_REGION
       - AWS_ACCESS_KEY_ID=${MINIO_USER}
       - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET}
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_HOST
-      - POSTGRES_URL
 
   minio:
     image: minio/minio:latest
@@ -36,30 +32,7 @@ services:
       MINIO_API_CORS_ALLOW_ORIGIN: "*"
     command: server --address ":9000" --console-address ":9001" /data
 
-  postgres:
-    image: postgres:15-alpine
-    restart: unless-stopped
-    networks: [devcontainer]
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-
-  postgrest:
-    image: postgrest/postgrest
-    command: "postgrest /postgrest.conf"
-    volumes:
-      - ../postgrest.conf:/postgrest.conf
-    networks:
-      - devcontainer
-    depends_on:
-      - postgres
-    environment:
-      PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}
-
 volumes:
-  postgres-data:
   minio-storage:
 
 networks:

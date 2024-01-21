@@ -9,18 +9,9 @@
 # create S3 bucket
 aws s3 --endpoint-url http://minio:9000 mb s3://$S3_BUCKET
 
-# init database
-psql "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}" -f ./db/schema.sql
-
-# Reload PostgREST schema cache
-./db/reload-postgrest-schema-cache.sh
-
-# Replace dev data
-./data/hydrate.sh
-
 # Login to brev
-if [ -s ./brev-token.txt ]; then    
-    brev login --token $(cat ./brev-token.txt)
+if [ -s ./brev-token.txt ]; then
+	brev login --token $(cat ./brev-token.txt)
 fi
 
 # install node modules

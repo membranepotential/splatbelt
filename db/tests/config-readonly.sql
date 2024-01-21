@@ -1,5 +1,5 @@
 -- Test data
-INSERT INTO api.projects (id, name) VALUES (1, 'test');
+INSERT INTO api.projects (id, name, camera) VALUES (1, 'test', api.new_camera());
 
 CREATE FUNCTION assert_config_is_readonly(value text)
 RETURNS VOID AS $$

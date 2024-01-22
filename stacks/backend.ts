@@ -4,6 +4,7 @@ export default function Backend({ stack }: StackContext) {
   const storage = new Bucket(stack, "storage", {
     cors: [
       {
+        maxAge: "1 day",
         allowedMethods: ["HEAD", "GET", "PUT", "POST", "DELETE"],
         allowedOrigins: ["*"],
         allowedHeaders: ["*"],
@@ -33,7 +34,9 @@ export default function Backend({ stack }: StackContext) {
 
   stack.addOutputs({
     bucketName: storage.bucketName,
+    bucketArn: storage.bucketArn,
     tableName: db.tableName,
+    tableArn: db.tableArn,
   });
 
   return { storage, db };

@@ -1,16 +1,20 @@
 import { generatePresignedUrl, headObject } from './s3'
+import { fetchUserAttributes } from 'aws-amplify/auth'
 
-export function pointCloudKey(projectId: string) {
-  return `${projectId}/model.ply`
+export async function pointCloudKey(projectId: string) {
+  const { sub } = await fetchUserAttributes()
+  return `${sub}/${projectId}/model.ply`
 }
 
-export function getDownloadUrl(projectId: string) {
-  return generatePresignedUrl(pointCloudKey(projectId), 'GET')
+export async function getDownloadUrl(projectId: string) {
+  const key = await pointCloudKey(projectId)
+  return generatePresignedUrl(key, 'GET')
 }
 
 export async function exists(projectId: string): Promise<boolean> {
   try {
-    await headObject(pointCloudKey(projectId))
+    const key = await pointCloudKey(projectId)
+    await headObject(key)
     return true
   } catch (error) {
     if (error.name === 'NotFound') return false

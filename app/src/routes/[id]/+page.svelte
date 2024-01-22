@@ -86,18 +86,18 @@
   }
 
   onMount(async () => {
-    if (!project.camera) error(500, 'No camera data found')
+    if (!project.scene) error(500, 'No scene data found')
 
     camera = new PerspectiveCamera(
-      project.camera.fov,
+      project.scene.fov,
       rootElement.clientWidth / rootElement.clientHeight,
       0.1,
       500
     )
-    camera.position.fromArray(project.camera.position)
-    camera.up.fromArray(project.camera.up)
+    camera.position.fromArray(project.scene.position)
+    camera.up.fromArray(project.scene.up)
 
-    const target = new Vector3().fromArray(project.camera.center)
+    const target = new Vector3().fromArray(project.scene.center)
     control = new Control(camera, target)
 
     viewer = new Viewer({

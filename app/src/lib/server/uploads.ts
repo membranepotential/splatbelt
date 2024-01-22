@@ -32,8 +32,8 @@ export async function head(key: string) {
   return S3Object.parse({ key, name, size: ContentLength, type: ContentType })
 }
 
-export async function list(projectId: string) {
-  const contents = await listObjects(`${projectId}/uploads`)
+export async function list(userId: string, projectId: string) {
+  const contents = await listObjects(`${userId}/${projectId}/uploads`)
 
   const sortKey = (a: any) => a.LastModified?.getTime() ?? 0 // eslint-disable-line
   contents.sort((a, b) => sortKey(a) - sortKey(b))
@@ -50,14 +50,11 @@ export async function list(projectId: string) {
   })
 }
 
-export async function listWithType(projectId: string) {
-  const objects = await list(projectId)
+export async function listWithType(userId: string, projectId: string) {
+  const objects = await list(userId, projectId)
   return Promise.all(
     objects.map(async (object) => {
-      if (
-        // object.type.startsWith('image/') ||
-        object.type.startsWith('video/')
-      ) {
+      if (object.type.startsWith('video/')) {
         return await head(object.key)
       }
       return object
@@ -71,8 +68,12 @@ type CreateParams = {
   type: string
 }
 
-export async function create(projectId: string, file: CreateParams) {
-  const key = `${projectId}/uploads/${file.name}`
+export async function create(
+  userId: string,
+  projectId: string,
+  file: CreateParams
+) {
+  const key = `${userId}/${projectId}/uploads/${file.name}`
   const upload = await prepareUpload(key, file.size, file.type)
   return { key, ...upload }
 }

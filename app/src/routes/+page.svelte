@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import Upload from './Upload.svelte'
+  import Upload from '$lib/components/Upload.svelte'
 
   export let data: PageData
 </script>
@@ -14,6 +14,7 @@
         <a
           class="block overflow-x-hidden text-ellipsis whitespace-nowrap px-4 py-6 transition-colors hover:bg-slate-800 hover:text-white focus:bg-slate-800"
           href={`/${project.id}`}
+          data-sveltekit-preload-data="tap"
         >
           {project.name}
         </a>

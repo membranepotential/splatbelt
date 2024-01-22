@@ -1,5 +1,5 @@
 import { Entity, type EntityItem, type UpdateEntityItem } from 'electrodb'
-import { Dynamo } from '$lib/server/dynamo'
+import { Dynamo } from './dynamo'
 import { AnalysisState } from '$lib/schemas'
 import { Movement } from '$lib/types'
 
@@ -16,6 +16,11 @@ export const ProjectEntity = new Entity(
         required: true,
         readOnly: true,
       },
+      user: {
+        type: 'string',
+        required: true,
+        readOnly: true,
+      },
       name: { type: 'string', required: true },
       created: {
         type: 'string',
@@ -28,7 +33,7 @@ export const ProjectEntity = new Entity(
         default: AnalysisState.CONFIGURING,
         required: true,
       },
-      camera: {
+      scene: {
         type: 'map',
         properties: {
           position: { type: 'list', items: { type: 'number' }, required: true },
@@ -46,7 +51,6 @@ export const ProjectEntity = new Entity(
           },
           fov: { type: 'number', default: 50, required: true },
         },
-        readOnly: true,
       },
       shots: {
         type: 'list',
@@ -115,7 +119,8 @@ export const ProjectEntity = new Entity(
       primary: {
         pk: {
           field: 'pk',
-          composite: [],
+          composite: ['user'],
+          template: '${user}',
         },
         sk: {
           field: 'sk',
@@ -132,25 +137,25 @@ export type ShotItem = ProjectItem['shots'][0]
 
 export type UpdateProjectItem = UpdateEntityItem<typeof ProjectEntity>
 
-export async function create(id: string, name: string) {
-  const result = await ProjectEntity.create({ id, name }).go()
+export async function create(user: string, id: string, name: string) {
+  const result = await ProjectEntity.create({ id, user, name }).go()
   return result.data
 }
 
-export async function list() {
-  const result = await ProjectEntity.query.primary({}).go()
+export async function list(user: string) {
+  const result = await ProjectEntity.query.primary({ user }).go()
   return result.data
 }
 
-export async function get(id: string) {
-  const result = await ProjectEntity.get({ id }).go()
+export async function get(user: string, id: string) {
+  const result = await ProjectEntity.get({ user, id }).go()
   return result.data
 }
 
-export function update(id: string, data: UpdateProjectItem) {
-  return ProjectEntity.patch({ id }).set(data).go()
+export function update(user: string, id: string, data: UpdateProjectItem) {
+  return ProjectEntity.patch({ user, id }).set(data).go()
 }
 
-export function delete_(id: string) {
-  return ProjectEntity.delete({ id }).go()
+export function delete_(user: string, id: string) {
+  return ProjectEntity.delete({ user, id }).go()
 }

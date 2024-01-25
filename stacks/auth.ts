@@ -7,11 +7,13 @@ export default function AuthStack({ stack }: StackContext) {
 
   const auth = new Cognito(stack, "auth", {
     login: ["username"],
+    triggers: {
+      preSignUp: "stacks/preSignUp.handler",
+    },
     cdk: {
       userPool: {
-        autoVerify: { email: true },
         passwordPolicy: {
-          minLength: 8,
+          minLength: 6,
           requireDigits: false,
           requireLowercase: false,
           requireSymbols: false,

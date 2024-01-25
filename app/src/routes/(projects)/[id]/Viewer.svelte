@@ -5,7 +5,6 @@
   import { onMount } from 'svelte'
   import { readable, type Readable } from 'svelte/store'
   import { error } from '@sveltejs/kit'
-  import type { PageData } from './$types'
   import {
     VIEWER_STATE,
     Movement,
@@ -22,14 +21,14 @@
   import ShotSettings from '$lib/components/ShotSettings.svelte'
   import ShotList from '$lib/components/ShotList.svelte'
   import TraceSvg from '$lib/components/TraceSVG.svelte'
+  import type { ProjectItem } from '$lib/server/projects'
 
   /*
   Root component that views the uploaded model.
   */
 
-  export let data: PageData
+  export let project: ProjectItem
 
-  $: project = data.project
   $: shots.hydrate(project.shots ?? [])
 
   $: state = $app.state
@@ -85,6 +84,17 @@
     )
   }
 
+  let resizeObserver = new ResizeObserver((entries) => {
+    const { width, height } = entries[0].contentRect
+    const aspect = width / height
+
+    if (Math.abs(camera.aspect - aspect) > 0.01) {
+      camera.aspect = aspect
+      camera.updateProjectionMatrix()
+      requestUpdate()
+    }
+  })
+
   onMount(async () => {
     if (!project.scene) error(500, 'No scene data found')
 
@@ -118,12 +128,8 @@
 
     animation = new Animated(control)
 
-    control.addEventListener('change', () => {
-      if (!updateScheduled) {
-        updateScheduled = true
-        requestAnimationFrame(update)
-      }
-    })
+    resizeObserver.observe(rootElement)
+    control.addEventListener('change', requestUpdate)
 
     // first update
     updateOnChange = false
@@ -135,16 +141,22 @@
     }, 1000)
   })
 
+  function requestUpdate() {
+    if (!updateScheduled) {
+      updateScheduled = true
+      requestAnimationFrame(update)
+    }
+  }
+
   function update() {
+    updateScheduled = false
+
     control.update()
     viewer.update()
     viewer.render()
 
     if (!updateOnChange) {
-      updateScheduled = true
-      requestAnimationFrame(update)
-    } else {
-      updateScheduled = false
+      requestUpdate()
     }
   }
 
@@ -252,55 +264,53 @@
   }
 </script>
 
-<div class="flex h-full items-center justify-center">
-  <div
-    bind:this={rootElement}
-    class="canvas relative z-10 h-full w-full touch-none bg-black sm:w-[390px]"
-    role="application"
-    on:pointerdown={onPointerDown}
-    on:wheel={onWheel}
-    on:contextmenu={(e) => e.preventDefault()}
-  >
-    <div class="absolute left-0 top-0 z-20 h-full w-full">
-      <TraceSvg
-        trace={$trace}
-        fill="none"
-        stroke="white"
-        stroke-width="12px"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+<div
+  bind:this={rootElement}
+  class="canvas relative z-10 h-full w-full touch-none overflow-hidden"
+  role="application"
+  on:pointerdown={onPointerDown}
+  on:wheel={onWheel}
+  on:contextmenu={(e) => e.preventDefault()}
+>
+  <div class="absolute left-0 top-0 z-20 h-full w-full">
+    <TraceSvg
+      trace={$trace}
+      fill="none"
+      stroke="white"
+      stroke-width="12px"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </div>
+
+  <div class="absolute left-0 top-0 z-30 h-full w-full">
+    {#if state === VIEWER_STATE.FREE || state === VIEWER_STATE.RECORD}
+      <ViewRecordToggle {state} on:toggle={(e) => app.goto(e.detail)} />
+      <SettingsPane {shot} on:toggle={toggleMotion} />
+    {/if}
+
+    {#if state === VIEWER_STATE.PLAY}
+      <ShotSettings
+        {state}
+        {shot}
+        on:speed={updateShotSpeed}
+        on:delete={deleteCurrentShot}
       />
-    </div>
-
-    <div class="absolute left-0 top-0 z-30 h-full w-full">
-      {#if state === VIEWER_STATE.FREE || state === VIEWER_STATE.RECORD}
-        <ViewRecordToggle {state} on:toggle={(e) => app.goto(e.detail)} />
-        <SettingsPane {shot} on:toggle={toggleMotion} />
-      {/if}
-
-      {#if state === VIEWER_STATE.PLAY}
-        <ShotSettings
-          {state}
-          {shot}
-          on:speed={updateShotSpeed}
-          on:delete={deleteCurrentShot}
-        />
-        <ShotList
-          current={shotIdx}
-          total={$shots.length}
-          progress={$playProgress}
-          on:new={newShot}
-          on:redo={replaceShot}
-          on:change={changeShot}
-        />
-      {/if}
-
-      <TopNav
-        showBack={state === VIEWER_STATE.PLAY}
-        showExport={$shots.length > 0}
-        on:back={() => app.goto(VIEWER_STATE.FREE)}
-        on:export={() => exportVideo()}
+      <ShotList
+        current={shotIdx}
+        total={$shots.length}
+        progress={$playProgress}
+        on:new={newShot}
+        on:redo={replaceShot}
+        on:change={changeShot}
       />
-    </div>
+    {/if}
+
+    <TopNav
+      showBack={state === VIEWER_STATE.PLAY}
+      showExport={$shots.length > 0}
+      on:back={() => app.goto(VIEWER_STATE.FREE)}
+      on:export={() => exportVideo()}
+    />
   </div>
 </div>

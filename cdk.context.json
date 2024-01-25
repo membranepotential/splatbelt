@@ -56,5 +56,9 @@
         ]
       }
     ]
+  },
+  "hosted-zone:account=200418026239:domainName=cepheid.xyz:region=us-east-1": {
+    "Id": "/hostedzone/Z1WSTTJGFFKAHQ",
+    "Name": "cepheid.xyz."
   }
 }

@@ -2,27 +2,18 @@ import { ulid } from 'ulid'
 import type { PageServerLoad, Actions } from './$types'
 import { list, create } from '$lib/server/projects'
 import * as uploads from '$lib/server/uploads'
-import { fail, error, redirect } from '@sveltejs/kit'
-import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth'
+import { fail } from '@sveltejs/kit'
 
-export const load: PageServerLoad = async () => {
-  try {
-    await getCurrentUser()
-  } catch (error) {
-    redirect(302, '/login')
-  }
-
-  const { sub } = await fetchUserAttributes()
-  if (!sub) error(500, 'No user sub')
-
-  return { projects: await list(sub) }
+export const load: PageServerLoad = async ({ parent }) => {
+  const { user } = await parent()
+  return { projects: await list(user.userId) }
 }
 
 export const actions = {
-  prepare: async ({ request }) => {
+  prepare: async ({ request, locals }) => {
     try {
-      const { sub } = await fetchUserAttributes()
-      if (!sub) throw fail(403)
+      const { user } = locals
+      if (!user) throw fail(403)
 
       const id = ulid().toLowerCase()
 
@@ -31,17 +22,17 @@ export const actions = {
       const size = parseInt(formData.get('size') as string)
       const type = formData.get('type') as string
 
-      const upload = await uploads.create(sub, id, { name, type, size })
+      const upload = await uploads.create(user.userId, id, { name, type, size })
 
       return { id, ...upload }
     } catch (error) {
       return fail(422, { message: error.message })
     }
   },
-  complete: async ({ request }) => {
+  complete: async ({ request, locals }) => {
     try {
-      const { sub } = await fetchUserAttributes()
-      if (!sub) throw fail(403)
+      const { user } = locals
+      if (!user) throw fail(403)
 
       const formData = await request.formData()
       const id = formData.get('id') as string
@@ -51,7 +42,7 @@ export const actions = {
       const etags = formData.getAll('etags') as Array<string>
 
       await uploads.complete({ key, uploadId, etags })
-      await create(sub, id, name)
+      await create(user.userId, id, name)
     } catch (error) {
       return fail(422, { message: error.message })
     }

@@ -33,7 +33,8 @@ declare module '@mkkellogg/gaussian-splats-3d' {
 
   declare class Viewer {
     camera: PerspectiveCamera
-    scene: Scene
+    splatMesh: Scene
+    threeScene: Scene
     renderer: Renderer
     controls: OrbitControls
 
@@ -46,15 +47,31 @@ declare module '@mkkellogg/gaussian-splats-3d' {
     useBuiltInControls: boolean
     rootElement: HTMLElement
     ignoreDevicePixelRatio: boolean
+    devicePixelRatio: number
     halfPrecisionCovariancesOnGPU: boolean
     gpuAcceleratedSort: boolean
+    integerBasedSort: boolean
+    sharedMemoryForWorkers: boolean
 
     showMeshCursor: boolean
     showControlPlane: boolean
     showInfo: boolean
 
+    selfDrivenModeRunning: boolean
+    splatRenderingInitialized: boolean
+
+    raycaster: Raycaster
+
     currentFPS: number
     lastSortTime: number
+
+    previousCameraTarget: Vector3
+    nextCameraTarget: Vector3
+
+    resizeObserver: ResizeObserver
+
+    usingExternalCamera: boolean
+    usingExternalRenderer: boolean
 
     constructor(options?: ViewerOptions)
     addSplatScene(file: string, options?: ViewerLoadFileOptions): Promise<void>

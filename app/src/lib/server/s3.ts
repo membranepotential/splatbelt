@@ -52,16 +52,15 @@ function generatePresignedPartUrls(
   return Promise.all(urls)
 }
 
-function initiateMultipartUpload(key: string, type: string) {
-  return s3()
-    .send(
-      new CreateMultipartUploadCommand({
-        Key: key,
-        Bucket: Bucket.storage.bucketName,
-        ContentType: type,
-      })
-    )
-    .then(({ UploadId }) => UploadId as string)
+async function initiateMultipartUpload(key: string, type: string) {
+  const { UploadId } = await s3().send(
+    new CreateMultipartUploadCommand({
+      Key: key,
+      Bucket: Bucket.storage.bucketName,
+      ContentType: type,
+    })
+  )
+  return UploadId as string
 }
 
 async function prepareSinglePartUpload(key: string) {
@@ -103,15 +102,14 @@ export function completeMultipartUpload(
   )
 }
 
-export function listObjects(prefix: string) {
-  return s3()
-    .send(
-      new ListObjectsV2Command({
-        Bucket: Bucket.storage.bucketName,
-        Prefix: prefix,
-      })
-    )
-    .then(({ Contents }) => Contents ?? [])
+export async function listObjects(prefix: string) {
+  const { Contents } = await s3().send(
+    new ListObjectsV2Command({
+      Bucket: Bucket.storage.bucketName,
+      Prefix: prefix,
+    })
+  )
+  return Contents ?? []
 }
 
 export function headObject(key: string) {

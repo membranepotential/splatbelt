@@ -1,5 +1,7 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { Entity, type EntityItem, type UpdateEntityItem } from 'electrodb'
-import { Dynamo } from './dynamo'
+
+import { Table } from 'sst/node/table'
 import { AnalysisState } from '$lib/schemas'
 import { Movement } from '$lib/types'
 
@@ -30,7 +32,7 @@ export const ProjectEntity = new Entity(
       },
       state: {
         type: Object.values(AnalysisState),
-        default: AnalysisState.CONFIGURING,
+        default: AnalysisState.PENDING,
         required: true,
       },
       scene: {
@@ -127,13 +129,28 @@ export const ProjectEntity = new Entity(
           composite: ['id'],
         },
       },
+      state: {
+        index: 'gsi1',
+        pk: {
+          field: 'gsi1pk',
+          composite: ['state'],
+        },
+        sk: {
+          field: 'gsi1sk',
+          composite: [],
+        },
+      },
     },
   },
-  Dynamo.Configuration
+  {
+    client: new DynamoDBClient({}),
+    table: Table.db.tableName,
+  }
 )
 
 export type ProjectItem = EntityItem<typeof ProjectEntity>
 export type ShotItem = ProjectItem['shots'][0]
+export type SceneItem = ProjectItem['scene']
 
 export type UpdateProjectItem = UpdateEntityItem<typeof ProjectEntity>
 
@@ -144,6 +161,11 @@ export async function create(user: string, id: string, name: string) {
 
 export async function list(user: string) {
   const result = await ProjectEntity.query.primary({ user }).go()
+  return result.data
+}
+
+export async function listByState(state: AnalysisState) {
+  const result = await ProjectEntity.query.state({ state }).go()
   return result.data
 }
 

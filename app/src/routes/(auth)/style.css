@@ -1,0 +1,23 @@
+.form--auth {
+  @apply flex flex-col gap-4;
+}
+
+.label--auth {
+  @apply mb-2 ml-3 block text-sm font-bold;
+}
+
+.input--auth {
+  @apply w-full appearance-none rounded-lg border border-slate-700 bg-slate-800 px-3 py-3 leading-tight text-indigo-100 caret-indigo-100 transition-colors focus:border-slate-500 focus:bg-slate-700 focus:text-white focus:outline-none;
+}
+
+.msg--error {
+  @apply ml-3 text-sm italic text-red-500;
+}
+
+.btn--primary {
+  @apply w-full appearance-none rounded-lg border border-slate-800 bg-slate-800 px-3 py-3 text-center leading-tight text-indigo-100 caret-indigo-100 transition-colors hover:border-slate-500 hover:bg-slate-700 hover:text-white focus:border-slate-500 focus:text-white focus:outline-none active:border-slate-600 active:bg-slate-800 active:transition-none disabled:cursor-not-allowed disabled:text-indigo-100 disabled:opacity-60 disabled:hover:border-slate-800 disabled:hover:bg-slate-800;
+}
+
+a.btn--primary {
+  @apply block;
+}

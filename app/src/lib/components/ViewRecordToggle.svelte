@@ -33,7 +33,7 @@
     <button
       on:click={toggle}
       type="button"
-      class="border-bg-gray-200 relative inline-flex h-9 w-16 flex-shrink-0 cursor-pointer rounded-full border-2 border-green-900 bg-transparent transition-colors duration-200 ease-in-out"
+      class="border-bg-gray-200 relative inline-flex h-9 w-16 flex-shrink-0 cursor-pointer rounded-full border-2 border-green-900 bg-transparent backdrop-blur transition-colors duration-200 ease-in-out"
       class:border-red-800={isRecording}
       role="switch"
       aria-checked="false"
@@ -72,7 +72,7 @@
 
   <!-- Move these to <Hints />? -->
   <div
-    class="help-text pointer-events-none absolute bottom-52 left-0 w-full text-center text-white opacity-50"
+    class="help-text pointer-events-none absolute bottom-52 left-0 w-full text-center text-white opacity-70"
   >
     <p class:hidden={!isFree}>
       View and Move Model<br />

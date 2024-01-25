@@ -17,10 +17,10 @@
 <div class="flex items-center justify-center bg-slate-950">
   <label
     for="file-input"
-    class="text-md inline-flex aspect-square flex-col items-center justify-center gap-2 rounded-2xl border-2 border-slate-800 bg-slate-900 px-4 py-4 text-indigo-100 transition-colors hover:cursor-pointer hover:text-white"
+    class="text-md inline-flex aspect-square flex-col items-center justify-center gap-2 rounded-full border-2 border-slate-800 bg-slate-900 px-4 py-4 text-indigo-100 transition-colors hover:cursor-pointer hover:text-white"
   >
     {#if $upload === null}
-      <span class="h-14 w-14">
+      <span class="h-8 w-8">
         {@html UploadIcon}
       </span>
       Upload Video

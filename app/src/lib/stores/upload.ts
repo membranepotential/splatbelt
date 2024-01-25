@@ -42,7 +42,7 @@ async function complete(upload: Upload) {
   body.append('name', upload.name)
   body.append('key', upload.key)
   body.append('uploadId', upload.uploadId)
-  upload.etags.forEach((etag) => body.append('etags', etag))
+  upload.etags?.forEach((etag) => body.append('etags', etag))
 
   const res = await fetch('?/complete', { method: 'POST', body })
     .then((res) => res.text())

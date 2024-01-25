@@ -4,20 +4,14 @@
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
  */
 import type { Handle } from '@sveltejs/kit'
-import { Amplify } from 'aws-amplify'
-import { env } from '$env/dynamic/private'
+import { getCurrentUserFromCookies } from '$lib/server/auth'
 
 export const handle: Handle = async ({ event, resolve }) => {
-  const authConfig = {
-    Cognito: {
-      region: env.AWS_REGION,
-      userPoolId: env.USER_POOL_ID,
-      userPoolClientId: env.USER_POOL_CLIENT_ID,
-      identityPoolId: env.IDENTITY_POOL_ID,
-    },
+  const user = await getCurrentUserFromCookies(event.cookies)
+  if (user) {
+    event.locals.user = user
+    console.log('active session as', user.username, user.userId)
   }
-  Amplify.configure({ Auth: authConfig })
-
   const response = await resolve(event)
 
   /**

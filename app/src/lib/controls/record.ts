@@ -3,6 +3,7 @@ import { writable, get, type Readable, derived } from 'svelte/store'
 import type { Control } from './control'
 import { Movement, type CameraSetting, type Sample } from '$lib/types'
 import simplify from 'simplify-js'
+import { damp } from 'three/src/math/MathUtils.js'
 
 type Shot = Sample[]
 
@@ -105,6 +106,8 @@ class Trace implements Readable<Shot> {
 type RecordEvents = { type: 'start' | 'end' } | { type: 'shot'; shot: Shot }
 
 export class Record extends EventDispatcher<RecordEvents> {
+  dampingFactor = 0.005
+
   control: Control
   motion: { x: Movement; y: Movement }
 
@@ -115,7 +118,7 @@ export class Record extends EventDispatcher<RecordEvents> {
   private pointerId: number | null = null
 
   private pointer = new Vector2()
-  private delta = new Vector2()
+  private lastUpdate = performance.now()
 
   constructor(control: Control, motion: { x: Movement; y: Movement }) {
     super()
@@ -165,6 +168,26 @@ export class Record extends EventDispatcher<RecordEvents> {
     return new Vector2(event.offsetX, event.offsetY)
   }
 
+  private updatePointer(event: PointerEvent) {
+    const scale = 1 / (event.target as HTMLElement).clientHeight
+
+    const dt = event.timeStamp - this.lastUpdate
+    this.lastUpdate = event.timeStamp
+
+    const target = this.getPointerFromEvent(event)
+    const next = new Vector2(
+      damp(this.pointer.x, target.x, this.dampingFactor, dt),
+      damp(this.pointer.y, target.y, this.dampingFactor, dt)
+    )
+
+    const delta = new Vector2()
+      .subVectors(next, this.pointer)
+      .multiplyScalar(scale)
+    this.pointer = next
+
+    return delta
+  }
+
   private sample() {
     this.shot.record(this.pointer, this.control.sample())
   }
@@ -183,6 +206,7 @@ export class Record extends EventDispatcher<RecordEvents> {
     target.addEventListener('pointerup', this.onPointerUp)
 
     this.pointer = this.getPointerFromEvent(event)
+    this.lastUpdate = performance.now()
     this.dispatchEvent({ type: 'start' })
 
     this.shot.reset()
@@ -193,13 +217,8 @@ export class Record extends EventDispatcher<RecordEvents> {
   onPointerMove(event: PointerEvent) {
     if (!this.isRecordingPointer(event)) return
 
-    const height = (event.target as HTMLElement).clientHeight
-    this.delta = this.getPointerFromEvent(event)
-      .sub(this.pointer)
-      .multiplyScalar(1 / height)
-    this.controlFunction(this.delta.x, this.delta.y)
-
-    this.pointer = this.getPointerFromEvent(event)
+    const delta = this.updatePointer(event)
+    this.controlFunction(delta.x, delta.y)
   }
 
   onPointerUp(event: PointerEvent) {

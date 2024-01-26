@@ -2,7 +2,7 @@
   import { Viewer } from '@mkkellogg/gaussian-splats-3d'
   import { PerspectiveCamera, Vector2, Vector3 } from 'three'
 
-  import { onMount } from 'svelte'
+  import { onMount, onDestroy } from 'svelte'
   import { readable, type Readable } from 'svelte/store'
   import { error } from '@sveltejs/kit'
   import {
@@ -32,10 +32,7 @@
   $: shots.hydrate(project.shots ?? [])
 
   $: state = $app.state
-  $: console.log('state is now: ', state)
-
   $: shotIdx = $app.shotIdx
-  $: console.log('shotIdx is now: ', shotIdx)
 
   let shot: Shot
   $: shot = $shots[shotIdx] ?? DEFAULT_SHOT
@@ -105,9 +102,9 @@
       500
     )
     camera.position.fromArray(project.scene.position)
-    camera.up.fromArray(project.scene.up)
+    camera.up.fromArray(project.scene.up ?? [0, 1, 0])
 
-    const target = new Vector3().fromArray(project.scene.center)
+    const target = new Vector3().fromArray(project.scene.center ?? [0, 0, 0])
     control = new Control(camera, target)
 
     viewer = new Viewer({
@@ -119,7 +116,7 @@
     })
 
     await viewer.addSplatScene(`/${project.id}/model.ply`, {
-      splatAlphaRemovalThreshold: 0,
+      splatAlphaRemovalThreshold: 70,
     })
 
     free = new Orbit(control)
@@ -139,6 +136,12 @@
     setTimeout(() => {
       updateOnChange = true
     }, 1000)
+  })
+
+  onDestroy(() => {
+    resizeObserver.disconnect()
+    control.removeEventListener('change', requestUpdate)
+    viewer.dispose()
   })
 
   function requestUpdate() {
@@ -270,7 +273,7 @@
   role="application"
   on:pointerdown={onPointerDown}
   on:wheel={onWheel}
-  on:contextmenu={(e) => e.preventDefault()}
+  on:contextmenu|preventDefault
 >
   <div class="absolute left-0 top-0 z-20 h-full w-full">
     <TraceSvg

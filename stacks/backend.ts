@@ -8,7 +8,7 @@ export default function Backend({ stack }: StackContext) {
         allowedMethods: ["HEAD", "GET", "PUT", "POST", "DELETE"],
         allowedOrigins: ["*"],
         allowedHeaders: ["*"],
-        exposedHeaders: ["ETag"],
+        exposedHeaders: ["ETag", "Cache-Control"],
       },
     ],
   });

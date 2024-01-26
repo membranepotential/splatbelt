@@ -1,5 +1,6 @@
 import { Vector2 } from 'three'
 import type { Control } from './control'
+import { damp } from 'three/src/math/MathUtils.js'
 
 enum STATE {
   NONE,
@@ -18,6 +19,7 @@ enum STATE {
  * tap and drag: dolly
  */
 export class Orbit {
+  dampingFactor = 0.005
   control: Control
 
   private state = STATE.NONE
@@ -28,6 +30,7 @@ export class Orbit {
   private start = new Vector2()
   private end = new Vector2()
   private delta = new Vector2()
+  private lastMove = performance.now()
 
   constructor(control: Control) {
     this.control = control
@@ -69,6 +72,7 @@ export class Orbit {
       }
     } else {
       this.start.set(event.clientX, event.clientY)
+
       if (event.button === 0) {
         this.state = STATE.ROTATE
       } else if (event.button === 1) {
@@ -95,6 +99,16 @@ export class Orbit {
     } else {
       this.end.set(event.clientX, event.clientY)
     }
+
+    // apply damping to input
+    // technically we should track time for each indivudal pointer
+    const dt = event.timeStamp - this.lastMove
+    this.lastMove = event.timeStamp
+
+    this.end.set(
+      damp(this.start.x, this.end.x, this.dampingFactor, dt),
+      damp(this.start.y, this.end.y, this.dampingFactor, dt)
+    )
 
     const height = (event.target as HTMLElement).clientHeight
     this.delta.subVectors(this.end, this.start).multiplyScalar(1 / height)

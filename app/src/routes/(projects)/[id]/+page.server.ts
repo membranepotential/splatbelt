@@ -1,15 +1,16 @@
 import * as projects from '$lib/server/projects'
 import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
+// import { AnalysisState } from '$lib/schemas/project'
 
 export const load: PageServerLoad = async ({ params, parent }) => {
   const { user } = await parent()
 
-  // await projects.update(sub, params.id, {
+  // await projects.update(user.userId, params.id, {
   //   state: AnalysisState.COMPLETE,
   //   scene: {
-  //     position: [5.99, 5.1, -12.77],
-  //     up: [-0.07, -0.71, -0.7],
+  //     position: [10, 10, 0],
+  //     up: [0.0, -1, -1],
   //     center: [0, 0, 0],
   //     fov: 50,
   //   },

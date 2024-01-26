@@ -64,7 +64,7 @@
         </span>
       </span>
     </button>
-    <div class="flex pt-2 text-white">
+    <div class="flex pt-2 text-indigo-100">
       <span class:hidden={!isFree}>View</span>
       <span class:hidden={!isRecording}>Record</span>
     </div>

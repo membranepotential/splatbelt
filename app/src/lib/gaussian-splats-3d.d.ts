@@ -79,5 +79,6 @@ declare module '@mkkellogg/gaussian-splats-3d' {
     stop(): void
     update(): void
     render(): void
+    dispose(): void
   }
 }
